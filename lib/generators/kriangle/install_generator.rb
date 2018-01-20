@@ -35,7 +35,7 @@ module Kriangle
         # @pluralize_name = name.underscore.pluralize
         # template "model.rb", "app/models/#{@underscored_name}.rb"
         # # migration_template "create_#{@pluralize_name}.rb", "db/migrate/create_#{@pluralize_name}.rb" if options['custom_orm'] == 'ActiveRecord'
-
+        
         template "authentication.rb", "app/models/authentication.rb"
         migration_template "create_authentications.rb", "db/migrate/create_authentications.rb" if options['custom_orm'] == 'ActiveRecord'
       end

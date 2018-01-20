@@ -26,7 +26,10 @@ module Kriangle
 
       def create_model_file
         template "model.rb", "app/models/#{singular_name}.rb" unless options['skip_model']
-        migration_template "create_#{singular_name}s.rb", "db/migrate/create_#{singular_name}.rb" if options['custom_orm'] == 'ActiveRecord'
+        migration_template "create_migration.rb", "db/migrate/create_#{singular_name}s.rb" if options['custom_orm'] == 'ActiveRecord'
+
+        template "active_serializer.rb", "app/serializers/active_serializer.rb"
+        template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb"
       end
 
       desc "Generates model, controller with the given NAME."
