@@ -1,10 +1,10 @@
 class <%= user_class %>Serializer < ActiveSerializer
-  attributes :id
+  attributes :id # other columns
 
   # has_one :address
   # has_many :avatars
 
-  # def custom_fuction
+  # def custom_function
   #   some logic
   # end
 
