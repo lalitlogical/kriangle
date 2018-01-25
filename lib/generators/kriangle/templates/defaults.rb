@@ -69,7 +69,12 @@ module API
           end
 
           def authenticate!
-            error!('Unauthorized. Invalid or expired token.', 401) unless current_<%= @underscored_name %>
+            unless current_<%= @underscored_name %>
+              error!({
+                success: false,
+                errors: ['Invalid or expired token.']
+              }, 401)
+            end
           end
 
           def array_serializer
