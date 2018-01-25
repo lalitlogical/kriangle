@@ -15,12 +15,17 @@ module API
           end
         end
         post :register do
-          @<%= @underscored_name %> = <%= user_class %>.new(params[:<%= @underscored_name %>])
-          if @<%= @underscored_name %>.save
-            create_authentication(@<%= @underscored_name %>)
-            @<%= @underscored_name %>
+          <%= @underscored_name %> = <%= user_class %>.new(params[:<%= @underscored_name %>])
+          if <%= @underscored_name %>.save
+            create_authentication(<%= @underscored_name %>)
+            json_success_response({
+              message: "You have registered successfully.",
+              data: single_serializer.new(<%= @underscored_name %>, serializer: <%= user_class %>Serializer)
+            })
           else
-            error!(@<%= @underscored_name %>.errors.full_messages, 403)
+            json_error_response({
+              errors: <%= @underscored_name %>.errors.full_messages
+            })
           end
         end
 
@@ -35,22 +40,31 @@ module API
           <%= @underscored_name %> = <%= user_class %>.find_by(email: params[:<%= @underscored_name %>][:email].downcase)
           if <%= @underscored_name %> && <%= @underscored_name %>.valid_password?(params[:<%= @underscored_name %>][:password])
             create_authentication(<%= @underscored_name %>)
-            <%= @underscored_name %>
+            json_success_response({
+              message: "You have successfully logged in.",
+              data: single_serializer.new(<%= @underscored_name %>, serializer: <%= user_class %>Serializer)
+            })
           else
-            error!('Invalid email or password.', 401)
+            json_error_response({
+              errors: ['Invalid email or password.']
+            }, 401)
           end
         end
 
         description "Logout <%= @underscored_name %>"
         post :logout do
           destroy_authentication_token
-          { message: "You have successfully logout." }
+          json_success_response({
+            message: "You have successfully logout."
+          })
         end
 
         description "Returns pong if logged in correctly"
         get :ping do
           authenticate!
-          { message: "pong" }
+          json_success_response({
+            message: "pong"
+          })
         end
 
         desc "Forgot Password"
@@ -64,9 +78,13 @@ module API
           if <%= @underscored_name %>.present?
             <%= @underscored_name %>.update(reset_token: token)
             # send Forgot Password email
-            { message: "You will receive email with instructions to reset password shortly." }
+            json_success_response({
+              message: "You will receive email with instructions to reset password shortly."
+            })
           else
-            error!('Invalid email.', 422)
+            json_error_response({
+              errors: ['Invalid email address.']
+            })
           end
         end
 
@@ -82,16 +100,22 @@ module API
           <%= @underscored_name %> = <%= user_class %>.find_by(reset_token: params[:reset_token])
           if <%= @underscored_name %>.update(params[:<%= @underscored_name %>])
             # send Reset Password email
-            { message: "Your password have successfully changed." }
+            json_success_response({
+              message: "Your password have successfully changed."
+            })
           else
-            error!('Invalid reset token.', 422)
+            json_error_response({
+              errors: ['Invalid reset token.']
+            })
           end
         end
 
         description "Return <%= @underscored_name %>"
         get '' do
           authenticate!
-          current_<%= @underscored_name %>
+          json_success_response({
+            data: single_serializer.new(current_<%= @underscored_name %>, serializer: <%= user_class %>Serializer)
+          })
         end
 
         description "Update <%= @underscored_name %>"
@@ -101,19 +125,23 @@ module API
             optional :last_name, type: String, desc: "Last Name"
             optional :password, type: String, desc: "Password", allow_blank: false
             optional :password_confirmation, type: String, desc: "Password Confirmation", allow_blank: false
-            group :avatars_attributes, type: Hash, desc: "An array of avatars" do
-              optional :id, type: Integer
-              optional :image, type: String
-              optional :_destroy, type: Boolean
-            end
+            # group :avatars_attributes, type: Hash, desc: "An array of avatars" do
+            #   optional :id, type: Integer
+            #   optional :image, type: String
+            #   optional :_destroy, type: Boolean
+            # end
           end
         end
         put "" do
           authenticate!
           if current_<%= @underscored_name %>.update(params[:<%= @underscored_name %>])
-            current_<%= @underscored_name %>
+            json_success_response({
+              data: single_serializer.new(current_<%= @underscored_name %>, serializer: <%= user_class %>Serializer)
+            })
           else
-            error!(current_<%= @underscored_name %>.errors.full_messages, 403)
+            json_error_response({
+              errors: current_<%= @underscored_name %>.errors.full_messages
+            })
           end
         end
       end

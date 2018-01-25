@@ -72,12 +72,20 @@ module API
             error!('Unauthorized. Invalid or expired token.', 401) unless current_<%= @underscored_name %>
           end
 
-          def json_success_response response, status_code = 200
-            response
+          def array_serializer
+            ActiveModel::Serializer::CollectionSerializer
           end
 
-          def json_error_response errors, status_code = (ENV['STATUS_CODE'] || 422)
-            error!(errors, status_code)
+          def single_serializer
+            ActiveModelSerializers::SerializableResource
+          end
+
+          def json_success_response response = {}, status_code = 200
+            { success: true }.merge(response)
+          end
+
+          def json_error_response response = {}, status_code = (ENV['STATUS_CODE'] || 422)
+            error!({ success: false }.merge(response), status_code)
           end
         end
         <% if options['custom_orm'] == 'ActiveRecord' %>
