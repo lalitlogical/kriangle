@@ -13,6 +13,14 @@ module API
         def self.description title
           desc title, {
             headers: {
+              "X-Uid" => {
+                description: "User Id",
+                required: true
+              },
+              "X-Client-Id" => {
+                description: "Client Id",
+                required: true
+              },
               "X-Authentication-Token" => {
                 description: "Authentication Token",
                 required: true
@@ -34,14 +42,16 @@ module API
             Digest::MD5.hexdigest(('a'..'z').to_a.sample+(Time.now.to_f * 1000).to_s[1,12]+(rand(10 ** 10).to_s.rjust(10,'0')+rand(10 ** 10).to_s.rjust(10,'0'))[1,15])
           end
 
-          def create_authentication <%= @underscored_name %>
-            authentication = <%= @underscored_name %>.authentications.create(token: token)
+          def create_authentication <%= @underscored_name %>, client_id = (ENV['CLIENT_ID'] || token.last(20))
+            authentication = <%= @underscored_name %>.authentications.create(client_id: token.last(20), token: token)
+            header 'X-Uid', authentication.user_id
+            header 'X-Client-Id', authentication.client_id
             header 'X-Authentication-Token', authentication.token
           end
 
           def get_authentication_token
             headers['X-Authentication-Token'] or return
-            Authentication.where(token: headers['X-Authentication-Token']).first
+            Authentication.where(user_id: headers['X-Uid'], client_id: headers['X-Client-Id'], token: headers['X-Authentication-Token']).first
           end
 
           def destroy_authentication_token
@@ -58,12 +68,16 @@ module API
             @current_<%= @underscored_name %> ||= get_current_<%= @underscored_name %>
           end
 
-          def authenticate_key!
-            error!('Unauthorized. Invalid or expired api key.', 401) unless current_<%= @underscored_name %>
-          end
-
           def authenticate!
             error!('Unauthorized. Invalid or expired token.', 401) unless current_<%= @underscored_name %>
+          end
+
+          def json_success_response response, status_code = 200
+            response
+          end
+
+          def json_error_response errors, status_code = (ENV['STATUS_CODE'] || 422)
+            error!(errors, status_code)
           end
         end
         <% if options['custom_orm'] == 'ActiveRecord' %>

@@ -8,4 +8,7 @@ class <%= class_name %> < ApplicationRecord
   # field :content, type: String, default: ""
   # field :views, type: Integer, default: 0
   <% end %>
+
+  # Some validation
+  # validates :name, :description, presence: true
 end

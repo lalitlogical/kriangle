@@ -12,6 +12,7 @@ module Kriangle
       include Kriangle::Generators::GeneratorHelpers
 
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: "ORM i.e. ActiveRecord, mongoid"
+      class_option :skip_migration, type: :boolean, default: true, desc: "Skip Migration"
 
       source_root File.expand_path('../templates', __FILE__)
 
@@ -26,7 +27,7 @@ module Kriangle
 
       def create_model_file
         template "model.rb", "app/models/#{singular_name}.rb" unless options['skip_model']
-        migration_template "create_migration.rb", "db/migrate/create_#{singular_name}s.rb" if options['custom_orm'] == 'ActiveRecord'
+        migration_template "create_migration.rb", "db/migrate/create_#{singular_name}s.rb" if !options['skip_migration'] && options['custom_orm'] == 'ActiveRecord'
 
         template "active_serializer.rb", "app/serializers/active_serializer.rb"
         template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb"

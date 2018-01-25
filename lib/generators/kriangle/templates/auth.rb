@@ -1,9 +1,9 @@
 module API
   module V1
-    class <%= name.pluralize %> < Grape::API
+    class <%= mount_path.pluralize %> < Grape::API
       include API::V1::Defaults
 
-      resource :<%= @underscored_name.pluralize %> do
+      resource :<%= @underscored_mount_path.pluralize %> do
         desc "Register new <%= @underscored_name %>"
         params do
           requires :<%= @underscored_name %>, type: Hash do
@@ -15,7 +15,7 @@ module API
           end
         end
         post :register do
-          @<%= @underscored_name %> = <%= name %>.new(params[:<%= @underscored_name %>])
+          @<%= @underscored_name %> = <%= user_class %>.new(params[:<%= @underscored_name %>])
           if @<%= @underscored_name %>.save
             create_authentication(@<%= @underscored_name %>)
             @<%= @underscored_name %>
@@ -32,7 +32,7 @@ module API
           end
         end
         post :login do
-          <%= @underscored_name %> = <%= name %>.find_by(email: params[:<%= @underscored_name %>][:email].downcase)
+          <%= @underscored_name %> = <%= user_class %>.find_by(email: params[:<%= @underscored_name %>][:email].downcase)
           if <%= @underscored_name %> && <%= @underscored_name %>.valid_password?(params[:<%= @underscored_name %>][:password])
             create_authentication(<%= @underscored_name %>)
             <%= @underscored_name %>
@@ -60,7 +60,7 @@ module API
           end
         end
         post :forgot_password do
-          <%= @underscored_name %> = <%= name %>.find_by(email: params[:<%= @underscored_name %>][:email].downcase)
+          <%= @underscored_name %> = <%= user_class %>.find_by(email: params[:<%= @underscored_name %>][:email].downcase)
           if <%= @underscored_name %>.present?
             <%= @underscored_name %>.update(reset_token: token)
             # send Forgot Password email
@@ -79,12 +79,41 @@ module API
           end
         end
         post :reset_password do
-          <%= @underscored_name %> = <%= name %>.find_by(reset_token: params[:reset_token])
+          <%= @underscored_name %> = <%= user_class %>.find_by(reset_token: params[:reset_token])
           if <%= @underscored_name %>.update(params[:<%= @underscored_name %>])
             # send Reset Password email
             { message: "Your password have successfully changed." }
           else
             error!('Invalid reset token.', 422)
+          end
+        end
+
+        description "Return <%= @underscored_name %>"
+        get '' do
+          authenticate!
+          current_<%= @underscored_name %>
+        end
+
+        description "Update <%= @underscored_name %>"
+        params do
+          requires :<%= @underscored_name %>, type: Hash do
+            optional :first_name, type: String, desc: "First Name", allow_blank: false
+            optional :last_name, type: String, desc: "Last Name"
+            optional :password, type: String, desc: "Password", allow_blank: false
+            optional :password_confirmation, type: String, desc: "Password Confirmation", allow_blank: false
+            group :avatars_attributes, type: Hash, desc: "An array of avatars" do
+              optional :id, type: Integer
+              optional :image, type: String
+              optional :_destroy, type: Boolean
+            end
+          end
+        end
+        put "" do
+          authenticate!
+          if current_<%= @underscored_name %>.update(params[:<%= @underscored_name %>])
+            current_<%= @underscored_name %>
+          else
+            error!(current_<%= @underscored_name %>.errors.full_messages, 403)
           end
         end
       end
