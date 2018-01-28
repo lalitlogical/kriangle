@@ -1,10 +1,10 @@
-class <%= class_name %>Serializer < ActiveSerializer
-  attributes :id
+class <%= @class_name %>Serializer < ActiveSerializer
+  attributes <%= @attributes ? @attributes : ':id' %>
 
-  # has_one :association_name
-  # has_many :association_name
+  # has_one :address
+  # has_many :avatars
 
-  # def custom_fuction
+  # def custom_function
   #   some logic
   # end
 

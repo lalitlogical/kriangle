@@ -12,6 +12,9 @@ module API
             requires :email, type: String, desc: "Email address", allow_blank: false
             requires :password, type: String, desc: "Password", allow_blank: false
             requires :password_confirmation, type: String, desc: "Password Confirmation", allow_blank: false
+            requires :age, type: Integer, desc: "Age", allow_blank: false
+            requires :dob, type: DateTime, desc: "Date of Birth", allow_blank: false
+            requires :gender, type: String, desc: "Gender", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
           end
         end
         post :register do

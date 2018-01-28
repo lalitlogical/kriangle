@@ -16,34 +16,61 @@ module Kriangle
 
       class_option :skip_swagger, type: :boolean, default: false, desc: "Skip \"Swagger UI\""
       class_option :custom_orm,   type: :string,  default: "ActiveRecord", desc: "ORM i.e. ActiveRecord, mongoid"
-      class_option :skip_migration, type: :boolean, default: true, desc: "Skip Migration"
 
       source_root File.expand_path('../templates', __FILE__)
 
       def self.next_migration_number(path)
-        Time.now.utc.strftime("%Y%m%d%H%M%S")
+        unless @prev_migration_nr
+          @prev_migration_nr = Time.now.utc.strftime("%Y%m%d%H%M%S").to_i
+        else
+          @prev_migration_nr += 1
+        end
+        @prev_migration_nr.to_s
       end
 
       def copy_initializer
-        template 'application_record.rb', 'app/models/application_record.rb'
-        template 'swagger.rb', 'config/initializers/swagger.rb' unless options['skip_swagger']
+        create_template 'application_record.rb', 'app/models/application_record.rb'
+        create_template 'swagger.rb', 'config/initializers/swagger.rb' unless options['skip_swagger']
       end
 
       def copy_migrations
-        @underscored_name = user_class.underscore
-        migration_template "create_authentications.rb", "db/migrate/create_authentications.rb" if !options['skip_migration'] && options['custom_orm'] == 'ActiveRecord'
+        if options['custom_orm'] == 'ActiveRecord'
+          @underscored_name = user_class.underscore
+          if self.class.migration_exists?("db/migrate", "create_#{user_class.pluralize.underscore}")
+            say_status("skipped", "Migration 'create_#{user_class.pluralize.underscore}' already exists")
+          else
+            migration_template "create_users.rb.erb", "db/migrate/create_#{user_class.pluralize.underscore}.rb"
+          end
+
+          if self.class.migration_exists?("db/migrate", "create_authentications")
+            say_status("skipped", "Migration 'create_authentications' already exists")
+          else
+            migration_template "create_authentications.rb", "db/migrate/create_authentications.rb"
+          end
+
+          if self.class.migration_exists?("db/migrate", "create_avatars")
+            say_status("skipped", "Migration 'creat_avatars' already exists")
+          else
+            migration_template "create_avatars.rb", "db/migrate/create_avatars.rb"
+          end
+        end
       end
 
       def create_model_file
         @underscored_name = user_class.underscore
-        @underscored_mount_path = mount_path.underscore
 
-        # @pluralize_name = user_class.underscore.pluralize
-        # template "model.rb", "app/models/#{@underscored_name}.rb"
-        # # migration_template "create_#{@pluralize_name}.rb", "db/migrate/create_#{@pluralize_name}.rb" if options['custom_orm'] == 'ActiveRecord'
+        create_template "user.rb", "app/models/#{ user_class.underscore }.rb"
+        create_template "authentication.rb", "app/models/authentication.rb"
+        create_template "avatar.rb", "app/models/avatar.rb"
 
-        template "authentication.rb", "app/models/authentication.rb"
-        template "user_serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb"
+        create_template "active_serializer.rb", "app/serializers/active_serializer.rb"
+        @class_name = user_class
+        create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", ":id, :first_name, :last_name, :email, :age, :gender, :dob, :address"
+        @class_name = 'Avatar'
+        create_template "serializer.rb", "app/serializers/avatar_serializer.rb", ":id, :image_url"
+
+        # Uploader File
+        create_template "avatar_uploader.rb", "app/uploaders/avatar_uploader.rb"
       end
 
       desc "Generates required files."
@@ -51,28 +78,22 @@ module Kriangle
         @underscored_name = user_class.underscore
         @underscored_mount_path = mount_path.underscore
 
-        # Main base file
-        template "base.rb", "app/controllers/api/base.rb"
-        template "defaults.rb", "app/controllers/api/v1/defaults.rb"
-
-        # Authentication file
-        template "auth.rb", "app/controllers/api/v1/#{@underscored_mount_path.pluralize}.rb"
+        # Main base files
+        create_template "base.rb", "app/controllers/api/base.rb"
 
         # All new controllers will go here
-        template "controllers.rb", "app/controllers/api/v1/controllers.rb"
+        create_template "controllers.rb", "app/controllers/api/v1/controllers.rb"
+
+        # Authentications related things will go there
+        template "defaults.rb", "app/controllers/api/v1/defaults.rb"
+
+        # Authentication i.e. login, register, logout
+        template "auth.rb", "app/controllers/api/v1/#{@underscored_mount_path.pluralize}.rb"
 
         # setup routes
         inject_into_file "config/routes.rb", "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless options['skip_swagger']
         inject_into_file "config/routes.rb", "\n\tmount API::Base, at: '/'", after: /routes.draw.*/
       end
     end
-
-    # def add_routes    #   inject_into_file "config/routes.rb", "\n\t\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless options['skip_swagger']
-    #   inject_into_file "config/routes.rb", "\n mount API::Base, at: '/'", after: /routes.draw.*/
-    #
-    #   routes_string = options['skip_swagger'] ? '' : "mount GrapeSwaggerRails::Engine => '/swagger'"
-    #   routes_string += '\n mount API::Base, at: "/"'
-    #   route routes_string
-    # end
   end
 end

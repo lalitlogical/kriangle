@@ -3,7 +3,7 @@ module Kriangle
     # Some helpers for generating scaffolding
     module GeneratorHelpers
       attr_accessor :options, :attributes
-      
+
       private
         def show_authenticate?
           !options['skip_authentication']
@@ -19,6 +19,15 @@ module Kriangle
           attributes ||= model_columns_for_attributes.map do |column|
             Rails::Generators::GeneratedAttribute.new(column.name.to_s, column.type.to_s)
           end
+        end
+
+        def create_template template_fname, fname, attributes = nil
+          @attributes = attributes
+          # unless File.exist?(File.join(destination_root, fname))
+            template template_fname, fname
+          # else
+          #   say_status "skipped", fname
+          # end
         end
     end
   end
