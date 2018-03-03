@@ -94,23 +94,13 @@ module API
           end
         end
 
-        <%- if options['custom_orm'] == 'ActiveRecord' -%>
-        rescue_from ActiveRecord::RecordNotFound do |e|
+        rescue_from <%= get_record_not_found_exception %> do |e|
           error_response(message: e.message, status: 404)
         end
 
-        rescue_from ActiveRecord::RecordInvalid do |e|
+        rescue_from <%= get_record_invalid_exception %> do |e|
           error_response(message: e.message, status: 422)
         end
-        <%- elsif options['custom_orm'] == 'Mongoid' -%>
-        rescue_from Mongoid::Errors::DocumentNotFound do |e|
-          error_response(message: e.message, status: 404)
-        end
-
-        rescue_from Mongoid::Errors::InvalidFind do |e|
-          error_response(message: e.message, status: 422)
-        end
-        <%- end -%>
       end
     end
   end

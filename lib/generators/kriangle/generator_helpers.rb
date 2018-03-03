@@ -36,6 +36,18 @@ module Kriangle
           # end
         end
 
+        def get_record_not_found_exception
+          options['custom_orm'] == 'Mongoid' ? 'Mongoid::Errors::DocumentNotFound' : 'ActiveRecord::RecordNotFound'
+        end
+
+        def get_record_invalid_exception
+          options['custom_orm'] == 'Mongoid' ? 'Mongoid::Errors::InvalidFind' : 'ActiveRecord::RecordInvalid'
+        end
+
+        def get_attribute_name name, attribute_type
+          attribute_type == 'references' ? "#{name}_id" : name
+        end
+
         def get_attribute_type attribute_type
           column_type = @@column_types[attribute_type.to_sym]
           attribute_type = column_type.present? ? column_type : attribute_type

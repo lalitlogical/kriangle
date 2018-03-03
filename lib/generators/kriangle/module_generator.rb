@@ -15,6 +15,7 @@ module Kriangle
 
       argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
 
+      class_option :reference, :desc => 'Reference to user', :type => :boolean
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: "ORM i.e. ActiveRecord, mongoid"
       class_option :skip_model, :desc => 'Don\'t generate a model or migration file.', :type => :boolean
       class_option :skip_migration, :desc => 'Don\'t generate migration file for model.', :type => :boolean
@@ -36,6 +37,10 @@ module Kriangle
             @controller_actions << 'create' if arg == 'new'
             @controller_actions << 'update' if arg == 'edit'
           end
+        end
+
+        if @controller_actions.blank?
+          @controller_actions = ['index', 'show', 'create', 'update', 'destroy']
         end
 
         # Get attribute's name
