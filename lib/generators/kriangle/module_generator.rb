@@ -59,8 +59,8 @@ module Kriangle
         migration_template "create_migration.rb", "db/migrate/create_#{singular_name}s.rb" if !options['skip_migration'] && options['custom_orm'] == 'ActiveRecord'
 
         @class_name = class_name
-        template "active_serializer.rb", "app/serializers/active_serializer.rb"
-        template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", @attributes
+        create_template "active_serializer.rb", "app/serializers/active_serializer.rb"
+        create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", @attributes
       end
 
       desc "Generates controller with the given NAME."
