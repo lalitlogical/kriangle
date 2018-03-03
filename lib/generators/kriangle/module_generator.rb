@@ -24,7 +24,6 @@ module Kriangle
 
       def initialize(*args, &block)
         super
-        byebug
         @controller_actions = []
         @model_attributes = []
         @skip_model = options.skip_model?

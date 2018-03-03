@@ -18,5 +18,5 @@ class <%= user_class %> < ApplicationRecord
   has_many :authentications
 
   # Some validation
-  validates :first_name, presence: true
+  # validates :first_name, presence: true
 end
