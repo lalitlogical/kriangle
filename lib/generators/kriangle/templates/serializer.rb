@@ -1,5 +1,5 @@
 class <%= @class_name %>Serializer < ActiveSerializer
-  attributes <%= @attributes ? @attributes : ':id' %>
+  attributes <%= @column_names.present? ? @column_names.to_s.gsub(/\[|\]/, '') : ':id' %>
 
   # has_one :address
   # has_many :avatars

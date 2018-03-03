@@ -11,7 +11,7 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :model_attributes, :controller_actions }
+      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions }
 
       argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
 
@@ -37,6 +37,10 @@ module Kriangle
             @controller_actions << 'update' if arg == 'edit'
           end
         end
+
+        # Get attribute's name
+        @attributes = [:id]
+        @attributes += @model_attributes.map{|a| a.type == 'references' ? "#{a.name}_id".to_sym : a.name.to_sym }
       end
 
       def self.next_migration_number(path)
@@ -56,7 +60,7 @@ module Kriangle
 
         @class_name = class_name
         template "active_serializer.rb", "app/serializers/active_serializer.rb"
-        template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb"
+        template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", @attributes
       end
 
       desc "Generates controller with the given NAME."

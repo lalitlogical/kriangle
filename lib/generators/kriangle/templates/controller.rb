@@ -4,11 +4,11 @@ module API
       include API::V1::Defaults
 
       resource :<%= singular_name %>s do
-        <% if show_authenticate? %>
+        <%- if show_authenticate? -%>
         before do
           authenticate!
         end
-        <% end %>
+        <%- end -%>
 
         description "Return all <%= singular_name %>s"
         params do
@@ -33,8 +33,11 @@ module API
         description "Create a <%= singular_name %>"
         params do
           requires :<%= singular_name %>, type: Hash do
-            requires :title, type: String, desc: "Title of the <%= singular_name %>"
-            requires :content, type: String, desc: "Content of the <%= singular_name %>"
+            <%- for attribute in model_attributes -%>
+            requires :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
+            <%- end -%>
+            # requires :title, type: String, desc: "Title of the <%= singular_name %>"
+            # requires :content, type: String, desc: "Content of the <%= singular_name %>"
           end
         end
         post "", root: "<%= singular_name %>" do
@@ -55,9 +58,12 @@ module API
         params do
           # requires :id, type: String, desc: "ID of the <%= singular_name %>"
           requires :<%= singular_name %>, type: Hash do
-            requires :title, type: String, desc: "Title of the <%= singular_name %>"
-            requires :content, type: String, desc: "Content of the <%= singular_name %>"
-            optional :views, type: String, desc: "Content of the <%= singular_name %>"
+            <%- for attribute in model_attributes -%>
+            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
+            <%- end -%>
+            # requires :title, type: String, desc: "Title of the <%= singular_name %>"
+            # requires :content, type: String, desc: "Content of the <%= singular_name %>"
+            # optional :views, type: String, desc: "Content of the <%= singular_name %>"
           end
         end
         post ":id", root: "<%= singular_name %>" do

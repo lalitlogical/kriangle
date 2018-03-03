@@ -93,7 +93,8 @@ module API
             error!({ success: false }.merge(response), status_code)
           end
         end
-        <% if options['custom_orm'] == 'ActiveRecord' %>
+
+        <%- if options['custom_orm'] == 'ActiveRecord' -%>
         rescue_from ActiveRecord::RecordNotFound do |e|
           error_response(message: e.message, status: 404)
         end
@@ -101,7 +102,7 @@ module API
         rescue_from ActiveRecord::RecordInvalid do |e|
           error_response(message: e.message, status: 422)
         end
-        <% elsif options['custom_orm'] == 'Mongoid' %>
+        <%- elsif options['custom_orm'] == 'Mongoid' -%>
         rescue_from Mongoid::Errors::DocumentNotFound do |e|
           error_response(message: e.message, status: 404)
         end
@@ -109,7 +110,7 @@ module API
         rescue_from Mongoid::Errors::InvalidFind do |e|
           error_response(message: e.message, status: 422)
         end
-        <% end %>
+        <%- end -%>
       end
     end
   end

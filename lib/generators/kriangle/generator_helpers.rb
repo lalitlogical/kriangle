@@ -4,6 +4,12 @@ module Kriangle
     module GeneratorHelpers
       attr_accessor :options, :attributes
 
+      @@column_types = {
+        'references': 'integer',
+        'text': 'string',
+        'datetime': 'date_time'
+      }
+
       private
         def show_authenticate?
           !options['skip_authentication']
@@ -22,12 +28,18 @@ module Kriangle
         end
 
         def create_template template_fname, fname, attributes = nil
-          @attributes = attributes
+          @column_names = attributes
           # unless File.exist?(File.join(destination_root, fname))
             template template_fname, fname
           # else
           #   say_status "skipped", fname
           # end
+        end
+
+        def get_attribute_type attribute_type
+          column_type = @@column_types[attribute_type.to_sym]
+          attribute_type = column_type.present? ? column_type : attribute_type
+          attribute_type.camelcase
         end
     end
   end

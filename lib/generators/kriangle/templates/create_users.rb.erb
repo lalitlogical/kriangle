@@ -2,6 +2,7 @@ class Create<%= user_class.pluralize %> < ActiveRecord::Migration<%= "[#{Rails::
   def change
     create_table(:<%= user_class.pluralize.underscore %>) do |t|
       ## Database authenticatable
+      t.string :email,              :null => false, :default => ""
       t.string :encrypted_password, :null => false, :default => ""
 
       ## Recoverable
@@ -31,13 +32,9 @@ class Create<%= user_class.pluralize %> < ActiveRecord::Migration<%= "[#{Rails::
       t.datetime :locked_at
 
       ## User Info
-      t.string :first_name
-      t.string :last_name
-      t.string :email
-      t.text :about
-      t.datetime :dob
-      t.integer :age
-      t.string :gender
+      <%- for attribute in model_attributes -%>
+      t.<%= attribute.type %> :<%= attribute.name %>
+      <%- end -%>
 
       t.timestamps
     end

@@ -10,14 +10,36 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
+      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions }
+
       # arguments
       argument :user_class, type: :string, default: "User"
       argument :mount_path, type: :string, default: 'Auth'
+      argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
 
       class_option :skip_swagger, type: :boolean, default: false, desc: "Skip \"Swagger UI\""
       class_option :custom_orm,   type: :string,  default: "ActiveRecord", desc: "ORM i.e. ActiveRecord, mongoid"
 
       source_root File.expand_path('../templates', __FILE__)
+
+      def initialize(*args, &block)
+        super
+        @model_attributes = []
+
+        args_for_c_m.each do |arg|
+          if arg.include?(':')
+            @model_attributes << Rails::Generators::GeneratedAttribute.new(*arg.split(':'))
+          end
+        end
+
+        if @model_attributes.blank?
+          default_attributes = ['first_name:string', 'last_name:string', 'about:text', 'age:integer', 'dob:datetime', 'gender:string']
+          @model_attributes = default_attributes.map { |a| Rails::Generators::GeneratedAttribute.new(*a.split(':')) }
+        end
+
+        @attributes = [:id, :email]
+        @attributes += @model_attributes.map{|a| a.name.to_sym }
+      end
 
       def self.next_migration_number(path)
         unless @prev_migration_nr
@@ -65,9 +87,9 @@ module Kriangle
 
         create_template "active_serializer.rb", "app/serializers/active_serializer.rb"
         @class_name = user_class
-        create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", ":id, :first_name, :last_name, :email, :age, :gender, :dob, :about"
+        create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", @attributes
         @class_name = 'Avatar'
-        create_template "serializer.rb", "app/serializers/avatar_serializer.rb", ":id, :image_url"
+        create_template "serializer.rb", "app/serializers/avatar_serializer.rb", [:id, :image_url]
 
         # Uploader File
         create_template "avatar_uploader.rb", "app/uploaders/avatar_uploader.rb"

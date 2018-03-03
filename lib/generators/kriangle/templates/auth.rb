@@ -7,15 +7,17 @@ module API
         desc "Register new <%= @underscored_name %>"
         params do
           requires :<%= @underscored_name %>, type: Hash do
-            optional :first_name, type: String, desc: "First Name", allow_blank: false
-            optional :last_name, type: String, desc: "Last Name"
             requires :email, type: String, desc: "Email address", allow_blank: false
             requires :password, type: String, desc: "Password", allow_blank: false
             requires :password_confirmation, type: String, desc: "Password Confirmation", allow_blank: false
-            optional :about, type: String, desc: "About", allow_blank: false
-            optional :age, type: Integer, desc: "Age", allow_blank: false
-            optional :dob, type: DateTime, desc: "Date of Birth", allow_blank: false
-            optional :gender, type: String, desc: "Gender", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
+            # Additional(optional) parameters
+            <%- for attribute in model_attributes -%>
+              <%- if attribute.name == 'gender' -%>
+            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
+              <%- else -%>
+            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
+              <%- end -%>
+            <%- end -%>
           end
         end
         post :register do
@@ -125,12 +127,14 @@ module API
         description "Update <%= @underscored_name %>"
         params do
           requires :<%= @underscored_name %>, type: Hash do
-            optional :first_name, type: String, desc: "First Name", allow_blank: false
-            optional :last_name, type: String, desc: "Last Name"
-            optional :about, type: String, desc: "About", allow_blank: false
-            optional :age, type: Integer, desc: "Age", allow_blank: false
-            optional :dob, type: DateTime, desc: "Date of Birth", allow_blank: false
-            optional :gender, type: String, desc: "Gender", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
+            # Additional(optional) parameters
+            <%- for attribute in model_attributes -%>
+              <%- if attribute.name == 'gender' -%>
+            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
+              <%- else -%>
+            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
+              <%- end -%>
+            <%- end -%>
             # group :avatars_attributes, type: Hash, desc: "An array of avatars" do
             #   optional :id, type: Integer
             #   optional :image, type: String
