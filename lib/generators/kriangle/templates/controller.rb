@@ -114,9 +114,6 @@ module API
         <%- if controller_actions.include?('destroy') -%>
 
         description "Destoy a <%= singular_name %>"
-        params do
-          # requires :id, type: String, desc: "ID of the <%= singular_name %>"
-        end
         delete ":id", root: "<%= singular_name %>" do
           <%= singular_name %> = <%= class_name %>.where(id: params[:id]).first || raise(<%= get_record_not_found_exception %>)
           if <%= singular_name %>.destroy
