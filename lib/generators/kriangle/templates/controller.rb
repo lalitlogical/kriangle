@@ -4,7 +4,7 @@ module API
       include API::V1::Defaults
 
       resource :<%= singular_name %>s do
-        <%- if show_authenticate? -%>
+        <%- unless skip_authentication -%>
         before do
           authenticate!
         end
@@ -17,15 +17,29 @@ module API
           optional :per_page, type: Integer, desc: "Per Page", default: 15
         end
         get "", root: :<%= singular_name %>s do
-          paginate <%= class_name %>.all
+          <%- if reference -%>
+            <%- if has_many -%>
+          results = paginate @current_<%= user_class %>.<%= singular_name %>s.all
+          json_success_response({
+            data: array_serializer.new(results, serializer: <%= class_name %>Serializer)
+          })
+            <%- else -%>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>
+          json_success_response({
+            data: single_serializer.new(<%= singular_name %>, serializer: <%= class_name %>Serializer)
+          })
+            <%- end -%>
+          <%- else -%>
+          results = paginate <%= class_name %>.all
+          json_success_response({
+            data: array_serializer.new(results, serializer: <%= class_name %>Serializer)
+          })
+          <%- end -%>
         end
         <%- end -%>
         <%- if controller_actions.include?('show') -%>
 
         description "Return a <%= singular_name %>"
-        params do
-          # requires :id, type: String, desc: "ID of the <%= singular_name %>"
-        end
         get ":id", root: "<%= singular_name %>" do
           <%= singular_name %> = <%= class_name %>.where(id: params[:id]).first || raise(<%= get_record_not_found_exception %>, 'Record not found!')
           json_success_response({
@@ -46,9 +60,15 @@ module API
           end
         end
         post "", root: "<%= singular_name %>" do
+          <%- if reference -%>
+            <%- if has_many -%>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.new(params[:<%= singular_name %>])
+            <%- else -%>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || @current_<%= user_class %>.build_<%= singular_name %>(params[:<%= singular_name %>])
+          <%= singular_name %>.attributes = params[:<%= singular_name %>] if <%= singular_name %>.persisted?
+            <%- end -%>
+          <%- else -%>
           <%= singular_name %> = <%= class_name %>.new(params[:<%= singular_name %>])
-          <%- if options['reference'] -%>
-          <%= singular_name %>.user = @current_user
           <%- end -%>
           if <%= singular_name %>.save
             json_success_response({
@@ -66,7 +86,6 @@ module API
 
         description "Update a <%= singular_name %>"
         params do
-          # requires :id, type: String, desc: "ID of the <%= singular_name %>"
           requires :<%= singular_name %>, type: Hash do
             <%- for attribute in model_attributes -%>
             optional :<%= get_attribute_name(attribute.name, attribute.type)  %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false

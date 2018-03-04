@@ -1,10 +1,10 @@
-<%- unless options['skip_swagger'] -%>
+<%- unless skip_swagger -%>
 require 'grape-swagger'
 <%- end -%>
 module API
   class Base < Grape::API
     mount API::V1::Controllers
-    <%- unless options['skip_swagger'] -%>
+    <%- unless skip_swagger -%>
 
     add_swagger_documentation(
       api_version: "v1",

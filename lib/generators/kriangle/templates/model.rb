@@ -1,5 +1,5 @@
 class <%= class_name %> < ApplicationRecord
-  <% if options['custom_orm'] == 'Mongoid' %>
+  <% if custom_orm == 'Mongoid' %>
   include Mongoid::Document
   include Mongoid::Timestamps
 

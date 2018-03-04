@@ -10,7 +10,7 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions }
+      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_swagger }
 
       # arguments
       argument :user_class, type: :string, default: "User"
@@ -25,6 +25,8 @@ module Kriangle
       def initialize(*args, &block)
         super
         @model_attributes = []
+        @custom_orm = options.custom_orm
+        @skip_swagger = options.skip_swagger?
 
         args_for_c_m.each do |arg|
           if arg.include?(':')
@@ -52,11 +54,11 @@ module Kriangle
 
       def copy_initializer
         create_template 'application_record.rb', 'app/models/application_record.rb'
-        create_template 'swagger.rb', 'config/initializers/swagger.rb' unless options['skip_swagger']
+        create_template 'swagger.rb', 'config/initializers/swagger.rb' unless skip_swagger
       end
 
       def copy_migrations
-        if options['custom_orm'] == 'ActiveRecord'
+        if custom_orm == 'ActiveRecord'
           @underscored_name = user_class.underscore
           if self.class.migration_exists?("db/migrate", "create_#{user_class.pluralize.underscore}")
             say_status("skipped", "Migration 'create_#{user_class.pluralize.underscore}' already exists")
@@ -113,7 +115,7 @@ module Kriangle
         template "auth.rb", "app/controllers/api/v1/#{@underscored_mount_path.pluralize}.rb"
 
         # setup routes
-        inject_into_file "config/routes.rb", "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless options['skip_swagger']
+        inject_into_file "config/routes.rb", "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger
         inject_into_file "config/routes.rb", "\n\tmount API::Base, at: '/'", after: /routes.draw.*/
       end
     end

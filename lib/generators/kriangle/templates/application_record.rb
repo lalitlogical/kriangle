@@ -1,4 +1,4 @@
-<% if options['custom_orm'] == 'Mongoid' %>
+<% if custom_orm == 'Mongoid' %>
 class ApplicationRecord
 <% else %>
 class ApplicationRecord < ActiveRecord::Base

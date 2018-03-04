@@ -11,10 +11,6 @@ module Kriangle
       }
 
       private
-        def show_authenticate?
-          !options['skip_authentication']
-        end
-
         def model_columns_for_attributes
           class_name.constantize.columns.reject do |column|
             column.name.to_s =~ /^(id|user_id|created_at|updated_at)$/
@@ -37,11 +33,11 @@ module Kriangle
         end
 
         def get_record_not_found_exception
-          options['custom_orm'] == 'Mongoid' ? 'Mongoid::Errors::DocumentNotFound' : 'ActiveRecord::RecordNotFound'
+          custom_orm == 'Mongoid' ? 'Mongoid::Errors::DocumentNotFound' : 'ActiveRecord::RecordNotFound'
         end
 
         def get_record_invalid_exception
-          options['custom_orm'] == 'Mongoid' ? 'Mongoid::Errors::InvalidFind' : 'ActiveRecord::RecordInvalid'
+          custom_orm == 'Mongoid' ? 'Mongoid::Errors::InvalidFind' : 'ActiveRecord::RecordInvalid'
         end
 
         def get_attribute_name name, attribute_type
