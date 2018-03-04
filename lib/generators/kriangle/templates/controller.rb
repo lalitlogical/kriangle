@@ -9,14 +9,16 @@ module API
           authenticate!
         end
         <%- end -%>
-
         <%- if resources -%>
           <%- if controller_actions.include?('index') -%>
+            
         description "Return all <%= singular_name %>s"
+        <%- if !reference or (reference && has_many) -%>
         params do
           optional :page, type: Integer, desc: "Page number", default: 0
           optional :per_page, type: Integer, desc: "Per Page", default: 15
         end
+        <%- end -%>
         get "", root: :<%= singular_name %>s do
           <%- if reference -%>
             <%- if has_many -%>
