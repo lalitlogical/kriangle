@@ -11,13 +11,14 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_timestamps, :skip_controller, :reference }
+      no_tasks { attr_accessor :scaffold_name, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_timestamps, :skip_controller, :reference, :resources }
 
       argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
 
       class_option :user_class, type: :string, default: 'User', desc: "User's model name"
       class_option :reference, :desc => 'Reference to user', :type => :boolean
       class_option :has_many, :desc => 'Association with user', :type => :boolean, default: true
+      class_option :resources, :desc => 'Resources routes', :type => :boolean, default: true
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: "ORM i.e. ActiveRecord, mongoid"
       class_option :skip_model, :desc => 'Don\'t generate a model or migration file.', :type => :boolean
       class_option :skip_controller, :desc => 'Don\'t generate a controller.', :type => :boolean
@@ -35,6 +36,7 @@ module Kriangle
         @user_class = options.user_class.underscore
         @reference = options.reference?
         @has_many = options.has_many?
+        @resources = options.resources?
 
         @custom_orm = options.custom_orm
         @skip_model = options.skip_model?
@@ -53,8 +55,10 @@ module Kriangle
           end
         end
 
+        # Default controller actions
         if @controller_actions.blank?
-          @controller_actions = ['index', 'show', 'create', 'update', 'destroy']
+          @controller_actions = ['show', 'create', 'update', 'destroy']
+          @controller_actions << 'index' if @resources
         end
 
         # Get attribute's name

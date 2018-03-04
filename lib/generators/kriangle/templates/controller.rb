@@ -10,7 +10,8 @@ module API
         end
         <%- end -%>
 
-        <%- if controller_actions.include?('index') -%>
+        <%- if resources -%>
+          <%- if controller_actions.include?('index') -%>
         description "Return all <%= singular_name %>s"
         params do
           optional :page, type: Integer, desc: "Page number", default: 0
@@ -36,6 +37,7 @@ module API
           })
           <%- end -%>
         end
+          <%- end -%>
         <%- end -%>
         <%- if controller_actions.include?('show') -%>
 
