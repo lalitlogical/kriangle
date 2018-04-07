@@ -11,7 +11,7 @@ module API
         <%- end -%>
         <%- if resources -%>
           <%- if controller_actions.include?('index') -%>
-            
+
         description "Return all <%= singular_name %>s"
         <%- if !reference or (reference && has_many) -%>
         params do
@@ -22,12 +22,12 @@ module API
         get "", root: :<%= singular_name %>s do
           <%- if reference -%>
             <%- if has_many -%>
-          results = paginate @current_<%= user_class %>.<%= singular_name %>s.all
+          results = paginate @current_<%= user_class %>.<%= singular_name %>s
           json_success_response({
             data: array_serializer.new(results, serializer: <%= class_name %>Serializer)
           })
             <%- else -%>
-          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
           json_success_response({
             data: single_serializer.new(<%= singular_name %>, serializer: <%= class_name %>Serializer)
           })
@@ -45,7 +45,15 @@ module API
 
         description "Return a <%= singular_name %>"
         get ":id", root: "<%= singular_name %>" do
-          <%= singular_name %> = <%= class_name %>.where(id: params[:id]).first || raise(<%= get_record_not_found_exception %>, 'Record not found!')
+          <%- if reference -%>
+            <%- if has_many -%>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find_by(id: params[:id]) || raise(<%= get_record_not_found_exception %>)
+            <%- else -%>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
+            <%- end -%>
+          <%- else -%>
+          <%= singular_name %> = <%= class_name %>.find_by(id: params[:id]) || raise(<%= get_record_not_found_exception %>)
+          <%- end -%>
           json_success_response({
             data: single_serializer.new(<%= singular_name %>, serializer: <%= class_name %>Serializer)
           })
@@ -100,7 +108,15 @@ module API
           end
         end
         post ":id", root: "<%= singular_name %>" do
-          <%= singular_name %> = <%= class_name %>.where(id: params[:id]).first || raise(<%= get_record_not_found_exception %>)
+          <%- if reference -%>
+            <%- if has_many -%>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find_by(id: params[:id]) || raise(<%= get_record_not_found_exception %>)
+            <%- else -%>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
+            <%- end -%>
+          <%- else -%>
+          <%= singular_name %> = <%= class_name %>.find_by(id: params[:id]) || raise(<%= get_record_not_found_exception %>)
+          <%- end -%>
           if <%= singular_name %>.update(params[:<%= singular_name %>])
             json_success_response({
               message: "<%= class_name %> updated successfully.",
@@ -117,7 +133,15 @@ module API
 
         description "Destoy a <%= singular_name %>"
         delete ":id", root: "<%= singular_name %>" do
-          <%= singular_name %> = <%= class_name %>.where(id: params[:id]).first || raise(<%= get_record_not_found_exception %>)
+          <%- if reference -%>
+            <%- if has_many -%>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find_by(id: params[:id]) || raise(<%= get_record_not_found_exception %>)
+            <%- else -%>
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
+            <%- end -%>
+          <%- else -%>
+          <%= singular_name %> = <%= class_name %>.find_by(id: params[:id]) || raise(<%= get_record_not_found_exception %>)
+          <%- end -%>
           if <%= singular_name %>.destroy
             json_success_response({
               message: "<%= class_name %> destroyed successfully.",
