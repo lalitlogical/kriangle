@@ -280,11 +280,13 @@ module API
         end
 
         rescue_from <%= get_record_not_found_exception %> do |e|
-          error_response(message: e.message, status: 404)
+          message = e.try(:problem) || e.try(:message)
+          model_name = message.match(/(?<=class|find)[^w]+/)&.to_s&.strip
+          json_error_response(errors: ["No #{model_name || 'Record'} Found."], status: 404)
         end
 
         rescue_from <%= get_record_invalid_exception %> do |e|
-          error_response(message: e.message, status: 422)
+          json_error_response(errors: [e.message], status: 422)
         end
       end
     end
