@@ -9,7 +9,18 @@ TODO: Delete this and the text above, and describe your gem
 Add this line to your application's Gemfile:
 
 ```ruby
+gem 'grape', '~> 1.0', '>= 1.0.1'
+gem 'grape-active_model_serializers', '~> 1.5', '>= 1.5.1'
+gem 'grape-swagger', '~> 0.27.3'
+gem 'grape-swagger-rails'
+gem 'grape-rails-cache'
+
+gem 'kaminari', '~> 1.0', '>= 1.0.1'
+gem 'api-pagination', '~> 4.7'
 gem 'kriangle'
+
+gem 'carrierwave'
+gem 'rack-cors', '~> 0.4.1'
 ```
 
 And then execute:
@@ -22,17 +33,25 @@ Or install it yourself as:
 
 ## Usage
 
-TODO: Write usage instructions here
+Generate Authentication Module
+`rails g kriangle:install [MODEL NAME] [MOUNT PATH] [column_name:type]`
 
-## Development
+i.e. If we want to generate the User model with Auth model (for authentication). So you can type below.
+`rails g kriangle:install User Auth first_name`
 
-After checking out the repo, run `bin/setup` to install dependencies. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+Generate other module
+`rails g kriangle:module MODULE_NAME [column_name:type]`
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and tags, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+i.e. If you want to generate Post model with title, content column, you can type below.
+`rails g kriangle:module Post title:string content:text`
 
-## Contributing
+By default generated the module not referenced to User model. You can enable it by passing reference: true
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/kriangle. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+`rails g kriangle:module Post title:string content:text --reference=true`
+
+If you want has_many association with User model, you should use below command.
+
+`rails g kriangle:module Post title:string content:text --reference=true --has_many=true`
 
 ## License
 
