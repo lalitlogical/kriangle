@@ -34,15 +34,19 @@ Or install it yourself as:
 ## Usage
 
 Generate Authentication Module
+
 `rails g kriangle:install [MODEL NAME] [MOUNT PATH] [column_name:type]`
 
 i.e. If we want to generate the User model with Auth model (for authentication). So you can type below.
+
 `rails g kriangle:install User Auth first_name`
 
 Generate other module
+
 `rails g kriangle:module MODULE_NAME [column_name:type]`
 
 i.e. If you want to generate Post model with title, content column, you can type below.
+
 `rails g kriangle:module Post title:string content:text`
 
 By default generated the module not referenced to User model. You can enable it by passing reference: true
