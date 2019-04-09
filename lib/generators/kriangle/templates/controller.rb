@@ -12,7 +12,7 @@ module API
         <%- if resources -%>
           <%- if controller_actions.include?('index') -%>
 
-        description "Return all <%= singular_name %>s"
+        desc "Return all <%= singular_name %>s"
         <%- if !reference or (reference && has_many) -%>
         params do
           optional :page, type: Integer, desc: "Page number", default: 0
@@ -23,27 +23,21 @@ module API
           <%- if reference -%>
             <%- if has_many -%>
           results = paginate @current_<%= user_class %>.<%= singular_name %>s
-          json_success_response({
-            data: array_serializer.new(results, serializer: <%= class_name %>Serializer)
-          })
+          render_objects(results)
             <%- else -%>
           <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
-          json_success_response({
-            data: single_serializer.new(<%= singular_name %>, serializer: <%= class_name %>Serializer)
-          })
+          render_object(<%= singular_name %>)
             <%- end -%>
           <%- else -%>
           results = paginate <%= class_name %>.all
-          json_success_response({
-            data: array_serializer.new(results, serializer: <%= class_name %>Serializer)
-          })
+          render_objects(results)
           <%- end -%>
         end
           <%- end -%>
         <%- end -%>
         <%- if controller_actions.include?('show') -%>
 
-        description "Return a <%= singular_name %>"
+        desc "Return a <%= singular_name %>"
         get ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
@@ -54,14 +48,12 @@ module API
           <%- else -%>
           <%= singular_name %> = <%= class_name %>.find_by(id: params[:id]) || raise(<%= get_record_not_found_exception %>)
           <%- end -%>
-          json_success_response({
-            data: single_serializer.new(<%= singular_name %>, serializer: <%= class_name %>Serializer)
-          })
+          render_object(<%= singular_name %>)
         end
         <%- end -%>
         <%- if controller_actions.include?('create') -%>
 
-        description "Create a <%= singular_name %>"
+        desc "Create a <%= singular_name %>"
         params do
           requires :<%= singular_name %>, type: Hash do
             <%- for attribute in model_attributes -%>
@@ -83,20 +75,15 @@ module API
           <%= singular_name %> = <%= class_name %>.new(params[:<%= singular_name %>])
           <%- end -%>
           if <%= singular_name %>.save
-            json_success_response({
-              message: "<%= class_name %> created successfully.",
-              data: single_serializer.new(<%= singular_name %>, serializer: <%= class_name %>Serializer)
-            })
+            render_object(<%= singular_name %>, additional_response: { message: "<%= class_name %> created successfully." })
           else
-            json_error_response({
-              errors: <%= singular_name %>.errors.full_messages
-            })
+            json_error_response(errors: <%= singular_name %>.errors.full_messages)
           end
         end
         <%- end -%>
         <%- if controller_actions.include?('update') -%>
 
-        description "Update a <%= singular_name %>"
+        desc "Update a <%= singular_name %>"
         params do
           requires :<%= singular_name %>, type: Hash do
             <%- for attribute in model_attributes -%>
@@ -118,20 +105,15 @@ module API
           <%= singular_name %> = <%= class_name %>.find_by(id: params[:id]) || raise(<%= get_record_not_found_exception %>)
           <%- end -%>
           if <%= singular_name %>.update(params[:<%= singular_name %>])
-            json_success_response({
-              message: "<%= class_name %> updated successfully.",
-              data: single_serializer.new(<%= singular_name %>, serializer: <%= class_name %>Serializer)
-            })
+            render_object(<%= singular_name %>, additional_response: { message: "<%= class_name %> updated successfully." })
           else
-            json_error_response({
-              errors: <%= singular_name %>.errors.full_messages
-            })
+            json_error_response(errors: <%= singular_name %>.errors.full_messages)
           end
         end
         <%- end -%>
         <%- if controller_actions.include?('destroy') -%>
 
-        description "Destoy a <%= singular_name %>"
+        desc "Destoy a <%= singular_name %>"
         delete ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
@@ -143,14 +125,9 @@ module API
           <%= singular_name %> = <%= class_name %>.find_by(id: params[:id]) || raise(<%= get_record_not_found_exception %>)
           <%- end -%>
           if <%= singular_name %>.destroy
-            json_success_response({
-              message: "<%= class_name %> destroyed successfully.",
-              data: {}
-            })
+            json_success_response(message: "<%= class_name %> destroyed successfully.")
           else
-            json_error_response({
-              errors: <%= singular_name %>.errors.full_messages
-            })
+            json_error_response(errors: <%= singular_name %>.errors.full_messages)
           end
         end
         <%- end -%>
