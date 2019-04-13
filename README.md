@@ -49,6 +49,14 @@ i.e. If you want to generate Post model with title, content column, you can type
 
 `rails g kriangle:module Post title:string content:text`
 
+i.e. City model only with index route, skip model and migration
+`rails g kriangle:module City name:string index --skip_model=true --skip_migration=true`
+
+More options are listed below
+`skip_controller`
+`skip_authentication`
+`skip_timestamps`
+
 By default generated the module not referenced to User model. You can enable it by passing reference: true
 
 `rails g kriangle:module Post title:string content:text --reference=true`

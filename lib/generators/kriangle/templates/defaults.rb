@@ -151,6 +151,8 @@ module API
           end
 
           def format_aggregation(aggs)
+            return [] if aggs.blank?
+            
             aggregations = []
             aggs.each do |k, value|
               value['buckets'].each do |bucket|
@@ -158,7 +160,7 @@ module API
               end
               aggregations << { name: k, buckets: value['buckets'] }
             end
-            { aggregations: aggregations }
+            aggregations
           end
 
           # render collection of objects with serializer
@@ -168,19 +170,20 @@ module API
             # collect meta data if any present there
             meta = {}
             meta.merge!(options[:extra_params]) if options[:extra_params].present?
-            meta.merge!(format_aggregation(objects.aggs)) if objects.respond_to?(:aggs) && objects.aggs.present?
+            meta[:suggestions]  = objects.suggestions if objects.respond_to?(:suggestions) && objects.suggestions.present?
+            meta[:aggregations] = format_aggregation(objects.aggs) if objects.respond_to?(:aggs)
             if objects.respond_to?(:total_count)
-              meta.merge!({
+              meta[:pagination] = {
                 total_count: objects.total_count,
                 current_page: objects.current_page,
                 next_page: objects.next_page,
                 per_page: objects.try(:per_page) || objects.try(:limit_value) || 10000
-              })
+              }
             end
 
             # send data & meta
             json_success_response({
-              data: @serializer.present? ? array_serializer.many(objects, serializer: @serializer) : [],
+              data: @serializer.present? ? array_serializer.new(objects, serializer: @serializer) : [],
               meta: meta
             }.merge(@additional_response))
           end
