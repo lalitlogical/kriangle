@@ -32,25 +32,6 @@ module API
         format :json
         formatter :json, Grape::Formatter::ActiveModelSerializers
 
-        def self.description title
-          desc title, {
-            headers: {
-              "X-Uid" => {
-                description: "User Id",
-                required: true
-              },
-              "X-Client-Id" => {
-                description: "Client Id",
-                required: true
-              },
-              "X-Authentication-Token" => {
-                description: "Authentication Token",
-                required: true
-              }
-            }
-          }
-        end
-
         helpers do
           # Catch exception and return JSON-formatted error
           def handle_exceptions
@@ -152,7 +133,7 @@ module API
 
           def format_aggregation(aggs)
             return [] if aggs.blank?
-            
+
             aggregations = []
             aggs.each do |k, value|
               value['buckets'].each do |bucket|

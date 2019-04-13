@@ -47,13 +47,13 @@ module API
           end
         end
 
-        desc "Logout <%= @underscored_name %>"
+        description "Logout <%= @underscored_name %>"
         post :logout do
           destroy_authentication_token
           json_success_response(message: "You have successfully logout.")
         end
 
-        desc "Returns pong if logged in correctly"
+        description "Returns pong if logged in correctly"
         get :ping do
           authenticate!
           json_success_response(message: "pong")
@@ -94,13 +94,13 @@ module API
           end
         end
 
-        desc "Return <%= @underscored_name %>"
+        description "Return <%= @underscored_name %>"
         get '' do
           authenticate!
           render_object(current_<%= @underscored_name %>)
         end
 
-        desc "Update <%= @underscored_name %>"
+        description "Update <%= @underscored_name %>"
         params do
           requires :<%= @underscored_name %>, type: Hash do
             # Additional(optional) parameters

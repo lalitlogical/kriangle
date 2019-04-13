@@ -110,6 +110,7 @@ module Kriangle
 
         # Authentications related things will go there
         template "defaults.rb", "app/controllers/api/v1/defaults.rb"
+        template "custom_description.rb", "app/controllers/api/v1/custom_description.rb"
 
         # Authentication i.e. login, register, logout
         template "auth.rb", "app/controllers/api/v1/#{@underscored_mount_path.pluralize}.rb"

@@ -4,6 +4,8 @@ module API
       include API::V1::Defaults
 
       resource :<%= singular_name %>s do
+        <%- unless skip_authentication -%>include API::V1::CustomDescription<%- end -%>
+
         <%- unless skip_authentication -%>
         before do
           authenticate!
@@ -12,7 +14,7 @@ module API
         <%- if resources -%>
           <%- if controller_actions.include?('index') -%>
 
-        desc "Return all <%= singular_name %>s"
+        <%= description_method_name %> "Return all <%= singular_name %>s"
         <%- if !reference or (reference && has_many) -%>
         params do
           optional :page, type: Integer, desc: "Page number", default: 0
@@ -37,7 +39,7 @@ module API
         <%- end -%>
         <%- if controller_actions.include?('show') -%>
 
-        desc "Return a <%= singular_name %>"
+        <%= description_method_name %> "Return a <%= singular_name %>"
         get ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
@@ -53,7 +55,7 @@ module API
         <%- end -%>
         <%- if controller_actions.include?('create') -%>
 
-        desc "Create a <%= singular_name %>"
+        <%= description_method_name %> "Create a <%= singular_name %>"
         params do
           requires :<%= singular_name %>, type: Hash do
             <%- for attribute in model_attributes -%>
@@ -83,7 +85,7 @@ module API
         <%- end -%>
         <%- if controller_actions.include?('update') -%>
 
-        desc "Update a <%= singular_name %>"
+        <%= description_method_name %> "Update a <%= singular_name %>"
         params do
           requires :<%= singular_name %>, type: Hash do
             <%- for attribute in model_attributes -%>
@@ -113,7 +115,7 @@ module API
         <%- end -%>
         <%- if controller_actions.include?('destroy') -%>
 
-        desc "Destoy a <%= singular_name %>"
+        <%= description_method_name %> "Destoy a <%= singular_name %>"
         delete ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>

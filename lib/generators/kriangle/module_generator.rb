@@ -11,7 +11,7 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_timestamps, :skip_controller, :reference, :resources }
+      no_tasks { attr_accessor :scaffold_name, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_timestamps, :skip_controller, :reference, :resources, :description_method_name }
 
       argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
 
@@ -25,6 +25,7 @@ module Kriangle
       class_option :skip_migration, :desc => 'Don\'t generate migration file for model.', :type => :boolean
       class_option :skip_timestamps, :desc => 'Don\'t add timestamps to migration file.', :type => :boolean
       class_option :skip_authentication, :desc => 'Don\'t require authentication for this controller.', :type => :boolean
+      class_option :description_method_name, type: :string, default: 'desc', desc: "desc or description"
 
       source_root File.expand_path('../templates', __FILE__)
 
@@ -44,6 +45,7 @@ module Kriangle
         @skip_migration = options.skip_migration?
         @skip_timestamps = options.skip_timestamps?
         @skip_authentication = options.skip_authentication?
+        @description_method_name = @skip_authentication ? 'desc' : 'description'
 
         args_for_c_m.each do |arg|
           if arg.include?(':')
