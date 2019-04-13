@@ -43,12 +43,12 @@ module API
         get ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find(id: params[:id])
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find(params[:id])
             <%- else -%>
           <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
             <%- end -%>
           <%- else -%>
-          <%= singular_name %> = <%= class_name %>.find(id: params[:id])
+          <%= singular_name %> = <%= class_name %>.find(params[:id])
           <%- end -%>
           render_object(<%= singular_name %>)
         end
@@ -99,12 +99,12 @@ module API
         post ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find(id: params[:id])
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find(params[:id])
             <%- else -%>
           <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
             <%- end -%>
           <%- else -%>
-          <%= singular_name %> = <%= class_name %>.find(id: params[:id])
+          <%= singular_name %> = <%= class_name %>.find(params[:id])
           <%- end -%>
           if <%= singular_name %>.update(params[:<%= singular_name %>])
             render_object(<%= singular_name %>, additional_response: { message: "<%= class_name %> updated successfully." })
@@ -119,12 +119,12 @@ module API
         delete ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find(id: params[:id])
+          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find(params[:id])
             <%- else -%>
           <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
             <%- end -%>
           <%- else -%>
-          <%= singular_name %> = <%= class_name %>.find(id: params[:id])
+          <%= singular_name %> = <%= class_name %>.find(params[:id])
           <%- end -%>
           if <%= singular_name %>.destroy
             json_success_response(message: "<%= class_name %> destroyed successfully.")
