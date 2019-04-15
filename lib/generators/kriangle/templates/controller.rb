@@ -4,8 +4,10 @@ module API
       include API::V1::Defaults
 
       resource :<%= singular_name %>s do
-        <%- unless skip_authentication -%>include API::V1::CustomDescription<%- end -%>
-
+        <%- unless skip_authentication -%>
+        include API::V1::CustomDescription
+        <%- end -%>
+        
         <%- unless skip_authentication -%>
         before do
           authenticate!
