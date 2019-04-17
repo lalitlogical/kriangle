@@ -61,14 +61,19 @@ module API
             "#{SecureRandom.urlsafe_base64}#{DateTime.now.to_i}#{SecureRandom.urlsafe_base64}"
           end
 
-          def generate_token
-            string = ''
-            (1..5).each{ |i| string += "#{SecureRandom.urlsafe_base64}#{DateTime.now.to_i}#{SecureRandom.urlsafe_base64}#{ i == rand(1..6) ? '.' : ''}" }
-            string.gsub('.','')
+          def create_token
+            token = SecureRandom.urlsafe_base64(nil, false)
+            BCrypt::Password.create(token)
+          end
+
+          def dencrypted_token token_hash
+            ::BCrypt::Password.new(token_hash)
+          rescue StandardError => error
+            nil
           end
 
           def create_authentication <%= @underscored_name %>, client_id = (ENV['CLIENT_ID'] || generate_client_id)
-            authentication = <%= @underscored_name %>.authentications.create(client_id: client_id, token: generate_token)
+            authentication = <%= @underscored_name %>.authentications.create(client_id: client_id, token: create_token)
             header 'X-Uid', authentication.user_id
             header 'X-Client-Id', authentication.client_id
             header 'X-Authentication-Token', authentication.token
@@ -76,7 +81,8 @@ module API
 
           def get_authentication_token
             headers['X-Authentication-Token'] or return
-            Authentication.where(user_id: headers['X-Uid'], client_id: headers['X-Client-Id'], token: headers['X-Authentication-Token']).first
+            token = dencrypted_token(headers['X-Authentication-Token'])
+            Authentication.where(user_id: headers['X-Uid'], client_id: headers['X-Client-Id'], token: token).last
           end
 
           def destroy_authentication_token
