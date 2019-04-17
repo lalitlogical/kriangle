@@ -11,7 +11,7 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_timestamps, :skip_controller, :reference, :resources, :description_method_name }
+      no_tasks { attr_accessor :scaffold_name, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :reference, :resources, :description_method_name }
 
       argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
 
@@ -23,7 +23,9 @@ module Kriangle
       class_option :skip_model, :desc => 'Don\'t generate a model or migration file.', :type => :boolean
       class_option :skip_controller, :desc => 'Don\'t generate a controller.', :type => :boolean
       class_option :skip_migration, :desc => 'Don\'t generate migration file for model.', :type => :boolean
+      class_option :skip_serializer, :desc => 'Don\'t generate serializer file for model.', :type => :boolean
       class_option :skip_timestamps, :desc => 'Don\'t add timestamps to migration file.', :type => :boolean
+      class_option :skip_pagination, :desc => 'Don\'t add pagination to index method.', :type => :boolean
       class_option :skip_authentication, :desc => 'Don\'t require authentication for this controller.', :type => :boolean
       class_option :description_method_name, type: :string, default: 'desc', desc: "desc or description"
 
@@ -43,8 +45,10 @@ module Kriangle
         @skip_model = options.skip_model?
         @skip_controller = options.skip_controller?
         @skip_migration = options.skip_migration?
+        @skip_serializer = options.skip_serializer?
         @skip_timestamps = options.skip_timestamps?
         @skip_authentication = options.skip_authentication?
+        @skip_pagination = options.skip_pagination?
         @description_method_name = @skip_authentication ? 'desc' : 'description'
 
         args_for_c_m.each do |arg|
@@ -84,8 +88,10 @@ module Kriangle
         migration_template "create_migration.rb", "db/migrate/create_#{singular_name}s.rb" if !skip_migration && custom_orm == 'ActiveRecord'
 
         @class_name = class_name
-        create_template "active_serializer.rb", "app/serializers/active_serializer.rb"
-        create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", @attributes
+        unless skip_serializer
+          create_template "active_serializer.rb", "app/serializers/active_serializer.rb"
+          create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", @attributes
+        end
       end
 
       desc "Generates controller with the given NAME."

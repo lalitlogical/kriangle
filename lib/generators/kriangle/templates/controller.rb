@@ -3,37 +3,43 @@ module API
     class <%= controller_class_name %> < Grape::API
       include API::V1::Defaults
 
-      resource :<%= singular_name %>s do
+      resource :<%= plural_name %> do
         <%- unless skip_authentication -%>
         include API::V1::CustomDescription
-        <%- end -%>
-        
-        <%- unless skip_authentication -%>
+
         before do
           authenticate!
         end
+
         <%- end -%>
         <%- if resources -%>
           <%- if controller_actions.include?('index') -%>
-
-        <%= description_method_name %> "Return all <%= singular_name %>s"
+        <%= description_method_name %> "Return all <%= plural_name %>"
         <%- if !reference or (reference && has_many) -%>
         params do
           optional :page, type: Integer, desc: "Page number", default: 0
           optional :per_page, type: Integer, desc: "Per Page", default: 15
         end
         <%- end -%>
-        get "", root: :<%= singular_name %>s do
+        get "", root: :<%= plural_name %> do
           <%- if reference -%>
             <%- if has_many -%>
-          results = paginate @current_<%= user_class %>.<%= singular_name %>s
+              <%- if skip_pagination -%>
+          results = @current_<%= user_class %>.<%= plural_name %>
+              <%- else -%>
+          results = paginate @current_<%= user_class %>.<%= plural_name %>
+              <%- end -%>
           render_objects(results)
             <%- else -%>
           <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
           render_object(<%= singular_name %>)
             <%- end -%>
           <%- else -%>
+          <%- if skip_pagination -%>
+          results = <%= class_name %>.all
+          <%- else -%>
           results = paginate <%= class_name %>.all
+          <%- end -%>
           render_objects(results)
           <%- end -%>
         end
@@ -45,7 +51,7 @@ module API
         get ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find(params[:id])
+          <%= singular_name %> = @current_<%= user_class %>.<%= plural_name %>.find(params[:id])
             <%- else -%>
           <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
             <%- end -%>
@@ -70,7 +76,7 @@ module API
         post "", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.new(params[:<%= singular_name %>])
+          <%= singular_name %> = @current_<%= user_class %>.<%= plural_name %>.new(params[:<%= singular_name %>])
             <%- else -%>
           <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || @current_<%= user_class %>.build_<%= singular_name %>(params[:<%= singular_name %>])
           <%= singular_name %>.attributes = params[:<%= singular_name %>] if <%= singular_name %>.persisted?
@@ -101,7 +107,7 @@ module API
         post ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find(params[:id])
+          <%= singular_name %> = @current_<%= user_class %>.<%= plural_name %>.find(params[:id])
             <%- else -%>
           <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
             <%- end -%>
@@ -121,7 +127,7 @@ module API
         delete ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %>s.find(params[:id])
+          <%= singular_name %> = @current_<%= user_class %>.<%= plural_name %>.find(params[:id])
             <%- else -%>
           <%= singular_name %> = @current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
             <%- end -%>
