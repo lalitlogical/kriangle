@@ -79,33 +79,22 @@ module API
             header 'X-Authentication-Token', authentication.token
           end
 
-          def get_authentication_token
+          def authentication
             headers['X-Authentication-Token'] or return
             token = dencrypted_token(headers['X-Authentication-Token'])
-            Authentication.where(user_id: headers['X-Uid'], client_id: headers['X-Client-Id'], token: token).last
+            @authentication ||= Authentication.where(user_id: headers['X-Uid'], client_id: headers['X-Client-Id'], token: token).last
           end
 
           def destroy_authentication_token
-            authentication = get_authentication_token
-            authentication.destroy if authentication.present?
-          end
-
-          def get_current_<%= @underscored_name %>
-            authentication = get_authentication_token
-            authentication ? authentication.<%= @underscored_name %> : nil
+            authentication&.destroy
           end
 
           def current_<%= @underscored_name %>
-            @current_<%= @underscored_name %> ||= get_current_<%= @underscored_name %>
+            @current_<%= @underscored_name %> ||= authentication&.<%= @underscored_name %>
           end
 
           def authenticate!
-            unless current_<%= @underscored_name %>
-              error!({
-                success: false,
-                errors: ['Invalid or expired token.']
-              }, 401)
-            end
+            render_unauthorized_access && return unless current_<%= @underscored_name %>
           end
 
           # extract options
@@ -195,61 +184,24 @@ module API
             render_error_response(['Internal server error.'], 500)
           end
 
-          # json success response
-          def json_success_response response = {}, status = 200
-            render_json_response({ success: true }.merge(response), status)
-          end
-
-          # json error response
-          def json_error_response response = {}, status = (ENV['STATUS_CODE'] || 422)
-            render_json_response({ success: false }.merge(response), status)
-          end
-
-          def render_response(success = true, message = "", errors = [], status = 200)
-            render_json_response({
-              success: success,
-              message: message,
-              errors: errors
-            }, status)
-          end
-
-          def render_success_response(message = "", status = 200)
-            render_json_response({
-              success: true,
-              message: message
-            }, status)
-          end
-
-          def render_error_response(errors = [], status = 422)
-            render_json_response({
-              success: false,
-              errors: errors
-            }, status)
-          end
-
           def render_unprocessable_entity(errors)
-            render_json_response({
-              success: false,
-              errors: errors
-            }, 422) and return true
-          end
-
-          def render_unauthorized_response
-            render_json_response({
-              success: false,
-              errors: [I18n.t('devise.failure.invalid', { authentication_keys: 'Email' })]
-            }, 401) and return
+            render_error_response(errors, 422) and return
           end
 
           def render_unauthorized_access
-            render_json_response({
-              success: false,
-              errors: [I18n.t('devise.failure.unauthenticated')]
-            }, 401) and return
+            render_error_response(['Invalid or expired token.'], 401) and return
           end
 
-          def render_json_response(options = {}, status = 500)
-            render json: JsonResponse.new(options), status: status
+          def render_error_response(errors = [], status = 422)
+            json_error_response({ errors: errors }, status)
+          end
+
+          def json_success_response response = {}
+            JsonResponse.new(response.merge(status: true)).as_json
+          end
+
+          def json_error_response response = {}, status = 422
+            error!(JsonResponse.new(response.merge(status: true)).as_json, status)
           end
 
           def array_serializer
@@ -259,24 +211,16 @@ module API
           def single_serializer
             ActiveModelSerializers::SerializableResource
           end
-
-          def json_success_response response = {}, status_code = 200
-            { success: true }.merge(response)
-          end
-
-          def json_error_response response = {}, status_code = (ENV['STATUS_CODE'] || 422)
-            error!({ success: false }.merge(response), status_code)
-          end
         end
 
         rescue_from <%= get_record_not_found_exception %> do |e|
           message = e.try(:problem) || e.try(:message)
           model_name = message.match(/(?<=class|find)[^w]+/)&.to_s&.strip
-          json_error_response(errors: ["No #{model_name || 'Record'} Found."], status: 404)
+          render_error_response(["No #{model_name || 'Record'} Found."], status: 404)
         end
 
         rescue_from <%= get_record_invalid_exception %> do |e|
-          json_error_response(errors: [e.message], status: 422)
+          render_error_response([e.message], status: 422)
         end
       end
     end
