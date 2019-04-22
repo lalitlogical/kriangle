@@ -104,7 +104,7 @@ module API
             # optional :views, type: String, desc: "Content of the <%= singular_name %>"
           end
         end
-        post ":id", root: "<%= singular_name %>" do
+        put ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
           <%= singular_name %> = current_<%= user_class %>.<%= plural_name %>.find(params[:id])
