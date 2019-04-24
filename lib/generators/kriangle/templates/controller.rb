@@ -67,7 +67,7 @@ module API
         params do
           requires :<%= singular_name %>, type: Hash do
             <%- for attribute in model_attributes -%>
-            requires :<%= get_attribute_name(attribute.name, attribute.type)  %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
+            requires :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
             <%- end -%>
             # requires :title, type: String, desc: "Title of the <%= singular_name %>"
             # requires :content, type: String, desc: "Content of the <%= singular_name %>"
@@ -97,7 +97,7 @@ module API
         params do
           requires :<%= singular_name %>, type: Hash do
             <%- for attribute in model_attributes -%>
-            optional :<%= get_attribute_name(attribute.name, attribute.type)  %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
+            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
             <%- end -%>
             # requires :title, type: String, desc: "Title of the <%= singular_name %>"
             # requires :content, type: String, desc: "Content of the <%= singular_name %>"

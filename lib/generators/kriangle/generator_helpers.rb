@@ -6,8 +6,7 @@ module Kriangle
 
       @@column_types = {
         'references': 'integer',
-        'text': 'string',
-        'datetime': 'date_time'
+        'text': 'string'
       }
 
       private
@@ -23,8 +22,9 @@ module Kriangle
           end
         end
 
-        def create_template template_fname, fname, attributes = nil
-          @column_names = attributes
+        def create_template template_fname, fname, **options
+          @options = options
+
           # unless File.exist?(File.join(destination_root, fname))
             template template_fname, fname
           # else
@@ -47,7 +47,7 @@ module Kriangle
         def get_attribute_type attribute_type
           column_type = @@column_types[attribute_type.to_sym]
           attribute_type = column_type.present? ? column_type : attribute_type
-          attribute_type.camelcase
+          attribute_type.to_s.camelcase
         end
     end
   end

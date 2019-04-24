@@ -15,7 +15,7 @@ module API
               <%- if attribute.name == 'gender' -%>
             optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
               <%- else -%>
-            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
+            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
               <%- end -%>
             <%- end -%>
           end
@@ -108,7 +108,7 @@ module API
               <%- if attribute.name == 'gender' -%>
             optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
               <%- else -%>
-            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
+            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
               <%- end -%>
             <%- end -%>
             # group :avatars_attributes, type: Hash, desc: "An array of avatars" do

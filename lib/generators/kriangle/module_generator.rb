@@ -11,6 +11,8 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
+      CONTROLLER_ACTIONS = ['index', 'show', 'new', 'create', 'edit', 'update', 'destroy'].freeze
+
       no_tasks { attr_accessor :scaffold_name, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :reference, :resources, :description_method_name }
 
       argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
@@ -52,7 +54,7 @@ module Kriangle
         @description_method_name = @skip_authentication ? 'desc' : 'description'
 
         args_for_c_m.each do |arg|
-          if arg.include?(':')
+          if arg.include?(':') || !CONTROLLER_ACTIONS.include?(arg)
             @model_attributes << Rails::Generators::GeneratedAttribute.new(*arg.split(':'))
           else
             @controller_actions << arg
@@ -69,7 +71,10 @@ module Kriangle
 
         # Get attribute's name
         @attributes = [:id]
-        @attributes += @model_attributes.map{|a| a.type == 'references' ? "#{a.name}_id".to_sym : a.name.to_sym }
+        @attributes += @model_attributes.select { |a| a.type != 'references' }.map { |a| a.name.to_sym }
+
+        # if model referenced to any parent model
+        @belongs_to = @model_attributes.select { |a| a.type == 'references' }.map(&:name)
       end
 
       def self.next_migration_number(path)
@@ -84,13 +89,13 @@ module Kriangle
       desc "Generates model with the given NAME."
       def create_model_file
         @class_name = class_name
-        template "model.rb", "app/models/#{singular_name}.rb" unless skip_model
+        create_template "model.rb", "app/models/#{singular_name}.rb", belongs_to: @belongs_to unless skip_model
         migration_template "create_migration.rb", "db/migrate/create_#{singular_name}s.rb" if !skip_migration && custom_orm == 'ActiveRecord'
 
         @class_name = class_name
         unless skip_serializer
           create_template "active_serializer.rb", "app/serializers/active_serializer.rb"
-          create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", @attributes
+          create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", attributes: @attributes, belongs_to: @belongs_to
         end
       end
 
