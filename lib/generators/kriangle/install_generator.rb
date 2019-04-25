@@ -89,7 +89,7 @@ module Kriangle
 
         create_template "active_serializer.rb", "app/serializers/active_serializer.rb"
         @class_name = user_class
-        create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", @attributes
+        create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", attributes: @attributes
         @class_name = 'Avatar'
         create_template "serializer.rb", "app/serializers/avatar_serializer.rb", [:id, :image_url]
 
