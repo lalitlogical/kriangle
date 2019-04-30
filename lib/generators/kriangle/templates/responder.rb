@@ -27,12 +27,6 @@ module API
     extend ActiveSupport::Concern
 
     included do
-      prefix "api"
-      version "<%= wrapper.underscore %>", using: :path
-      default_format :json
-      format :json
-      formatter :json, Grape::Formatter::ActiveModelSerializers
-
       # catch exception and return JSON-formatted error
       def handle_exceptions
         begin

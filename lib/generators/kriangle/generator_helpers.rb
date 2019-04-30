@@ -26,11 +26,11 @@ module Kriangle
         def create_template template_fname, fname, **options
           @options = options
 
-          # unless File.exist?(File.join(destination_root, fname))
+          if @options[:skip_template] && File.exist?(File.join(destination_root, fname))
+            say_status "skipped", fname
+          else
             template template_fname, fname
-          # else
-          #   say_status "skipped", fname
-          # end
+          end
         end
 
         def get_record_not_found_exception

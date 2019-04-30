@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module API
   module <%= wrapper.capitalize %>
     class <%= mount_path.pluralize %> < Grape::API

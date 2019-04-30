@@ -92,11 +92,11 @@ module Kriangle
       def create_model_file
         @class_name = class_name
         create_template "model.rb", "app/models/#{singular_name}.rb", belongs_to: @belongs_to unless skip_model
-        migration_template "create_migration.rb", "db/migrate/create_#{singular_name}s.rb" if !skip_migration && custom_orm == 'ActiveRecord'
+        migration_template "create_migration.rb", "db/migrate/create_#{plural_name}.rb" if !skip_migration && custom_orm == 'ActiveRecord'
 
         @class_name = class_name
         unless skip_serializer
-          create_template "active_serializer.rb", "app/serializers/active_serializer.rb"
+          create_template "active_serializer.rb", "app/serializers/active_serializer.rb", skip_template: true
           create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", attributes: @attributes, belongs_to: @belongs_to
         end
       end
@@ -105,8 +105,7 @@ module Kriangle
       def copy_controller_and_spec_files
         template "controller.rb", "app/controllers/api/#{@wrapper.underscore}/#{controller_file_name}.rb" unless skip_controller
 
-        # inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n mount API::V1::#{controller_class_name} \n"
-        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount API::V1::#{controller_class_name}", after: /Grape::API.*/
+        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount API::#{@wrapper.capitalize}::#{controller_class_name}", after: /Grape::API.*/
       end
     end
   end

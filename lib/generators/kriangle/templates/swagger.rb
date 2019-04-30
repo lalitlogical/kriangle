@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 GrapeSwaggerRails.options.app_name = 'Rest APIs with Kriangle'
 GrapeSwaggerRails.options.url      = "/kriangle/api/<%= wrapper.underscore %>/swagger_doc.json"
 GrapeSwaggerRails.options.before_action do

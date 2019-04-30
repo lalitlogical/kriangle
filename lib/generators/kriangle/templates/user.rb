@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class <%= user_class %> < ApplicationRecord
   <% if custom_orm == 'Mongoid' %>
   include Mongoid::Document

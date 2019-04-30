@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 <% if custom_orm == 'Mongoid' %>
 class ApplicationRecord
 <% else %>

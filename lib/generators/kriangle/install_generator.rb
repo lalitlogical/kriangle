@@ -55,8 +55,8 @@ module Kriangle
       end
 
       def copy_initializer
-        create_template 'application_record.rb', 'app/models/application_record.rb'
-        create_template 'swagger.rb', 'config/initializers/swagger.rb' unless skip_swagger
+        create_template 'application_record.rb', 'app/models/application_record.rb', skip_template: true
+        create_template 'swagger.rb', 'config/initializers/swagger.rb', skip_template: true unless skip_swagger
       end
 
       def copy_migrations
@@ -89,7 +89,7 @@ module Kriangle
         create_template "authentication.rb", "app/models/authentication.rb"
         create_template "avatar.rb", "app/models/avatar.rb"
 
-        create_template "active_serializer.rb", "app/serializers/active_serializer.rb"
+        create_template "active_serializer.rb", "app/serializers/active_serializer.rb", skip_template: true
         @class_name = user_class
         create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", attributes: @attributes
         @class_name = 'Avatar'
@@ -105,10 +105,11 @@ module Kriangle
         @underscored_mount_path = mount_path.underscore
 
         # Main base files
-        create_template "base.rb", "app/controllers/api/base.rb"
+        create_template "base.rb", "app/controllers/api/base.rb", skip_template: true
+        inject_into_file "app/controllers/api/base.rb", "\n\t\t\tmount API::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
 
         # All new controllers will go here
-        create_template "controllers.rb", "app/controllers/api/#{@wrapper.underscore}/controllers.rb"
+        create_template "controllers.rb", "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_template: true
 
         # Authentications related things will go there
         template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb"

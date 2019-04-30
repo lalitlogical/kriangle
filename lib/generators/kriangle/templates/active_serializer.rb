@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 class ActiveSerializer < ActiveModel::Serializer
   <%- if custom_orm == 'Mongoid' -%>
   def id
