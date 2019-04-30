@@ -27,6 +27,28 @@ module API
     extend ActiveSupport::Concern
 
     included do
+      prefix "api"
+      version "<%= wrapper.underscore %>", using: :path
+      default_format :json
+      format :json
+      formatter :json, Grape::Formatter::ActiveModelSerializers
+
+      # catch exception and return JSON-formatted error
+      def handle_exceptions
+        begin
+          yield
+        rescue <%= get_record_not_found_exception %> => e
+          status_code = 404
+        rescue <%= get_record_invalid_exception %> => e
+          json_error_response(e.record) && return
+        rescue ArgumentError => e
+          status_code = 400
+        rescue StandardError => e
+          status_code = 500
+        end
+        json_error_response({ message: e.class.to_s, errors: [{ detail: e.message, trace: e.backtrace }] }, status_code) unless e.class == NilClass
+      end
+
       helpers do
         # extract options
         # i.e. serializer = nil, options = {}, additional_response = {}
@@ -142,6 +164,16 @@ module API
         def single_serializer
           ActiveModelSerializers::SerializableResource
         end
+      end
+
+      rescue_from <%= get_record_not_found_exception %> do |e|
+        message = e.try(:problem) || e.try(:message)
+        model_name = message.match(/(?<=class|find)[^w]+/)&.to_s&.strip
+        json_error_response(errors: ["No #{model_name || 'Record'} Found."], status: 404)
+      end
+
+      rescue_from <%= get_record_invalid_exception %> do |e|
+        json_error_response(errors: [e.message], status: 422)
       end
     end
   end

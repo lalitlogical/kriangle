@@ -1,7 +1,7 @@
 module API
-  module V1
+  module <%= wrapper.capitalize %>
     class Controllers < Grape::API
-      mount API::V1::<%= mount_path.pluralize %>
+      mount API::<%= wrapper.capitalize %>::<%= mount_path.pluralize %>
     end
   end
 end

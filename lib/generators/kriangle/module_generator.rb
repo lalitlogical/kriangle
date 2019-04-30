@@ -13,10 +13,11 @@ module Kriangle
 
       CONTROLLER_ACTIONS = ['index', 'show', 'new', 'create', 'edit', 'update', 'destroy'].freeze
 
-      no_tasks { attr_accessor :scaffold_name, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :reference, :resources, :description_method_name }
+      no_tasks { attr_accessor :scaffold_name, :wrapper, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :reference, :resources, :description_method_name }
 
       argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
 
+      class_option :wrapper, type: :string, default: "V1", desc: "Skip \"Swagger UI\""
       class_option :user_class, type: :string, default: 'User', desc: "User's model name"
       class_option :reference, :desc => 'Reference to user', :type => :boolean
       class_option :has_many, :desc => 'Association with user', :type => :boolean, default: true
@@ -38,6 +39,7 @@ module Kriangle
         @controller_actions = []
         @model_attributes = []
 
+        @wrapper = options.wrapper
         @user_class = options.user_class.underscore
         @reference = options.reference?
         @has_many = options.has_many?
@@ -101,10 +103,10 @@ module Kriangle
 
       desc "Generates controller with the given NAME."
       def copy_controller_and_spec_files
-        template "controller.rb", "app/controllers/api/v1/#{controller_file_name}.rb" unless skip_controller
+        template "controller.rb", "app/controllers/api/#{@wrapper.underscore}/#{controller_file_name}.rb" unless skip_controller
 
-        # inject_into_file "app/controllers/api/v1/controllers.rb", "\n mount API::V1::#{controller_class_name} \n"
-        inject_into_file "app/controllers/api/v1/controllers.rb", "\n\t\t\tmount API::V1::#{controller_class_name}", after: /Grape::API.*/
+        # inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n mount API::V1::#{controller_class_name} \n"
+        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount API::V1::#{controller_class_name}", after: /Grape::API.*/
       end
     end
   end

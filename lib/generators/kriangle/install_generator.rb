@@ -10,21 +10,23 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_swagger }
+      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :wrapper, :custom_orm, :skip_swagger }
 
       # arguments
       argument :user_class, type: :string, default: "User"
       argument :mount_path, type: :string, default: 'Auth'
       argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
 
+      class_option :wrapper, type: :string, default: "V1", desc: "Skip \"Swagger UI\""
       class_option :skip_swagger, type: :boolean, default: false, desc: "Skip \"Swagger UI\""
-      class_option :custom_orm,   type: :string,  default: "ActiveRecord", desc: "ORM i.e. ActiveRecord, mongoid"
+      class_option :custom_orm,   type: :string,  default: "ActiveRecord", desc: "ORM i.e. ActiveRecord, Mongoid"
 
       source_root File.expand_path('../templates', __FILE__)
 
       def initialize(*args, &block)
         super
         @model_attributes = []
+        @wrapper = options.wrapper
         @custom_orm = options.custom_orm
         @skip_swagger = options.skip_swagger?
 
@@ -106,15 +108,16 @@ module Kriangle
         create_template "base.rb", "app/controllers/api/base.rb"
 
         # All new controllers will go here
-        create_template "controllers.rb", "app/controllers/api/v1/controllers.rb"
+        create_template "controllers.rb", "app/controllers/api/#{@wrapper.underscore}/controllers.rb"
 
         # Authentications related things will go there
-        template "defaults.rb", "app/controllers/api/v1/defaults.rb"
+        template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb"
         template "custom_description.rb", "app/controllers/api/custom_description.rb"
+        template "authenticator.rb", "app/controllers/api/authenticator.rb"
         template "responder.rb", "app/controllers/api/responder.rb"
 
         # Authentication i.e. login, register, logout
-        template "auth.rb", "app/controllers/api/v1/#{@underscored_mount_path.pluralize}.rb"
+        template "auth.rb", "app/controllers/api/#{@wrapper.underscore}/#{@underscored_mount_path.pluralize}.rb"
 
         # setup routes
         inject_into_file "config/routes.rb", "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger

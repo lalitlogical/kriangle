@@ -1,7 +1,8 @@
 module API
-  module V1
+  module <%= wrapper.capitalize %>
     class <%= mount_path.pluralize %> < Grape::API
-      include API::V1::Defaults
+      include API::<%= wrapper.capitalize %>::Defaults
+      include API::Authenticator
       include API::Responder
 
       resource :<%= @underscored_mount_path.pluralize %> do
