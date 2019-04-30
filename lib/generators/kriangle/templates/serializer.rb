@@ -2,8 +2,8 @@
 
 class <%= @class_name %>Serializer < ActiveSerializer
   attributes <%= @options[:attributes].present? ? @options[:attributes].to_s.gsub(/\[|\]/, '') : ':id' %>
-  <%- for parent_model in @options[:belongs_to] -%>
-
+  
+  <%- @options[:belongs_to].try(:each) do |parent_model| -%>
   belongs_to :<%= parent_model %>
   <%- end -%>
 

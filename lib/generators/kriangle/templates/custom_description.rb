@@ -1,27 +1,25 @@
 module API
-  module V1
-    module CustomDescription
-      extend ActiveSupport::Concern
+  module CustomDescription
+    extend ActiveSupport::Concern
 
-      class_methods do
-        def description title
-          desc title, {
-            headers: {
-              "X-Uid" => {
-                description: "User Id",
-                required: true
-              },
-              "X-Client-Id" => {
-                description: "Client Id",
-                required: true
-              },
-              "X-Authentication-Token" => {
-                description: "Authentication Token",
-                required: true
-              }
+    class_methods do
+      def description title
+        desc title, {
+          headers: {
+            "X-Uid" => {
+              description: "User Id",
+              required: true
+            },
+            "X-Client-Id" => {
+              description: "Client Id",
+              required: true
+            },
+            "X-Authentication-Token" => {
+              description: "Authentication Token",
+              required: true
             }
           }
-        end
+        }
       end
     end
   end

@@ -5,8 +5,9 @@ module Kriangle
       attr_accessor :options, :attributes
 
       @@column_types = {
-        'references': 'integer',
-        'text': 'string'
+        'references': 'Integer',
+        'text': 'String',
+        'datetime': 'DateTime'
       }
 
       private
@@ -46,8 +47,7 @@ module Kriangle
 
         def get_attribute_type attribute_type
           column_type = @@column_types[attribute_type.to_sym]
-          attribute_type = column_type.present? ? column_type : attribute_type
-          attribute_type.to_s.camelcase
+          column_type.present? ? column_type : attribute_type.to_s.camelcase
         end
     end
   end

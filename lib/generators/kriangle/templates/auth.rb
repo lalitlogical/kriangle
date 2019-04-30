@@ -2,8 +2,11 @@ module API
   module V1
     class <%= mount_path.pluralize %> < Grape::API
       include API::V1::Defaults
+      include API::Responder
 
       resource :<%= @underscored_mount_path.pluralize %> do
+        include API::CustomDescription
+
         desc "Register new <%= @underscored_name %>"
         params do
           requires :<%= @underscored_name %>, type: Hash do
@@ -13,7 +16,7 @@ module API
             # Additional(optional) parameters
             <%- for attribute in model_attributes -%>
               <%- if attribute.name == 'gender' -%>
-            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
+            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
               <%- else -%>
             optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
               <%- end -%>
@@ -24,7 +27,7 @@ module API
           <%= @underscored_name %> = <%= user_class %>.new(params[:<%= @underscored_name %>])
           if <%= @underscored_name %>.save
             create_authentication(<%= @underscored_name %>)
-            render_object(current_<%= @underscored_name %>, additional_response: { message: "You have registered successfully." })
+            render_object(<%= @underscored_name %>, additional_response: { message: "You have registered successfully." })
           else
             json_error_response({ errors: <%= @underscored_name %>.errors.full_messages })
           end
@@ -53,7 +56,7 @@ module API
           json_success_response(message: "You have successfully logout.")
         end
 
-        description "Returns pong if logged in correctly"
+        description "Return pong if logged in correctly"
         get :ping do
           authenticate!
           json_success_response(message: "pong")

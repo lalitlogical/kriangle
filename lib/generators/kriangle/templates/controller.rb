@@ -2,10 +2,11 @@ module API
   module V1
     class <%= controller_class_name %> < Grape::API
       include API::V1::Defaults
+      include API::Responder
 
       resource :<%= plural_name %> do
         <%- unless skip_authentication -%>
-        include API::V1::CustomDescription
+        include API::CustomDescription
 
         before do
           authenticate!

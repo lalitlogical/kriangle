@@ -91,7 +91,7 @@ module Kriangle
         @class_name = user_class
         create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", attributes: @attributes
         @class_name = 'Avatar'
-        create_template "serializer.rb", "app/serializers/avatar_serializer.rb", [:id, :image_url]
+        create_template "serializer.rb", "app/serializers/avatar_serializer.rb", attributes: [:id, :image_url]
 
         # Uploader File
         create_template "avatar_uploader.rb", "app/uploaders/avatar_uploader.rb"
@@ -110,7 +110,8 @@ module Kriangle
 
         # Authentications related things will go there
         template "defaults.rb", "app/controllers/api/v1/defaults.rb"
-        template "custom_description.rb", "app/controllers/api/v1/custom_description.rb"
+        template "custom_description.rb", "app/controllers/api/custom_description.rb"
+        template "responder.rb", "app/controllers/api/responder.rb"
 
         # Authentication i.e. login, register, logout
         template "auth.rb", "app/controllers/api/v1/#{@underscored_mount_path.pluralize}.rb"
