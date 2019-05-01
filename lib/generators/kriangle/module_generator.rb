@@ -92,7 +92,7 @@ module Kriangle
       def create_model_file
         @class_name = class_name
         create_template "model.rb", "app/models/#{singular_name}.rb", belongs_to: @belongs_to unless skip_model
-        migration_template "create_migration.rb", "db/migrate/create_#{plural_name}.rb" if !skip_migration && custom_orm == 'ActiveRecord'
+        create_migration_file "module_migration.rb", "db/migrate/create_#{plural_name}.rb", skip_migration: skip_migration if custom_orm == 'ActiveRecord'
 
         @class_name = class_name
         unless skip_serializer

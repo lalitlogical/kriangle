@@ -28,20 +28,20 @@ module API
 
     included do
       # catch exception and return JSON-formatted error
-      def handle_exceptions
-        begin
-          yield
-        rescue <%= get_record_not_found_exception %> => e
-          status_code = 404
-        rescue <%= get_record_invalid_exception %> => e
-          json_error_response(e.record) && return
-        rescue ArgumentError => e
-          status_code = 400
-        rescue StandardError => e
-          status_code = 500
-        end
-        json_error_response({ message: e.class.to_s, errors: [{ detail: e.message, trace: e.backtrace }] }, status_code) unless e.class == NilClass
-      end
+      # def handle_exceptions
+      #   begin
+      #     yield
+      #   rescue <%= get_record_not_found_exception %> => e
+      #     status_code = 404
+      #   rescue <%= get_record_invalid_exception %> => e
+      #     json_error_response(e.record) && return
+      #   rescue ArgumentError => e
+      #     status_code = 400
+      #   rescue StandardError => e
+      #     status_code = 500
+      #   end
+      #   json_error_response({ message: e.class.to_s, errors: [{ detail: e.message, trace: e.backtrace }] }, status_code) unless e.class == NilClass
+      # end
 
       helpers do
         # extract options
@@ -69,7 +69,7 @@ module API
           extract_options(object, options) # extract required options
 
           json_success_response({
-            data: @serializer.present? ? single_serializer.new(object, serializer: @serializer) : {},
+            data: @serializer.present? ? single_serializer.new(object, serializer: @serializer, serializer_options: options[:serializer_options]) : {}
           }.merge(@additional_response))
         end
 
@@ -106,7 +106,7 @@ module API
 
           # send data & meta
           json_success_response({
-            data: @serializer.present? ? array_serializer.new(objects, serializer: @serializer) : [],
+            data: @serializer.present? ? array_serializer.new(objects, serializer: @serializer, serializer_options: options[:serializer_options]) : [],
             meta: meta
           }.merge(@additional_response))
         end

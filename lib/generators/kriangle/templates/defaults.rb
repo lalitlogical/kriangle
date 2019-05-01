@@ -1,7 +1,5 @@
 # frozen_string_literal: true
 
-require 'bcrypt'
-
 module API
   module <%= wrapper.capitalize %>
     module Defaults
@@ -13,7 +11,11 @@ module API
         default_format :json
         format :json
         formatter :json, Grape::Formatter::ActiveModelSerializers
-        
+
+        # Authenticator and Responder
+        include API::Authenticator
+        include API::Responder
+
         helpers do
           def logger
             Rails.logger

@@ -25,11 +25,19 @@ module Kriangle
 
         def create_template template_fname, fname, **options
           @options = options
-
           if @options[:skip_template] && File.exist?(File.join(destination_root, fname))
             say_status "skipped", fname
           else
             template template_fname, fname
+          end
+        end
+
+        def create_migration_file migration_fname, fname, **options
+          @options = options
+          if @options[:skip_migration] && self.class.migration_exists?("db/migrate", fname.split('/').last.gsub('.rb',''))
+            say_status("skipped", "Migration '#{fname}' already exists")
+          else
+            migration_template migration_fname, fname
           end
         end
 

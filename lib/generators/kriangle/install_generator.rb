@@ -10,7 +10,7 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :wrapper, :custom_orm, :skip_swagger }
+      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :wrapper, :custom_orm, :skip_swagger, :skip_avatar, :skip_migration }
 
       # arguments
       argument :user_class, type: :string, default: "User"
@@ -19,6 +19,8 @@ module Kriangle
 
       class_option :wrapper, type: :string, default: "V1", desc: "Skip \"Swagger UI\""
       class_option :skip_swagger, type: :boolean, default: false, desc: "Skip \"Swagger UI\""
+      class_option :skip_avatar, type: :boolean, default: true, desc: "Skip \"Avatar Feature\""
+      class_option :skip_migration, :desc => 'Don\'t generate migration file for model.', :type => :boolean
       class_option :custom_orm,   type: :string,  default: "ActiveRecord", desc: "ORM i.e. ActiveRecord, Mongoid"
 
       source_root File.expand_path('../templates', __FILE__)
@@ -29,6 +31,8 @@ module Kriangle
         @wrapper = options.wrapper
         @custom_orm = options.custom_orm
         @skip_swagger = options.skip_swagger?
+        @skip_avatar = options.skip_avatar?
+        @skip_migration = options.skip_migration?
 
         args_for_c_m.each do |arg|
           if arg.include?(':')
@@ -62,23 +66,9 @@ module Kriangle
       def copy_migrations
         if custom_orm == 'ActiveRecord'
           @underscored_name = user_class.underscore
-          if self.class.migration_exists?("db/migrate", "create_#{user_class.pluralize.underscore}")
-            say_status("skipped", "Migration 'create_#{user_class.pluralize.underscore}' already exists")
-          else
-            migration_template "create_users.rb.erb", "db/migrate/create_#{user_class.pluralize.underscore}.rb"
-          end
-
-          if self.class.migration_exists?("db/migrate", "create_authentications")
-            say_status("skipped", "Migration 'create_authentications' already exists")
-          else
-            migration_template "create_authentications.rb", "db/migrate/create_authentications.rb"
-          end
-
-          if self.class.migration_exists?("db/migrate", "create_avatars")
-            say_status("skipped", "Migration 'creat_avatars' already exists")
-          else
-            migration_template "create_avatars.rb", "db/migrate/create_avatars.rb"
-          end
+          create_migration_file "create_users.rb.erb", "db/migrate/create_#{user_class.pluralize.underscore}.rb", skip_migration: skip_migration
+          create_migration_file "create_authentications.rb", "db/migrate/create_authentications.rb", skip_migration: skip_migration
+          create_migration_file "create_avatars.rb", "db/migrate/create_avatars.rb", skip_migration: skip_migration unless skip_avatar
         end
       end
 
@@ -87,16 +77,14 @@ module Kriangle
 
         create_template "user.rb", "app/models/#{ user_class.underscore }.rb"
         create_template "authentication.rb", "app/models/authentication.rb"
-        create_template "avatar.rb", "app/models/avatar.rb"
+        create_template "avatar.rb", "app/models/avatar.rb" unless skip_avatar
 
         create_template "active_serializer.rb", "app/serializers/active_serializer.rb", skip_template: true
-        @class_name = user_class
-        create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", attributes: @attributes
-        @class_name = 'Avatar'
-        create_template "serializer.rb", "app/serializers/avatar_serializer.rb", attributes: [:id, :image_url]
+        create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", class_name: user_class, attributes: @attributes
+        create_template "serializer.rb", "app/serializers/avatar_serializer.rb", class_name: 'Avatar', attributes: [:id, :image_url] unless skip_avatar
 
         # Uploader File
-        create_template "avatar_uploader.rb", "app/uploaders/avatar_uploader.rb"
+        create_template "avatar_uploader.rb", "app/uploaders/avatar_uploader.rb" unless skip_avatar
       end
 
       desc "Generates required files."

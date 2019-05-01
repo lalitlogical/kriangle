@@ -1,5 +1,7 @@
 # frozen_string_literal: true
 
+require 'bcrypt'
+
 module API
   module Authenticator
     extend ActiveSupport::Concern

@@ -10,15 +10,18 @@ module API
           headers: {
             "X-Uid" => {
               description: "User Id",
-              required: true
+              required: true,
+              default: ENV['X_UID']
             },
             "X-Client-Id" => {
               description: "Client Id",
-              required: true
+              required: true,
+              default: ENV['X_CLIENT_ID']
             },
             "X-Authentication-Token" => {
               description: "Authentication Token",
-              required: true
+              required: true,
+              default: ENV['X_AUTH_TOKEN']
             }
           }
         }

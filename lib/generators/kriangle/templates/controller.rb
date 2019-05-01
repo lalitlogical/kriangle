@@ -4,10 +4,6 @@ module API
   module <%= wrapper.capitalize %>
     class <%= controller_class_name %> < Grape::API
       include API::<%= wrapper.capitalize %>::Defaults
-      <%- unless skip_authentication -%>
-      include API::Authenticator
-      <%- end -%>
-      include API::Responder
 
       resource :<%= plural_name %> do
         <%- unless skip_authentication -%>
