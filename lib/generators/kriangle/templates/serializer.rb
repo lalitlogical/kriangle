@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-class <%= @options[:class_name] || @class_name %>Serializer < ActiveSerializer
+class <%= @options[:class_name] || class_name %>Serializer < ActiveSerializer
   attributes :<%= @options[:attributes].join(', :') %>
   # attributes :custom_function
 
