@@ -90,15 +90,13 @@ module Kriangle
 
       desc "Generates model with the given NAME."
       def create_model_file
-        @class_name = class_name
-        create_template "model.rb", "app/models/#{singular_name}.rb", belongs_to: @belongs_to unless skip_model
+        # create module model & migration
+        create_template "model.rb", "app/models/#{singular_name}.rb", attributes: (@attributes - [:id]), belongs_to: @belongs_to, skip_template: skip_model
         create_migration_file "module_migration.rb", "db/migrate/create_#{plural_name}.rb", skip_migration: skip_migration if custom_orm == 'ActiveRecord'
 
-        @class_name = class_name
-        unless skip_serializer
-          create_template "active_serializer.rb", "app/serializers/active_serializer.rb", skip_template: true
-          create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", attributes: @attributes, belongs_to: @belongs_to
-        end
+        # create active serializer & module serializer
+        create_template "active_serializer.rb", "app/serializers/active_serializer.rb", skip_template: true
+        create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", skip_template: skip_serializer, attributes: @attributes, belongs_to: @belongs_to
       end
 
       desc "Generates controller with the given NAME."

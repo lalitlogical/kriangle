@@ -17,6 +17,6 @@ class <%= class_name %> < ApplicationRecord
   belongs_to :<%= parent_model %>
   <%- end -%>
 
-  # Some validation
-  # validates :name, :description, presence: true
+  # validation's on columns
+  validates :<%= @options[:attributes].join(', :') %>, presence: true
 end
