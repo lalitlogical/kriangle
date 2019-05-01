@@ -115,10 +115,6 @@ module API
           render_error_response(["#{ resource } not found."], :not_found)
         end
 
-        def render_logout
-          render_error_response([I18n.t('devise.failure.unauthenticated')], :unauthorized)
-        end
-
         def render_errors(object)
           render_error_response(object.errors, :unprocessable_entity)
         end

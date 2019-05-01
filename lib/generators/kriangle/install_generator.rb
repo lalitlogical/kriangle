@@ -59,16 +59,16 @@ module Kriangle
       end
 
       def copy_initializer
-        create_template 'application_record.rb', 'app/models/application_record.rb', skip_template: true
-        create_template 'swagger.rb', 'config/initializers/swagger.rb', skip_template: true unless skip_swagger
+        create_template 'application_record.rb', 'app/models/application_record.rb', skip_if_exist: true
+        create_template 'swagger.rb', 'config/initializers/swagger.rb', skip_if_exist: true unless skip_swagger
       end
 
       def copy_migrations
-        if custom_orm == 'ActiveRecord'
+        if custom_orm == 'ActiveRecord' && !skip_migration
           @underscored_name = user_class.underscore
-          create_migration_file "create_users.rb.erb", "db/migrate/create_#{user_class.pluralize.underscore}.rb", skip_migration: skip_migration
-          create_migration_file "create_authentications.rb", "db/migrate/create_authentications.rb", skip_migration: skip_migration
-          create_migration_file "create_avatars.rb", "db/migrate/create_avatars.rb", skip_migration: skip_migration unless skip_avatar
+          create_migration_file "create_users.rb.erb", "db/migrate/create_#{user_class.pluralize.underscore}.rb"
+          create_migration_file "create_authentications.rb", "db/migrate/create_authentications.rb"
+          create_migration_file "create_avatars.rb", "db/migrate/create_avatars.rb" unless skip_avatar
         end
       end
 
@@ -79,7 +79,7 @@ module Kriangle
         create_template "authentication.rb", "app/models/authentication.rb"
         create_template "avatar.rb", "app/models/avatar.rb" unless skip_avatar
 
-        create_template "active_serializer.rb", "app/serializers/active_serializer.rb", skip_template: true
+        create_template "active_serializer.rb", "app/serializers/active_serializer.rb", skip_if_exist: true
         create_template "serializer.rb", "app/serializers/#{@underscored_name}_serializer.rb", class_name: user_class, attributes: @attributes
         create_template "serializer.rb", "app/serializers/avatar_serializer.rb", class_name: 'Avatar', attributes: [:id, :image_url] unless skip_avatar
 
@@ -93,11 +93,11 @@ module Kriangle
         @underscored_mount_path = mount_path.underscore
 
         # Main base files
-        create_template "base.rb", "app/controllers/api/base.rb", skip_template: true
+        create_template "base.rb", "app/controllers/api/base.rb", skip_if_exist: true
         inject_into_file "app/controllers/api/base.rb", "\n\t\t\tmount API::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
 
         # All new controllers will go here
-        create_template "controllers.rb", "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_template: true
+        create_template "controllers.rb", "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true
 
         # Authentications related things will go there
         template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb"

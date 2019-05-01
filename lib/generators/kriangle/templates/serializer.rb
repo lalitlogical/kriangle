@@ -4,7 +4,7 @@ class <%= @options[:class_name] || class_name %>Serializer < ActiveSerializer
   attributes :<%= @options[:attributes].join(', :') %>
   # attributes :custom_function
 
-  <%- @options[:belongs_to].try(:each) do |parent_model| -%>
+  <%- @options[:references].try(:each) do |parent_model| -%>
   belongs_to :<%= parent_model %>
   <%- end -%>
   # association's example
@@ -13,7 +13,7 @@ class <%= @options[:class_name] || class_name %>Serializer < ActiveSerializer
   # has_many :avatars
 
   # def custom_function
-  #   some logic goes here
+  #   object.association(:association_model_name).loaded? ? object.association_model_name : {}
   # end
 
   # add your custom attributes here if required

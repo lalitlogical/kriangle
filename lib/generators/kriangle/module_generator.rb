@@ -72,11 +72,20 @@ module Kriangle
         end
 
         # Get attribute's name
-        @attributes = [:id]
-        @attributes += @model_attributes.select { |a| a.type != 'references' }.map { |a| a.name.to_sym }
+        @attributes = []
+        @references = []
+        @polymorphics = []
 
-        # if model referenced to any parent model
-        @belongs_to = @model_attributes.select { |a| a.type == 'references' }.map(&:name)
+        # get different types of attributes
+        @model_attributes.each do |attribute|
+          if attribute.type.to_s.match('polymorphic').present?
+            @polymorphics << attribute
+          elsif attribute.type.to_s.match('references').present?
+            @references << attribute
+          else
+            @attributes << attribute
+          end
+        end
       end
 
       def self.next_migration_number(path)
@@ -91,12 +100,14 @@ module Kriangle
       desc "Generates model with the given NAME."
       def create_model_file
         # create module model & migration
-        create_template "model.rb", "app/models/#{singular_name}.rb", attributes: (@attributes - [:id]), belongs_to: @belongs_to, skip_template: skip_model
-        create_migration_file "module_migration.rb", "db/migrate/create_#{plural_name}.rb", skip_migration: skip_migration if custom_orm == 'ActiveRecord'
+        create_template "model.rb", "app/models/#{singular_name}.rb", attributes: @attributes.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
+        create_migration_file "module_migration.rb", "db/migrate/create_#{plural_name}.rb" if !skip_migration && custom_orm == 'ActiveRecord'
 
         # create active serializer & module serializer
-        create_template "active_serializer.rb", "app/serializers/active_serializer.rb", skip_template: true
-        create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", skip_template: skip_serializer, attributes: @attributes, belongs_to: @belongs_to
+        unless skip_serializer
+          create_template "active_serializer.rb", "app/serializers/active_serializer.rb", skip_if_exist: true
+          create_template "serializer.rb", "app/serializers/#{singular_name}_serializer.rb", attributes: [:id] + @attributes.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name)
+        end
       end
 
       desc "Generates controller with the given NAME."

@@ -10,10 +10,15 @@ class <%= class_name %> < ApplicationRecord
   # field :content, type: String, default: ""
   # field :views, type: Integer, default: 0
   <%- end -%>
+  <%- for polymorphic in @options[:polymorphics] -%>
+  belongs_to :<%= polymorphic %>, polymorphic: true
+  # use below into referenced model
+  # has_many :<%= polymorphic.gsub('able','').pluralize %>, as: :<%= polymorphic %>, dependent: :destroy
+  <%- end -%>
   <%- if reference -%>
   belongs_to :<%= user_class %>
   <%- end -%>
-  <%- for parent_model in @options[:belongs_to] -%>
+  <%- for parent_model in @options[:references] -%>
   belongs_to :<%= parent_model %>
   <%- end -%>
 
