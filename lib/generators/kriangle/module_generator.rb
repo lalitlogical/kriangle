@@ -13,7 +13,7 @@ module Kriangle
 
       CONTROLLER_ACTIONS = ['index', 'show', 'new', 'create', 'edit', 'update', 'destroy'].freeze
 
-      no_tasks { attr_accessor :scaffold_name, :wrapper, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :reference, :resources, :description_method_name }
+      no_tasks { attr_accessor :scaffold_name, :wrapper, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :skip_swagger, :reference, :resources, :description_method_name }
 
       argument :args_for_c_m, :type => :array, :default => [], :banner => 'model:attributes'
 
@@ -23,6 +23,7 @@ module Kriangle
       class_option :has_many, :desc => 'Association with user', :type => :boolean, default: true
       class_option :resources, :desc => 'Resources routes', :type => :boolean, default: true
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: "ORM i.e. ActiveRecord, mongoid"
+      class_option :skip_swagger, type: :boolean, default: false, desc: "Skip \"Swagger UI\""
       class_option :skip_model, :desc => 'Don\'t generate a model or migration file.', :type => :boolean
       class_option :skip_controller, :desc => 'Don\'t generate a controller.', :type => :boolean
       class_option :skip_migration, :desc => 'Don\'t generate migration file for model.', :type => :boolean
@@ -46,13 +47,17 @@ module Kriangle
         @resources = options.resources?
 
         @custom_orm = options.custom_orm
+        @skip_swagger = options.skip_swagger?
         @skip_model = options.skip_model?
         @skip_controller = options.skip_controller?
         @skip_migration = options.skip_migration?
         @skip_serializer = options.skip_serializer?
         @skip_timestamps = options.skip_timestamps?
-        @skip_authentication = options.skip_authentication?
         @skip_pagination = options.skip_pagination?
+
+        # skip authentication if authenticator not found
+        @skip_authentication = options.skip_authentication?
+        @skip_authentication = true unless File.exist?(File.join(destination_root, "app/controllers/api/authenticator.rb"))
         @description_method_name = @skip_authentication ? 'desc' : 'description'
 
         args_for_c_m.each do |arg|
@@ -95,6 +100,22 @@ module Kriangle
           @prev_migration_nr += 1
         end
         @prev_migration_nr.to_s
+      end
+
+      def copy_initializer
+        create_template 'application_record.rb', 'app/models/application_record.rb', skip_if_exist: true
+        create_template 'swagger.rb', 'config/initializers/swagger.rb', skip_if_exist: true unless skip_swagger
+
+        create_template "base.rb", "app/controllers/api/base.rb", skip_if_exist: true
+        create_template "custom_description.rb", "app/controllers/api/custom_description.rb", skip_if_exist: true
+        create_template "responder.rb", "app/controllers/api/responder.rb"
+
+        create_template "controllers.rb", "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true unless skip_controller
+        create_template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb"
+
+        inject_into_file "app/controllers/api/base.rb", "\n\t\t\tmount API::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
+        inject_into_file "config/routes.rb", "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger
+        inject_into_file "config/routes.rb", "\n\tmount API::Base, at: '/'", after: /routes.draw.*/
       end
 
       desc "Generates model with the given NAME."

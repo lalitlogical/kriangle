@@ -10,7 +10,7 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :wrapper, :custom_orm, :skip_swagger, :skip_avatar, :skip_migration }
+      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :wrapper, :custom_orm, :skip_swagger, :skip_avatar, :skip_migration, :skip_authentication }
 
       # arguments
       argument :user_class, type: :string, default: "User"
@@ -33,6 +33,7 @@ module Kriangle
         @skip_swagger = options.skip_swagger?
         @skip_avatar = options.skip_avatar?
         @skip_migration = options.skip_migration?
+        @skip_authentication = false
 
         args_for_c_m.each do |arg|
           if arg.include?(':')
@@ -98,12 +99,13 @@ module Kriangle
 
         # All new controllers will go here
         create_template "controllers.rb", "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true
+        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount API::#{@wrapper.capitalize}::#{mount_path.pluralize}", after: /Grape::API.*/
 
         # Authentications related things will go there
-        template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb"
-        template "custom_description.rb", "app/controllers/api/custom_description.rb"
-        template "authenticator.rb", "app/controllers/api/authenticator.rb"
-        template "responder.rb", "app/controllers/api/responder.rb"
+        create_template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb"
+        create_template "custom_description.rb", "app/controllers/api/custom_description.rb"
+        create_template "authenticator.rb", "app/controllers/api/authenticator.rb"
+        create_template "responder.rb", "app/controllers/api/responder.rb"
 
         # Authentication i.e. login, register, logout
         template "auth.rb", "app/controllers/api/#{@wrapper.underscore}/#{@underscored_mount_path.pluralize}.rb"

@@ -13,7 +13,9 @@ module API
         formatter :json, Grape::Formatter::ActiveModelSerializers
 
         # Authenticator and Responder
+        <%- unless skip_authentication -%>
         include API::Authenticator
+        <%- end -%>
         include API::Responder
 
         helpers do

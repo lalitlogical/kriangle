@@ -7,7 +7,6 @@ require 'grape-swagger'
 module API
   module <%= wrapper.capitalize %>
     class Controllers < Grape::API
-      mount API::<%= wrapper.capitalize %>::<%= mount_path.pluralize %>
       <%- unless skip_swagger -%>
 
       add_swagger_documentation(
