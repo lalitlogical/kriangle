@@ -102,7 +102,7 @@ module Kriangle
         inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount API::#{@wrapper.capitalize}::#{mount_path.pluralize}", after: /Grape::API.*/
 
         # Authentications related things will go there
-        create_template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb"
+        create_template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb", skip_if_exist: true
         create_template "custom_description.rb", "app/controllers/api/custom_description.rb"
         create_template "authenticator.rb", "app/controllers/api/authenticator.rb"
         create_template "responder.rb", "app/controllers/api/responder.rb"

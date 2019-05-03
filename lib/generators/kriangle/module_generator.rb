@@ -111,7 +111,7 @@ module Kriangle
         create_template "responder.rb", "app/controllers/api/responder.rb"
 
         create_template "controllers.rb", "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true unless skip_controller
-        create_template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb"
+        create_template "defaults.rb", "app/controllers/api/#{@wrapper.underscore}/defaults.rb", skip_if_exist: true
 
         inject_into_file "app/controllers/api/base.rb", "\n\t\t\tmount API::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
         inject_into_file "config/routes.rb", "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger
