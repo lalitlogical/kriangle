@@ -17,11 +17,13 @@ module API
         <%- if resources -%>
           <%- if controller_actions.include?('index') -%>
         <%= description_method_name %> "Return all <%= plural_name %>"
+        <%- unless skip_pagination -%>
         <%- if !reference or (reference && has_many) -%>
         params do
           optional :page, type: Integer, desc: "Page number", default: 0
           optional :per_page, type: Integer, desc: "Per Page", default: 15
         end
+        <%- end -%>
         <%- end -%>
         get "", root: :<%= plural_name %> do
           <%- if reference -%>
