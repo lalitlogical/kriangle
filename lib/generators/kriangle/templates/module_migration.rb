@@ -14,6 +14,7 @@ class Create<%= controller_class_name %> < ActiveRecord::Migration[5.1]
       <%- for attribute in @attributes -%>
       t.<%= attribute.type || 'string'  %> :<%= attribute.name %>
       <%- end -%>
+      
       <%- unless skip_timestamps -%>
       t.timestamps
       <%- end -%>

@@ -5,10 +5,12 @@ class <%= class_name %> < ApplicationRecord
   include Mongoid::Document
   include Mongoid::Timestamps
 
+  <%- unless skip_tips -%>
   # Add your fields below
   # field :title, type: String
   # field :content, type: String, default: ""
   # field :views, type: Integer, default: 0
+  <%- end -%>
   <%- end -%>
   <%- for polymorphic in @options[:polymorphics] -%>
   belongs_to :<%= polymorphic %>, polymorphic: true
