@@ -2,7 +2,7 @@
 
 require 'bcrypt'
 
-module API
+module Api
   module Authenticator
     extend ActiveSupport::Concern
 

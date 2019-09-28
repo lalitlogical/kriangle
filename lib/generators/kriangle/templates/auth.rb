@@ -1,12 +1,12 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module <%= wrapper.capitalize %>
     class <%= mount_path.pluralize %> < Grape::API
-      include API::<%= wrapper.capitalize %>::Defaults
+      include Api::<%= wrapper.capitalize %>::Defaults
 
       resource :<%= @underscored_mount_path.pluralize %> do
-        include API::CustomDescription
+        include Api::CustomDescription
 
         desc "Register new <%= @underscored_name %>"
         params do

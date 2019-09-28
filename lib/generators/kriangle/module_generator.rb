@@ -119,11 +119,11 @@ module Kriangle
         create_template 'controllers.rb', "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true unless skip_controller
         create_template 'defaults.rb', "app/controllers/api/#{@wrapper.underscore}/defaults.rb", skip_if_exist: true
 
-        inject_into_file 'app/controllers/api/base.rb', "\n\t\tmount API::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
+        inject_into_file 'app/controllers/api/base.rb', "\n\t\t mount Api::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
 
         if initial_setup
           inject_into_file 'config/routes.rb', "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger
-          inject_into_file 'config/routes.rb', "\n\tmount API::Base, at: '/'", after: /routes.draw.*/
+          inject_into_file 'config/routes.rb', "\n\tmount Api::Base, at: '/'", after: /routes.draw.*/
         end
       end
 
@@ -144,7 +144,7 @@ module Kriangle
       def copy_controller_and_spec_files
         template 'controller.rb', "app/controllers/api/#{@wrapper.underscore}/#{controller_file_name}.rb" unless skip_controller
 
-        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount API::#{@wrapper.capitalize}::#{controller_class_name}", after: /Grape::API.*/
+        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount Api::#{@wrapper.capitalize}::#{controller_class_name}", after: /Grape::API.*/
       end
     end
   end

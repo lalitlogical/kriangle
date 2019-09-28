@@ -99,11 +99,11 @@ module Kriangle
 
         # Main base files
         create_template 'base.rb', 'app/controllers/api/base.rb', skip_if_exist: true
-        inject_into_file 'app/controllers/api/base.rb', "\n\t\t\tmount API::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
+        inject_into_file 'app/controllers/api/base.rb', "\n\t\t\tmount Api::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
 
         # All new controllers will go here
         create_template 'controllers.rb', "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true
-        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount API::#{@wrapper.capitalize}::#{mount_path.pluralize}", after: /Grape::API.*/
+        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount Api::#{@wrapper.capitalize}::#{mount_path.pluralize}", after: /Grape::API.*/
 
         # Authentications related things will go there
         create_template 'defaults.rb', "app/controllers/api/#{@wrapper.underscore}/defaults.rb", skip_if_exist: true
@@ -116,7 +116,7 @@ module Kriangle
 
         # setup routes
         inject_into_file 'config/routes.rb', "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger
-        inject_into_file 'config/routes.rb', "\n\tmount API::Base, at: '/'", after: /routes.draw.*/
+        inject_into_file 'config/routes.rb', "\n\tmount Api::Base, at: '/'", after: /routes.draw.*/
       end
     end
   end

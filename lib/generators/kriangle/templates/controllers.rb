@@ -4,7 +4,7 @@
 require 'grape-swagger'
 <%- end -%>
 
-module API
+module Api
   module <%= wrapper.capitalize %>
     class Controllers < Grape::API
       <%- unless skip_swagger -%>

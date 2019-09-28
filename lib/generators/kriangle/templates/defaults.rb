@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module <%= wrapper.capitalize %>
     module Defaults
       extend ActiveSupport::Concern
@@ -14,9 +14,9 @@ module API
 
         # Authenticator and Responder
         <%- unless skip_authentication -%>
-        include API::Authenticator
+        include Api::Authenticator
         <%- end -%>
-        include API::Responder
+        include Api::Responder
 
         helpers do
           def logger

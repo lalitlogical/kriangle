@@ -1,13 +1,13 @@
 # frozen_string_literal: true
 
-module API
+module Api
   module <%= wrapper.capitalize %>
     class <%= controller_class_name %> < Grape::API
-      include API::<%= wrapper.capitalize %>::Defaults
+      include Api::<%= wrapper.capitalize %>::Defaults
 
       resource :<%= plural_name %> do
         <%- unless skip_authentication -%>
-        include API::CustomDescription
+        include Api::CustomDescription
 
         before do
           authenticate!

@@ -33,6 +33,7 @@ class Create<%= user_class.pluralize %> < ActiveRecord::Migration<%= "[#{Rails::
 
       ## User Info
       <%- for attribute in model_attributes -%>
+      <% next if attribute.name == 'email' %>
       t.<%= attribute.type %> :<%= attribute.name %>
       <%- end -%>
 

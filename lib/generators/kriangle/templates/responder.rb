@@ -22,7 +22,7 @@ class JsonResponse
   end
 end
 
-module API
+module Api
   module Responder
     extend ActiveSupport::Concern
 
