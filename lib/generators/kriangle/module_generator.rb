@@ -22,7 +22,7 @@ module Kriangle
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
       class_option :user_class, type: :string, default: 'User', desc: "User's model name"
       class_option :reference, desc: 'Reference to user', type: :boolean
-      class_option :has_many, desc: 'Association with user', type: :boolean, default: true
+      class_option :has_many, desc: 'Association with user', type: :boolean
       class_option :resources, desc: 'Resources routes', type: :boolean, default: true
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: 'ORM i.e. ActiveRecord, mongoid'
       class_option :initial_setup, type: :boolean, default: false, desc: 'Skip "Initial Setup i.e. Routes, Base models, etc."'

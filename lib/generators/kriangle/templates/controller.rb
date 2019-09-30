@@ -73,8 +73,10 @@ module Api
             <%- for attribute in model_attributes -%>
             requires :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
             <%- end -%>
+            <%- unless skip_tips -%>
             # requires :title, type: String, desc: "Title of the <%= singular_name %>"
             # requires :content, type: String, desc: "Content of the <%= singular_name %>"
+            <%- end -%>
           end
         end
         post "", root: "<%= singular_name %>" do
@@ -103,9 +105,11 @@ module Api
             <%- for attribute in model_attributes -%>
             optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
             <%- end -%>
+            <%- unless skip_tips -%>
             # requires :title, type: String, desc: "Title of the <%= singular_name %>"
             # requires :content, type: String, desc: "Content of the <%= singular_name %>"
             # optional :views, type: String, desc: "Content of the <%= singular_name %>"
+            <%- end -%>
           end
         end
         put ":id", root: "<%= singular_name %>" do
