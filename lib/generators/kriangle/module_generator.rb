@@ -144,6 +144,7 @@ module Kriangle
       def create_model_file
         # create module model & migration
         create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
+        inject_into_file "app/models/#{@user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{@user_class.humanize} < ApplicationRecord.*/ unless skip_model
         create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb" if !skip_migration && custom_orm == 'ActiveRecord'
 
         # create active serializer & module serializer

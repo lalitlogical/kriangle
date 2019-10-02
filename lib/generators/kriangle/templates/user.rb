@@ -15,8 +15,9 @@ class <%= user_class %> < ApplicationRecord
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          :recoverable, :rememberable, :trackable, :validatable
-
+  <%- unless skip_avatar -%>
   has_many :avatars
+  <%- end -%>
   has_many :authentications
 
   # Some validation
