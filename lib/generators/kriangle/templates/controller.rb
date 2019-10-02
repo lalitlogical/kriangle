@@ -18,10 +18,15 @@ module Api
           <%- if controller_actions.include?('index') -%>
         <%= description_method_name %> "Return all <%= plural_name %>"
         <%- unless skip_pagination -%>
-        <%- if !reference or (reference && has_many) -%>
+        <%- if !reference || (reference && has_many) || @reference_id_param -%>
         params do
+          <%- if @reference_id_param -%>
+          requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
+          <%- end -%>
+          <%- if !reference || (reference && has_many) -%>
           optional :page, type: Integer, desc: "Page number", default: 0
           optional :per_page, type: Integer, desc: "Per Page", default: 15
+          <%- end -%>
         end
         <%- end -%>
         <%- end -%>
@@ -29,13 +34,13 @@ module Api
           <%- if reference -%>
             <%- if has_many -%>
               <%- if skip_pagination -%>
-          results = current_<%= user_class %>.<%= plural_name %>
+          results = <%= reference_name %>.<%= plural_name %>
               <%- else -%>
-          results = paginate current_<%= user_class %>.<%= plural_name %>
+          results = paginate <%= reference_name %>.<%= plural_name %>
               <%- end -%>
           render_objects(results)
             <%- else -%>
-          <%= singular_name %> = current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
+          <%= singular_name %> = <%= reference_name %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
           render_object(<%= singular_name %>)
             <%- end -%>
           <%- else -%>
@@ -52,12 +57,17 @@ module Api
         <%- if controller_actions.include?('show') -%>
 
         <%= description_method_name %> "Return a <%= singular_name %>"
+        <%- if @reference_id_param -%>
+        params do
+          requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
+        end
+        <%- end -%>
         get ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = current_<%= user_class %>.<%= plural_name %>.find(params[:id])
+          <%= singular_name %> = <%= reference_name %>.<%= plural_name %>.find(params[:id])
             <%- else -%>
-          <%= singular_name %> = current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
+          <%= singular_name %> = <%= reference_name %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
             <%- end -%>
           <%- else -%>
           <%= singular_name %> = <%= class_name %>.find(params[:id])
@@ -70,6 +80,9 @@ module Api
         <%= description_method_name %> "Create a <%= singular_name %>"
         params do
           requires :<%= singular_name %>, type: Hash do
+            <%- if @reference_id_param -%>
+            requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
+            <%- end -%>
             <%- for attribute in model_attributes -%>
             requires :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
             <%- end -%>
@@ -82,9 +95,9 @@ module Api
         post "", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = current_<%= user_class %>.<%= plural_name %>.new(params[:<%= singular_name %>])
+          <%= singular_name %> = <%= reference_name_create_update %>.<%= plural_name %>.new(params[:<%= singular_name %>])
             <%- else -%>
-          <%= singular_name %> = current_<%= user_class %>.<%= singular_name %> || current_<%= user_class %>.build_<%= singular_name %>(params[:<%= singular_name %>])
+          <%= singular_name %> = <%= reference_name_create_update %>.<%= singular_name %> || <%= reference_name_create_update %>.build_<%= singular_name %>(params[:<%= singular_name %>])
           <%= singular_name %>.attributes = params[:<%= singular_name %>] if <%= singular_name %>.persisted?
             <%- end -%>
           <%- else -%>
@@ -102,6 +115,9 @@ module Api
         <%= description_method_name %> "Update a <%= singular_name %>"
         params do
           requires :<%= singular_name %>, type: Hash do
+            <%- if @reference_id_param -%>
+            requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
+            <%- end -%>
             <%- for attribute in model_attributes -%>
             optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
             <%- end -%>
@@ -115,9 +131,9 @@ module Api
         put ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = current_<%= user_class %>.<%= plural_name %>.find(params[:id])
+          <%= singular_name %> = <%= reference_name_create_update %>.<%= plural_name %>.find(params[:id])
             <%- else -%>
-          <%= singular_name %> = current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
+          <%= singular_name %> = <%= reference_name_create_update %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
             <%- end -%>
           <%- else -%>
           <%= singular_name %> = <%= class_name %>.find(params[:id])
@@ -132,12 +148,17 @@ module Api
         <%- if controller_actions.include?('destroy') -%>
 
         <%= description_method_name %> "Destoy a <%= singular_name %>"
+        <%- if @reference_id_param -%>
+        params do
+          requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
+        end
+        <%- end -%>
         delete ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = current_<%= user_class %>.<%= plural_name %>.find(params[:id])
+          <%= singular_name %> = <%= reference_name %>.<%= plural_name %>.find(params[:id])
             <%- else -%>
-          <%= singular_name %> = current_<%= user_class %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
+          <%= singular_name %> = <%= reference_name %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
             <%- end -%>
           <%- else -%>
           <%= singular_name %> = <%= class_name %>.find(params[:id])

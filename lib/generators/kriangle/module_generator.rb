@@ -15,13 +15,14 @@ module Kriangle
 
       CONTROLLER_ACTIONS = %w[index show new create edit update destroy].freeze
 
-      no_tasks { attr_accessor :scaffold_name, :wrapper, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :initial_setup, :skip_tips, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :skip_swagger, :reference, :resources, :description_method_name }
+      no_tasks { attr_accessor :scaffold_name, :wrapper, :user_class, :current_user, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :initial_setup, :skip_tips, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :skip_swagger, :reference, :reference_name, :reference_name_create_update, :reference_id_param, :resources, :description_method_name }
 
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
 
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
-      class_option :user_class, type: :string, default: 'User', desc: "User's model name"
+      class_option :user_class, type: :string, desc: "User's model name"
       class_option :reference, desc: 'Reference to user', type: :boolean
+      class_option :reference_name, type: :string, default: 'current_user', desc: 'Reference Name'
       class_option :has_many, desc: 'Association with user', type: :boolean
       class_option :resources, desc: 'Resources routes', type: :boolean, default: true
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: 'ORM i.e. ActiveRecord, mongoid'
@@ -45,10 +46,22 @@ module Kriangle
         @model_attributes = []
 
         @wrapper = options.wrapper
-        @user_class = options.user_class.underscore
+
         @reference = options.reference?
-        @has_many = options.has_many?
         @resources = options.resources?
+
+        @has_many = options.has_many?
+        @reference_name = options.reference_name
+        @user_class = options.user_class&.underscore
+        @current_user = @reference_name.match(/current_/).present?
+        if @reference_name.match(/current_/)
+          @user_class = @reference_name.gsub(/current_/, '').underscore unless @user_class
+        else
+          @user_class = @reference_name.underscore unless @user_class
+          @reference_id_param = get_attribute_name(@reference_name.underscore, 'references')
+          @reference_name_create_update = "#{@reference_name}.find(params[:#{singular_name}][:#{reference_id_param}])"
+          @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
+        end
 
         @custom_orm = options.custom_orm
         @initial_setup = options.initial_setup?
@@ -119,7 +132,7 @@ module Kriangle
         create_template 'controllers.rb', "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true unless skip_controller
         create_template 'defaults.rb', "app/controllers/api/#{@wrapper.underscore}/defaults.rb", skip_if_exist: true
 
-        inject_into_file 'app/controllers/api/base.rb', "\n\t\t mount Api::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
+        inject_into_file 'app/controllers/api/base.rb', "\n\t\t\tmount Api::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
 
         if initial_setup
           inject_into_file 'config/routes.rb', "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger
