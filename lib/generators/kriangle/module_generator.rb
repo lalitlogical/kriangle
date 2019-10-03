@@ -15,7 +15,7 @@ module Kriangle
 
       CONTROLLER_ACTIONS = %w[index show new create edit update destroy].freeze
 
-      no_tasks { attr_accessor :scaffold_name, :wrapper, :user_class, :current_user, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :initial_setup, :skip_tips, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :skip_swagger, :reference, :reference_name, :reference_name_create_update, :reference_id_param, :resources, :description_method_name }
+      no_tasks { attr_accessor :scaffold_name, :wrapper, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :initial_setup, :skip_tips, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :skip_swagger, :reference, :reference_name, :reference_name_create_update, :reference_id_param, :resources, :description_method_name }
 
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
 
@@ -53,8 +53,8 @@ module Kriangle
         @has_many = options.has_many?
         @reference_name = options.reference_name
         @user_class = options.user_class&.underscore
-        @current_user = @reference_name.match(/current_/).present?
         if @reference_name.match(/current_/)
+          @reference_name_create_update = @reference_name
           @user_class = @reference_name.gsub(/current_/, '').underscore unless @user_class
         else
           @user_class = @reference_name.underscore unless @user_class
