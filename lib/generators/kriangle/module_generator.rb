@@ -81,7 +81,7 @@ module Kriangle
 
         args_for_c_m.each do |arg|
           if arg.include?(':') || !CONTROLLER_ACTIONS.include?(arg)
-            @model_attributes << Rails::Generators::GeneratedAttribute.new(*arg.split(':'))
+            @model_attributes << Attribute.new(*arg.split(':'))
           else
             @controller_actions << arg
             @controller_actions << 'create' if arg == 'new'
@@ -132,7 +132,7 @@ module Kriangle
         create_template 'controllers.rb', "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true unless skip_controller
         create_template 'defaults.rb', "app/controllers/api/#{@wrapper.underscore}/defaults.rb", skip_if_exist: true
 
-        inject_into_file 'app/controllers/api/base.rb', "\n\t\t\tmount Api::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
+        inject_into_file 'app/controllers/api/base.rb', "\n\t\tmount Api::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
 
         if initial_setup
           inject_into_file 'config/routes.rb', "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger
@@ -143,7 +143,7 @@ module Kriangle
       desc 'Generates model with the given NAME.'
       def create_model_file
         # create module model & migration
-        create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
+        create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.select{ |a| a.required == 'true' }.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
         inject_into_file "app/models/#{@user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{@user_class.humanize} < ApplicationRecord.*/ unless skip_model
         create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb" if !skip_migration && custom_orm == 'ActiveRecord'
 

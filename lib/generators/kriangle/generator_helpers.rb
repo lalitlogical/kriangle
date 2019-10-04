@@ -6,6 +6,8 @@ module Kriangle
     module GeneratorHelpers
       attr_accessor :options, :attributes
 
+      Attribute = Struct.new(:name, :type, :required, :search_by)
+
       @@column_types = {
         'references': 'Integer',
         'text': 'String',
@@ -54,6 +56,10 @@ module Kriangle
 
       def get_attribute_name(name, attribute_type)
         attribute_type == 'references' ? "#{name}_id" : name
+      end
+
+      def require_or_optional attribute
+        attribute.required == 'true' ? 'requires' : 'optional'
       end
 
       def get_attribute_type(attribute_type)

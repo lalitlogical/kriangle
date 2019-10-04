@@ -84,7 +84,7 @@ module Api
             requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
             <%- end -%>
             <%- for attribute in model_attributes -%>
-            requires :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
+            <%= require_or_optional(attribute) %> :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
             <%- end -%>
             <%- unless skip_tips -%>
             # requires :title, type: String, desc: "Title of the <%= singular_name %>"

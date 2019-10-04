@@ -23,7 +23,8 @@ class <%= class_name %> < ApplicationRecord
   <%- for parent_model in @options[:references] -%>
   belongs_to :<%= parent_model %>
   <%- end -%>
-
+  <%- if @options[:attributes].size != 0 -%>
   # validation's on columns
   validates :<%= @options[:attributes].join(', :') %>, presence: true
+  <%- end -%>
 end
