@@ -12,10 +12,10 @@ module Api
         before do
           authenticate!
         end
-
         <%- end -%>
         <%- if resources -%>
           <%- if controller_actions.include?('index') -%>
+
         <%= description_method_name %> "Return all <%= plural_name %>"
         <%- unless skip_pagination -%>
         <%- if !reference || (reference && has_many) || @reference_id_param -%>

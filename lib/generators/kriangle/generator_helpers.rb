@@ -58,7 +58,7 @@ module Kriangle
         attribute_type == 'references' ? "#{name}_id" : name
       end
 
-      def require_or_optional attribute
+      def require_or_optional(attribute)
         attribute.required == 'true' ? 'requires' : 'optional'
       end
 

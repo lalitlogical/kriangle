@@ -55,9 +55,9 @@ module Kriangle
         @user_class = options.user_class&.underscore
         if @reference_name.match(/current_/)
           @reference_name_create_update = @reference_name
-          @user_class = @reference_name.gsub(/current_/, '').underscore unless @user_class
+          @user_class ||= @reference_name.gsub(/current_/, '').underscore
         else
-          @user_class = @reference_name.underscore unless @user_class
+          @user_class ||= @reference_name.underscore
           @reference_id_param = get_attribute_name(@reference_name.underscore, 'references')
           @reference_name_create_update = "#{@reference_name}.find(params[:#{singular_name}][:#{reference_id_param}])"
           @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
@@ -143,7 +143,7 @@ module Kriangle
       desc 'Generates model with the given NAME.'
       def create_model_file
         # create module model & migration
-        create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.select{ |a| a.required == 'true' }.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
+        create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.select { |a| a.required == 'true' }.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
         inject_into_file "app/models/#{@user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{@user_class.humanize} < ApplicationRecord.*/ unless skip_model
         create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb" if !skip_migration && custom_orm == 'ActiveRecord'
 
