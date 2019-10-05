@@ -17,13 +17,21 @@ module Api
           <%- if controller_actions.include?('index') -%>
 
         <%= description_method_name %> "Return all <%= plural_name %>"
-        <%- unless skip_pagination -%>
+        <%- if !skip_pagination || search_by -%>
         <%- if !reference || (reference && has_many) || @reference_id_param -%>
         params do
+          <%- if search_by -%>
+          optional :q, type: Hash do
+            optional :m, type: String, desc: 'Matching case', default: 'or', values: ['or', 'and'], allow_blank: false
+            <%- for attribute in model_attributes.select { |ma| ma.search_by.present? } -%>
+            optional :<%= attribute.name %><%= attribute.search_by %>, type: <%= get_attribute_type(attribute.type) %>, desc: "Search by <%= attribute.name.capitalize %>", allow_blank: false
+            <%- end -%>
+          end
+          <%- end -%>
           <%- if @reference_id_param -%>
           requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
           <%- end -%>
-          <%- if !reference || (reference && has_many) -%>
+          <%- if !skip_pagination && (!reference || (reference && has_many)) -%>
           optional :page, type: Integer, desc: "Page number", default: 0
           optional :per_page, type: Integer, desc: "Per Page", default: 15
           <%- end -%>
@@ -33,23 +41,30 @@ module Api
         get "", root: :<%= plural_name %> do
           <%- if reference -%>
             <%- if has_many -%>
-              <%- if skip_pagination -%>
-          results = <%= reference_name %>.<%= plural_name %>
+              <%- if search_by -%>
+          @q = <%= reference_name %>.<%= plural_name %>.ransack(params[:q])
+          results = @q.result(distinct: true)
               <%- else -%>
-          results = paginate <%= reference_name %>.<%= plural_name %>
+          results = <%= reference_name %>.<%= plural_name %>
               <%- end -%>
-          render_objects(results)
             <%- else -%>
           <%= singular_name %> = <%= reference_name %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
           render_object(<%= singular_name %>)
             <%- end -%>
           <%- else -%>
-          <%- if skip_pagination -%>
+            <%- if search_by -%>
+          @q = <%= class_name %>.ransack(params[:q])
+          results = @q.result(distinct: true)
+            <%- else -%>
           results = <%= class_name %>.all
-          <%- else -%>
-          results = paginate <%= class_name %>.all
+            <%- end -%>
           <%- end -%>
+          <%- if !reference || has_many -%>
+            <%- if skip_pagination -%>
           render_objects(results)
+            <%- else -%>
+          render_objects(paginate results)
+            <%- end -%>
           <%- end -%>
         end
           <%- end -%>
