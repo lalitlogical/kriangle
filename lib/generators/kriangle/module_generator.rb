@@ -19,7 +19,6 @@ module Kriangle
         attr_accessor :scaffold_name,
                       :wrapper,
                       :user_class,
-                      :has_many,
                       :column_types,
                       :model_attributes,
                       :controller_actions,
@@ -36,25 +35,32 @@ module Kriangle
                       :skip_swagger,
                       :reference,
                       :reference_name,
+                      :has_many,
+                      :counter_cache,
+                      :self_reference,
                       :reference_name_create_update,
                       :reference_id_param,
                       :resources,
                       :description_method_name,
                       :search_by,
-                      :force,
-                      :counter_cache
+                      :force
       end
 
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
 
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
       class_option :user_class, type: :string, desc: "User's model name"
+
       class_option :reference, desc: 'Reference to user', type: :boolean
       class_option :reference_name, type: :string, default: 'current_user', desc: 'Reference Name'
       class_option :has_many, desc: 'Association with user', type: :boolean
+      class_option :counter_cache, desc: 'Counter cache support', type: :boolean, default: false
+      class_option :self_reference, desc: 'Counter cache support', type: :boolean, default: false
+
       class_option :resources, desc: 'Resources routes', type: :boolean, default: true
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: 'ORM i.e. ActiveRecord, mongoid'
       class_option :initial_setup, type: :boolean, default: false, desc: 'Skip "Initial Setup i.e. Routes, Base models, etc."'
+
       class_option :skip_swagger, type: :boolean, default: false, desc: 'Skip "Swagger UI"'
       class_option :skip_tips, type: :boolean, default: false, desc: 'Skip "Tips from different files i.e. model, serializer, etc."'
       class_option :skip_model, desc: 'Don\'t generate a model or migration file.', type: :boolean
@@ -66,7 +72,6 @@ module Kriangle
       class_option :skip_authentication, desc: 'Don\'t require authentication for this controller.', type: :boolean
       class_option :description_method_name, type: :string, default: 'desc', desc: 'desc or description'
       class_option :force, desc: 'Force', type: :boolean, default: false
-      class_option :counter_cache, desc: 'Counter cache support', type: :boolean, default: false
 
       source_root File.expand_path('templates', __dir__)
 
@@ -76,15 +81,15 @@ module Kriangle
         @model_attributes = []
 
         @wrapper = options.wrapper
+        @user_class = options.user_class&.underscore
         @force = options.force
-        @counter_cache = options.counter_cache
-
-        @reference = options.reference?
         @resources = options.resources?
 
+        @reference = options.reference?
         @has_many = options.has_many?
         @reference_name = options.reference_name
-        @user_class = options.user_class&.underscore
+        @counter_cache = options.counter_cache?
+        @self_reference = options.self_reference?
         if @reference_name.match(/current_/)
           @reference_name_create_update = @reference_name
           @user_class ||= @reference_name.gsub(/current_/, '').underscore
@@ -177,7 +182,7 @@ module Kriangle
       def create_model_file
         # create module model & migration
         create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.select { |a| a.required == 'true' }.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
-        inject_into_file "app/models/#{@user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{@user_class.humanize} < ApplicationRecord.*/ unless skip_model
+        inject_into_file "app/models/#{@user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{@user_class.humanize} < ApplicationRecord.*/ if user_class && !skip_model
         create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb", force: force if !skip_migration && custom_orm == 'ActiveRecord'
         create_migration_file 'counter_cache_migration.rb', "db/migrate/add_#{controller_class_name.downcase}_count_to_#{user_class.pluralize}.rb", force: force if counter_cache && custom_orm == 'ActiveRecord'
 

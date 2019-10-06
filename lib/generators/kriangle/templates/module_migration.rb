@@ -4,6 +4,9 @@ class Create<%= controller_class_name %> < ActiveRecord::Migration[5.2]
       <%- if reference -%>
       t.references :<%= user_class %>, foreign_key: true
       <%- end -%>
+      <%- if self_reference -%>
+      t.references :parent, index: true
+      <%- end -%>
       <%- for attribute in @polymorphics -%>
       t.references :<%= attribute.name %>, polymorphic: true
       <%- end -%>
