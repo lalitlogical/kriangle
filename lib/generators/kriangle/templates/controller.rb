@@ -162,7 +162,7 @@ module Api
         <%- end -%>
         <%- if controller_actions.include?('destroy') -%>
 
-        <%= description_method_name %> "Destoy a <%= singular_name %>"
+        <%= description_method_name %> "Destroy a <%= singular_name %>"
         <%- if @reference_id_param -%>
         params do
           requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
