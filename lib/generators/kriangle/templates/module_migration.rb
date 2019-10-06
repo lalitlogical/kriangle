@@ -7,14 +7,14 @@ class Create<%= controller_class_name %> < ActiveRecord::Migration[5.1]
       <%- for attribute in @polymorphics -%>
       t.references :<%= attribute.name %>, polymorphic: true
       <%- end -%>
-      <%- for attribute in @references -%>
+      <%- for attribute in @references.reject { |a| reference && a.name == user_class } -%>
       t.references :<%= attribute.name %>, foreign_key: true
       <%- end -%>
 
       <%- for attribute in @attributes -%>
       t.<%= attribute.type || 'string'  %> :<%= attribute.name %>
       <%- end -%>
-      
+
       <%- unless skip_timestamps -%>
       t.timestamps
       <%- end -%>

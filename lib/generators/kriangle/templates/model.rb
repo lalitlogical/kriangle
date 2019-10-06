@@ -21,7 +21,9 @@ class <%= class_name %> < ApplicationRecord
   belongs_to :<%= user_class %>
   <%- end -%>
   <%- for parent_model in @options[:references] -%>
+    <%- if !reference || parent_model != user_class -%>
   belongs_to :<%= parent_model %>
+    <%- end -%>
   <%- end -%>
   <%- if @options[:attributes].size != 0 -%>
   # validation's on columns

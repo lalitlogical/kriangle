@@ -15,7 +15,7 @@ module Kriangle
 
       CONTROLLER_ACTIONS = %w[index show new create edit update destroy].freeze
 
-      no_tasks { attr_accessor :scaffold_name, :wrapper, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :initial_setup, :skip_tips, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :skip_swagger, :reference, :reference_name, :reference_name_create_update, :reference_id_param, :resources, :description_method_name, :search_by }
+      no_tasks { attr_accessor :scaffold_name, :wrapper, :user_class, :has_many, :column_types, :model_attributes, :controller_actions, :custom_orm, :initial_setup, :skip_tips, :skip_authentication, :skip_model, :skip_migration, :skip_serializer, :skip_timestamps, :skip_controller, :skip_pagination, :skip_swagger, :reference, :reference_name, :reference_name_create_update, :reference_id_param, :resources, :description_method_name, :search_by, :force }
 
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
 
@@ -37,6 +37,7 @@ module Kriangle
       class_option :skip_pagination, desc: 'Don\'t add pagination to index method.', type: :boolean
       class_option :skip_authentication, desc: 'Don\'t require authentication for this controller.', type: :boolean
       class_option :description_method_name, type: :string, default: 'desc', desc: 'desc or description'
+      class_option :force, desc: 'Force', type: :boolean, default: false
 
       source_root File.expand_path('templates', __dir__)
 
@@ -46,6 +47,7 @@ module Kriangle
         @model_attributes = []
 
         @wrapper = options.wrapper
+        @force = options.force
 
         @reference = options.reference?
         @resources = options.resources?
@@ -103,9 +105,9 @@ module Kriangle
 
         # get different types of attributes
         @model_attributes.each do |attribute|
-          if attribute.type.to_s.match('polymorphic').present?
+          if attribute.type.match('polymorphic').present?
             @polymorphics << attribute
-          elsif attribute.type.to_s.match('references').present?
+          elsif attribute.type.match('references').present?
             @references << attribute
           else
             @attributes << attribute
@@ -146,7 +148,7 @@ module Kriangle
         # create module model & migration
         create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.select { |a| a.required == 'true' }.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
         inject_into_file "app/models/#{@user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{@user_class.humanize} < ApplicationRecord.*/ unless skip_model
-        create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb" if !skip_migration && custom_orm == 'ActiveRecord'
+        create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb", force: force if !skip_migration && custom_orm == 'ActiveRecord'
 
         # create active serializer & module serializer
         unless skip_serializer

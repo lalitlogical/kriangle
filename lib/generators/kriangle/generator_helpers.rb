@@ -42,7 +42,7 @@ module Kriangle
         if @options[:skip_if_exist] && self.class.migration_exists?('db/migrate', fname.split('/').last.gsub('.rb', ''))
           say_status('skipped', "Migration '#{fname}' already exists")
         else
-          migration_template migration_fname, fname
+          migration_template migration_fname, fname, options
         end
       end
 
