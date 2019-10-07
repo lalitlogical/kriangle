@@ -99,7 +99,7 @@ module Api
             requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class.classify %>'s id"
             <%- end -%>
             <%- if self_reference -%>
-            optional :parent_id, type: Integer, desc: "<%= class_name.classify %>'s id as parent"
+            optional :<%= parent_association_name %>_id, type: Integer, desc: "<%= class_name.classify %>'s id as parent"
             <%- end -%>
             <%- for attribute in model_attributes -%>
             <%= require_or_optional(attribute) %> :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
