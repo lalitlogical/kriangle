@@ -40,18 +40,18 @@ module Kriangle
         @skip_authentication = false
 
         args_for_c_m.each do |arg|
-          if arg.include?(':')
-            @model_attributes << Rails::Generators::GeneratedAttribute.new(*arg.split(':'))
-          end
+          @model_attributes << Attribute.new(*arg.split(':')) if arg.include?(':')
         end
 
         if @model_attributes.blank?
           default_attributes = ['first_name:string', 'last_name:string', 'about:text', 'age:integer', 'dob:datetime', 'gender:string']
-          @model_attributes = default_attributes.map { |a| Rails::Generators::GeneratedAttribute.new(*a.split(':')) }
+          @model_attributes = default_attributes.map { |arg| Attribute.new(*arg.split(':')) }
         end
+        @model_attributes.uniq! { |a| a.name }
 
         @attributes = %i[id email]
         @attributes += @model_attributes.map { |a| a.name.to_sym }
+        @attributes.uniq!
       end
 
       def self.next_migration_number(_path)

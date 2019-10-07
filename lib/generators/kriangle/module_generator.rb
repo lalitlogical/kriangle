@@ -147,6 +147,7 @@ module Kriangle
         @search_by = model_attributes.any? { |ma| ma.search_by.present? }
 
         # get different types of attributes
+        @model_attributes.uniq! { |a| a.name }
         @model_attributes.each do |attribute|
           if attribute.type.match('polymorphic').present?
             @polymorphics << attribute
