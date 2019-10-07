@@ -35,10 +35,12 @@ module Kriangle
                       :skip_swagger,
                       :reference,
                       :reference_name,
+                      :reference_name_create_update,
                       :has_many,
                       :counter_cache,
                       :self_reference,
-                      :reference_name_create_update,
+                      :parent_association_name,
+                      :child_association_name,
                       :reference_id_param,
                       :resources,
                       :description_method_name,
@@ -55,7 +57,10 @@ module Kriangle
       class_option :reference_name, type: :string, default: 'current_user', desc: 'Reference Name'
       class_option :has_many, desc: 'Association with user', type: :boolean
       class_option :counter_cache, desc: 'Counter cache support', type: :boolean, default: false
+
       class_option :self_reference, desc: 'Counter cache support', type: :boolean, default: false
+      class_option :parent_association_name, type: :string, default: 'parent', desc: 'Parent Association Name'
+      class_option :child_association_name, type: :string, default: 'children', desc: 'Child Association Name'
 
       class_option :resources, desc: 'Resources routes', type: :boolean, default: true
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: 'ORM i.e. ActiveRecord, mongoid'
@@ -89,7 +94,6 @@ module Kriangle
         @has_many = options.has_many?
         @reference_name = options.reference_name
         @counter_cache = options.counter_cache?
-        @self_reference = options.self_reference?
         if @reference_name.match(/current_/)
           @reference_name_create_update = @reference_name
           @user_class ||= @reference_name.gsub(/current_/, '').underscore
@@ -99,6 +103,10 @@ module Kriangle
           @reference_name_create_update = "#{@reference_name}.find(params[:#{singular_name}][:#{reference_id_param}])"
           @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
         end
+
+        @self_reference = options.self_reference?
+        @parent_association_name = options.parent_association_name
+        @child_association_name = options.child_association_name
 
         @custom_orm = options.custom_orm
         @initial_setup = options.initial_setup?
