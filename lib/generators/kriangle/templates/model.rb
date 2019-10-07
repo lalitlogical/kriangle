@@ -6,7 +6,7 @@ class <%= class_name %> < ApplicationRecord
   <%- end -%>
   <%- if self_reference -%>
   belongs_to :<%= parent_association_name %>, :class_name => '<%= class_name %>', optional: true
-  has_many :<%= child_association_name %>, :class_name => '<%= class_name %>', :foreign_key => 'parent_id'
+  has_many :<%= child_association_name %>, :class_name => '<%= class_name %>', :foreign_key => '<%= parent_association_name %>_id'
   <%- end -%>
   <%- for polymorphic in @options[:polymorphics] -%>
   belongs_to :<%= polymorphic %>, polymorphic: true
