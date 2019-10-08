@@ -1,5 +1,5 @@
-class Add<%= controller_class_name %>CountTo<%= user_class.classify.pluralize %> < ActiveRecord::Migration[5.2]
+class Add<%= class_name.pluralize %>CountTo<%= user_class.classify.pluralize %> < ActiveRecord::Migration[5.2]
   def change
-    add_column :<%= user_class.pluralize %>, :<%= controller_class_name.downcase %>_count, :integer
+    add_column :<%= user_class.pluralize %>, :<%= class_name.pluralize.underscore %>_count, :integer
   end
 end

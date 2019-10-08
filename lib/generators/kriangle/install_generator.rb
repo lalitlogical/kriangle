@@ -12,7 +12,7 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :wrapper, :custom_orm, :skip_tips, :skip_swagger, :skip_avatar, :skip_migration, :skip_authentication }
+      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :wrapper, :custom_orm, :self_reference, :skip_tips, :skip_swagger, :skip_avatar, :skip_migration, :skip_authentication }
 
       # arguments
       argument :user_class, type: :string, default: 'User'

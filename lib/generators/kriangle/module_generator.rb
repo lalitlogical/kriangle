@@ -198,7 +198,7 @@ module Kriangle
         create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.select { |a| a.required == 'true' }.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
         inject_into_file "app/models/#{@user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{@user_class.humanize} < ApplicationRecord.*/ if user_class && !skip_model
         create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb", force: force if !skip_migration && custom_orm == 'ActiveRecord'
-        create_migration_file 'counter_cache_migration.rb', "db/migrate/add_#{controller_class_name.downcase}_count_to_#{user_class.pluralize}.rb", force: force if counter_cache && custom_orm == 'ActiveRecord'
+        create_migration_file 'counter_cache_migration.rb', "db/migrate/add_#{class_name.pluralize.underscore}_count_to_#{user_class.pluralize}.rb", force: force if counter_cache && custom_orm == 'ActiveRecord'
 
         # create active serializer & module serializer
         unless skip_serializer
@@ -209,7 +209,7 @@ module Kriangle
 
       desc 'Generates controller with the given NAME.'
       def copy_controller_and_spec_files
-        template 'controller.rb', "app/controllers/api/#{@wrapper.underscore}/#{controller_path.underscore.downcase}.rb" unless skip_controller
+        template 'controller.rb', "app/controllers/api/#{@wrapper.underscore}/#{controller_path.underscore}.rb" unless skip_controller
 
         inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount Api::#{@wrapper.capitalize}::#{controller_path}", after: /Grape::API.*/
       end
