@@ -17,8 +17,9 @@ module Kriangle
 
       no_tasks do
         attr_accessor :scaffold_name,
-                      :wrapper,
                       :user_class,
+                      :wrapper,
+                      :controller_path,
                       :column_types,
                       :model_attributes,
                       :controller_actions,
@@ -51,8 +52,9 @@ module Kriangle
 
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
 
-      class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
       class_option :user_class, type: :string, desc: "User's model name"
+      class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
+      class_option :controller_path, type: :string, desc: "controller's path"
 
       class_option :reference, desc: 'Reference to user', type: :boolean
       class_option :reference_name, type: :string, default: 'current_user', desc: 'Reference Name'
@@ -86,8 +88,9 @@ module Kriangle
         @controller_actions = []
         @model_attributes = []
 
-        @wrapper = options.wrapper
         @user_class = options.user_class&.underscore
+        @wrapper = options.wrapper
+        @controller_path = options.controller_path&.classify&.pluralize || controller_class_name
         @force = options.force
         @resources = options.resources?
 
@@ -206,9 +209,9 @@ module Kriangle
 
       desc 'Generates controller with the given NAME.'
       def copy_controller_and_spec_files
-        template 'controller.rb', "app/controllers/api/#{@wrapper.underscore}/#{controller_file_name}.rb" unless skip_controller
+        template 'controller.rb', "app/controllers/api/#{@wrapper.underscore}/#{controller_path.underscore.downcase}.rb" unless skip_controller
 
-        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount Api::#{@wrapper.capitalize}::#{controller_class_name}", after: /Grape::API.*/
+        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount Api::#{@wrapper.capitalize}::#{controller_path}", after: /Grape::API.*/
       end
     end
   end

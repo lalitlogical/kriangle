@@ -2,10 +2,10 @@
 
 module Api
   module <%= wrapper.capitalize %>
-    class <%= controller_class_name %> < Grape::API
+    class <%= controller_path %> < Grape::API
       include Api::<%= wrapper.capitalize %>::Defaults
 
-      resource :<%= plural_name %> do
+      resource :<%= controller_path.underscore.downcase %> do
         <%- unless skip_authentication -%>
         include Api::CustomDescription
 
