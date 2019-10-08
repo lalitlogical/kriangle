@@ -41,6 +41,7 @@ module Kriangle
                       :self_reference,
                       :parent_association_name,
                       :child_association_name,
+                      :additional_where_clause,
                       :reference_id_param,
                       :resources,
                       :description_method_name,
@@ -107,6 +108,7 @@ module Kriangle
         @self_reference = options.self_reference?
         @parent_association_name = options.parent_association_name
         @child_association_name = options.child_association_name
+        @additional_where_clause = @self_reference ? '.only_parent' : ''
 
         @custom_orm = options.custom_orm
         @initial_setup = options.initial_setup?

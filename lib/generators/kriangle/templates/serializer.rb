@@ -9,6 +9,9 @@ class <%= @options[:class_name] || class_name %>Serializer < ActiveSerializer
   <%- @options[:references].try(:each) do |parent_model| -%>
   belongs_to :<%= parent_model %>
   <%- end -%>
+  <%- if self_reference -%>
+  has_many :<%= child_association_name %>, serializer: <%= @options[:class_name] || class_name %>Serializer
+  <%- end -%>
   <%- unless skip_tips -%>
   # association's example
   # belongs_to :user

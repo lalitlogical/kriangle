@@ -42,10 +42,10 @@ module Api
           <%- if reference -%>
             <%- if has_many -%>
               <%- if search_by -%>
-          @q = <%= reference_name %>.<%= plural_name %>.ransack(params[:q])
+          @q = <%= reference_name %>.<%= plural_name %><%= additional_where_clause %>.ransack(params[:q])
           results = @q.result(distinct: true)
               <%- else -%>
-          results = <%= reference_name %>.<%= plural_name %>
+          results = <%= reference_name %>.<%= plural_name %><%= additional_where_clause %>
               <%- end -%>
             <%- else -%>
           <%= singular_name %> = <%= reference_name %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
@@ -53,10 +53,10 @@ module Api
             <%- end -%>
           <%- else -%>
             <%- if search_by -%>
-          @q = <%= class_name %>.ransack(params[:q])
+          @q = <%= class_name %><%= additional_where_clause %>.ransack(params[:q])
           results = @q.result(distinct: true)
             <%- else -%>
-          results = <%= class_name %>.all
+          results = <%= class_name %><%= additional_where_clause %>.all
             <%- end -%>
           <%- end -%>
           <%- if !reference || has_many -%>
