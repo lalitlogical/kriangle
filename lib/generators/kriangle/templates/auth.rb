@@ -2,24 +2,24 @@
 
 module Api
   module <%= wrapper.capitalize %>
-    class <%= mount_path.pluralize %> < Grape::API
+    class <%= controller_path %> < Grape::API
       include Api::<%= wrapper.capitalize %>::Defaults
 
-      resource :<%= @underscored_mount_path.pluralize %> do
+      resource :<%= controller_path.underscore %> do
         include Api::CustomDescription
 
         desc "Register new <%= @underscored_name %>"
         params do
           requires :<%= @underscored_name %>, type: Hash do
-            requires :email, type: String, desc: "Email address", allow_blank: false
-            requires :password, type: String, desc: "Password", allow_blank: false
-            requires :password_confirmation, type: String, desc: "Password Confirmation", allow_blank: false
+            requires :email, type: String, desc: "Email address"
+            requires :password, type: String, desc: "Password"
+            requires :password_confirmation, type: String, desc: "Password Confirmation"
             # Additional(optional) parameters
             <%- for attribute in model_attributes -%>
               <%- if attribute.name == 'gender' -%>
-            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
+            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", default: 'Male', values: ['Male', 'Female', 'Other']
               <%- else -%>
-            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
+            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
               <%- end -%>
             <%- end -%>
           end
@@ -37,8 +37,8 @@ module Api
         desc "Creates and returns <%= @underscored_name %> with access token if valid login"
         params do
           requires :<%= @underscored_name %>, type: Hash do
-            requires :email, type: String, desc: "Email address", allow_blank: false
-            requires :password, type: String, desc: "Password", allow_blank: false
+            requires :email, type: String, desc: "Email address"
+            requires :password, type: String, desc: "Password"
           end
         end
         post :login do
@@ -66,7 +66,7 @@ module Api
         desc "Forgot Password"
         params do
           requires :<%= @underscored_name %>, type: Hash do
-            requires :email, type: String, desc: "Email address", allow_blank: false
+            requires :email, type: String, desc: "Email address"
           end
         end
         post :forgot_password do
@@ -82,10 +82,10 @@ module Api
 
         desc "Reset Password"
         params do
-          requires :reset_token, type: String, desc: "Reset Password", allow_blank: false
+          requires :reset_token, type: String, desc: "Reset Password"
           requires :<%= @underscored_name %>, type: Hash do
-            requires :password, type: String, desc: "Password", allow_blank: false
-            requires :password_confirmation, type: String, desc: "Password Confirmation", allow_blank: false
+            requires :password, type: String, desc: "Password"
+            requires :password_confirmation, type: String, desc: "Password Confirmation"
           end
         end
         post :reset_password do
@@ -110,9 +110,9 @@ module Api
             # Additional(optional) parameters
             <%- for attribute in model_attributes -%>
               <%- if attribute.name == 'gender' -%>
-            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false, default: 'Male', values: ['Male', 'Female', 'Other']
+            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", default: 'Male', values: ['Male', 'Female', 'Other']
               <%- else -%>
-            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", allow_blank: false
+            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
               <%- end -%>
             <%- end -%>
             # group :avatars_attributes, type: Hash, desc: "An array of avatars" do

@@ -12,14 +12,28 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      no_tasks { attr_accessor :scaffold_name, :column_types, :model_attributes, :controller_actions, :wrapper, :custom_orm, :self_reference, :skip_tips, :skip_swagger, :skip_avatar, :skip_migration, :skip_authentication }
+      no_tasks do
+        attr_accessor :column_types,
+                      :model_attributes,
+                      :controller_actions,
+                      :wrapper,
+                      :controller_path,
+                      :custom_orm,
+                      :self_reference,
+                      :skip_tips,
+                      :skip_swagger,
+                      :skip_avatar,
+                      :skip_migration,
+                      :skip_authentication
+      end
 
       # arguments
       argument :user_class, type: :string, default: 'User'
-      argument :mount_path, type: :string, default: 'Auth'
+      # argument :mount_path, type: :string, default: 'User'
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
 
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
+      class_option :controller_path, type: :string, desc: "controller's path"
       class_option :skip_tips, type: :boolean, default: false, desc: 'Skip "Tips from different files i.e. model, serializer, etc."'
       class_option :skip_swagger, type: :boolean, default: false, desc: 'Skip "Swagger UI"'
       class_option :skip_avatar, type: :boolean, default: true, desc: 'Skip "Avatar Feature"'
@@ -38,6 +52,7 @@ module Kriangle
         @skip_avatar = options.skip_avatar?
         @skip_migration = options.skip_migration?
         @skip_authentication = false
+        @controller_path = options.controller_path&.classify&.pluralize || user_class.classify&.pluralize
 
         args_for_c_m.each do |arg|
           @model_attributes << Attribute.new(*arg.split(':')) if arg.include?(':')
@@ -47,7 +62,7 @@ module Kriangle
           default_attributes = ['first_name:string', 'last_name:string', 'about:text', 'age:integer', 'dob:datetime', 'gender:string']
           @model_attributes = default_attributes.map { |arg| Attribute.new(*arg.split(':')) }
         end
-        @model_attributes.uniq! { |a| a.name }
+        @model_attributes.uniq!(&:name)
 
         @attributes = %i[id email]
         @attributes += @model_attributes.map { |a| a.name.to_sym }
@@ -95,7 +110,6 @@ module Kriangle
       desc 'Generates required files.'
       def copy_controller_and_spec_files
         @underscored_name = user_class.underscore
-        @underscored_mount_path = mount_path.underscore
 
         # Main base files
         create_template 'base.rb', 'app/controllers/api/base.rb', skip_if_exist: true
@@ -103,7 +117,7 @@ module Kriangle
 
         # All new controllers will go here
         create_template 'controllers.rb', "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true
-        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount Api::#{@wrapper.capitalize}::#{mount_path.pluralize}", after: /Grape::API.*/
+        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount Api::#{@wrapper.capitalize}::#{controller_path}", after: /Grape::API.*/
 
         # Authentications related things will go there
         create_template 'defaults.rb', "app/controllers/api/#{@wrapper.underscore}/defaults.rb", skip_if_exist: true
@@ -112,7 +126,7 @@ module Kriangle
         create_template 'responder.rb', 'app/controllers/api/responder.rb'
 
         # Authentication i.e. login, register, logout
-        template 'auth.rb', "app/controllers/api/#{@wrapper.underscore}/#{@underscored_mount_path.pluralize}.rb"
+        template 'auth.rb', "app/controllers/api/#{@wrapper.underscore}/#{controller_path.underscore}.rb"
 
         # setup routes
         inject_into_file 'config/routes.rb', "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger

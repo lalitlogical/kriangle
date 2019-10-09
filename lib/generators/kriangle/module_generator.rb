@@ -16,8 +16,7 @@ module Kriangle
       CONTROLLER_ACTIONS = %w[index show new create edit update destroy].freeze
 
       no_tasks do
-        attr_accessor :scaffold_name,
-                      :user_class,
+        attr_accessor :user_class,
                       :wrapper,
                       :controller_path,
                       :column_types,
@@ -152,7 +151,7 @@ module Kriangle
         @search_by = model_attributes.any? { |ma| ma.search_by.present? }
 
         # get different types of attributes
-        @model_attributes.uniq! { |a| a.name }
+        @model_attributes.uniq!(&:name)
         @model_attributes.each do |attribute|
           if attribute.type.match('polymorphic').present?
             @polymorphics << attribute
