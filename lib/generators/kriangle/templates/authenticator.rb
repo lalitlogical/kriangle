@@ -12,17 +12,17 @@ module Api
           "#{SecureRandom.urlsafe_base64}#{DateTime.now.to_i}#{SecureRandom.urlsafe_base64}"
         end
 
-        def create_authentication(<%= @underscored_name %>, client_id = ENV['CLIENT_ID'])
+        def create_authentication(<%= underscored_user_class %>, client_id = ENV['CLIENT_ID'])
           # delete all old tokens if any present
-          <%= @underscored_name %>.authentications.delete_all
+          <%= underscored_user_class %>.authentications.delete_all
 
           # create new auth token
           client_id ||= SecureRandom.urlsafe_base64(nil, false)
           token = generate_random_string
-          authentication = <%= @underscored_name %>.authentications.create(client_id: client_id, token: BCrypt::Password.create(token))
+          authentication = <%= underscored_user_class %>.authentications.create(client_id: client_id, token: BCrypt::Password.create(token))
 
           # build auth header
-          header 'X-Uid', authentication.<%= @underscored_name %>_id
+          header 'X-Uid', authentication.<%= underscored_user_class %>_id
           header 'X-Client-Id', authentication.client_id
           header 'X-Authentication-Token', token
         end
@@ -47,7 +47,7 @@ module Api
 
           return unless @token
 
-          auth = Authentication.where(<%= @underscored_name %>_id: uid, client_id: @client_id).last || return
+          auth = Authentication.where(<%= underscored_user_class %>_id: uid, client_id: @client_id).last || return
           return @authentication = auth if ::BCrypt::Password.new(auth.token) == @token
 
           @authentication = nil
@@ -57,12 +57,12 @@ module Api
           authentication&.destroy
         end
 
-        def current_<%= @underscored_name %>
-          @current_<%= @underscored_name %> ||= authentication&.<%= @underscored_name %>
+        def current_<%= underscored_user_class %>
+          @current_<%= underscored_user_class %> ||= authentication&.<%= underscored_user_class %>
         end
 
         def authenticate!
-          render_unauthorized_access && return unless current_<%= @underscored_name %>
+          render_unauthorized_access && return unless current_<%= underscored_user_class %>
         end
       end
     end

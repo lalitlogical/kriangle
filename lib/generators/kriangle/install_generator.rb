@@ -13,7 +13,8 @@ module Kriangle
       include Kriangle::Generators::GeneratorHelpers
 
       no_tasks do
-        attr_accessor :column_types,
+        attr_accessor :underscored_user_class,
+                      :column_types,
                       :model_attributes,
                       :controller_actions,
                       :wrapper,
@@ -45,6 +46,7 @@ module Kriangle
       def initialize(*args, &block)
         super
         @model_attributes = []
+        @underscored_user_class = user_class.underscore
         @wrapper = options.wrapper
         @custom_orm = options.custom_orm
         @skip_tips = options.skip_tips?
@@ -85,7 +87,6 @@ module Kriangle
 
       def copy_migrations
         if custom_orm == 'ActiveRecord' && !skip_migration
-          @underscored_name = user_class.underscore
           create_migration_file 'create_users.rb.erb', "db/migrate/create_#{user_class.pluralize.underscore}.rb"
           create_migration_file 'create_authentications.rb', 'db/migrate/create_authentications.rb'
           create_migration_file 'create_avatars.rb', 'db/migrate/create_avatars.rb' unless skip_avatar
@@ -93,14 +94,12 @@ module Kriangle
       end
 
       def create_model_file
-        @underscored_name = user_class.underscore
-
         create_template 'user.rb', "app/models/#{user_class.underscore}.rb"
         create_template 'authentication.rb', 'app/models/authentication.rb'
         create_template 'avatar.rb', 'app/models/avatar.rb' unless skip_avatar
 
         create_template 'active_serializer.rb', 'app/serializers/active_serializer.rb', skip_if_exist: true
-        create_template 'serializer.rb', "app/serializers/#{@underscored_name}_serializer.rb", class_name: user_class, attributes: @attributes
+        create_template 'serializer.rb', "app/serializers/#{underscored_user_class}_serializer.rb", class_name: user_class, attributes: @attributes
         create_template 'serializer.rb', 'app/serializers/avatar_serializer.rb', class_name: 'Avatar', attributes: %i[id image_url] unless skip_avatar
 
         # Uploader File
@@ -109,8 +108,6 @@ module Kriangle
 
       desc 'Generates required files.'
       def copy_controller_and_spec_files
-        @underscored_name = user_class.underscore
-
         # Main base files
         create_template 'base.rb', 'app/controllers/api/base.rb', skip_if_exist: true
         inject_into_file 'app/controllers/api/base.rb', "\n\t\t\tmount Api::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/

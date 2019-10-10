@@ -8,9 +8,9 @@ module Api
       resource :<%= controller_path.underscore %> do
         include Api::CustomDescription
 
-        desc "Register new <%= @underscored_name %>"
+        desc "Register new <%= underscored_user_class %>"
         params do
-          requires :<%= @underscored_name %>, type: Hash do
+          requires :<%= underscored_user_class %>, type: Hash do
             requires :email, type: String, desc: "Email address"
             requires :password, type: String, desc: "Password"
             requires :password_confirmation, type: String, desc: "Password Confirmation"
@@ -25,33 +25,33 @@ module Api
           end
         end
         post :register do
-          <%= @underscored_name %> = <%= user_class %>.new(params[:<%= @underscored_name %>])
-          if <%= @underscored_name %>.save
-            create_authentication(<%= @underscored_name %>)
-            render_object(<%= @underscored_name %>, additional_response: { message: "You have registered successfully." })
+          <%= underscored_user_class %> = <%= user_class %>.new(params[:<%= underscored_user_class %>])
+          if <%= underscored_user_class %>.save
+            create_authentication(<%= underscored_user_class %>)
+            render_object(<%= underscored_user_class %>, additional_response: { message: "You have registered successfully." })
           else
-            json_error_response({ errors: <%= @underscored_name %>.errors.full_messages })
+            json_error_response({ errors: <%= underscored_user_class %>.errors.full_messages })
           end
         end
 
-        desc "Creates and returns <%= @underscored_name %> with access token if valid login"
+        desc "Creates and returns <%= underscored_user_class %> with access token if valid login"
         params do
-          requires :<%= @underscored_name %>, type: Hash do
+          requires :<%= underscored_user_class %>, type: Hash do
             requires :email, type: String, desc: "Email address"
             requires :password, type: String, desc: "Password"
           end
         end
         post :login do
-          <%= @underscored_name %> = <%= user_class %>.find_by(email: params[:<%= @underscored_name %>][:email].downcase)
-          if <%= @underscored_name %> && <%= @underscored_name %>.valid_password?(params[:<%= @underscored_name %>][:password])
-            create_authentication(<%= @underscored_name %>)
-            render_object(<%= @underscored_name %>, additional_response: { message: "You have successfully logged in." })
+          <%= underscored_user_class %> = <%= user_class %>.find_by(email: params[:<%= underscored_user_class %>][:email].downcase)
+          if <%= underscored_user_class %> && <%= underscored_user_class %>.valid_password?(params[:<%= underscored_user_class %>][:password])
+            create_authentication(<%= underscored_user_class %>)
+            render_object(<%= underscored_user_class %>, additional_response: { message: "You have successfully logged in." })
           else
             json_error_response({ errors: ['Invalid email or password.'] }, 401)
           end
         end
 
-        description "Logout <%= @underscored_name %>"
+        description "Logout <%= underscored_user_class %>"
         post :logout do
           destroy_authentication_token
           json_success_response(message: "You have successfully logout.")
@@ -65,14 +65,14 @@ module Api
 
         desc "Forgot Password"
         params do
-          requires :<%= @underscored_name %>, type: Hash do
+          requires :<%= underscored_user_class %>, type: Hash do
             requires :email, type: String, desc: "Email address"
           end
         end
         post :forgot_password do
-          <%= @underscored_name %> = <%= user_class %>.find_by(email: params[:<%= @underscored_name %>][:email].downcase)
-          if <%= @underscored_name %>.present?
-            <%= @underscored_name %>.update(reset_token: token)
+          <%= underscored_user_class %> = <%= user_class %>.find_by(email: params[:<%= underscored_user_class %>][:email].downcase)
+          if <%= underscored_user_class %>.present?
+            <%= underscored_user_class %>.update(reset_token: token)
             # send Forgot Password email
             json_success_response(message: "You will receive email with instructions to reset password shortly.")
           else
@@ -83,14 +83,14 @@ module Api
         desc "Reset Password"
         params do
           requires :reset_token, type: String, desc: "Reset Password"
-          requires :<%= @underscored_name %>, type: Hash do
+          requires :<%= underscored_user_class %>, type: Hash do
             requires :password, type: String, desc: "Password"
             requires :password_confirmation, type: String, desc: "Password Confirmation"
           end
         end
         post :reset_password do
-          <%= @underscored_name %> = <%= user_class %>.find_by(reset_token: params[:reset_token])
-          if <%= @underscored_name %>.update(params[:<%= @underscored_name %>])
+          <%= underscored_user_class %> = <%= user_class %>.find_by(reset_token: params[:reset_token])
+          if <%= underscored_user_class %>.update(params[:<%= underscored_user_class %>])
             # send Reset Password email
             json_success_response(message: "Your password have successfully changed.")
           else
@@ -98,15 +98,15 @@ module Api
           end
         end
 
-        description "Return <%= @underscored_name %>"
+        description "Return <%= underscored_user_class %>"
         get '' do
           authenticate!
-          render_object(current_<%= @underscored_name %>)
+          render_object(current_<%= underscored_user_class %>)
         end
 
-        description "Update <%= @underscored_name %>"
+        description "Update <%= underscored_user_class %>"
         params do
-          requires :<%= @underscored_name %>, type: Hash do
+          requires :<%= underscored_user_class %>, type: Hash do
             # Additional(optional) parameters
             <%- for attribute in model_attributes -%>
               <%- if attribute.name == 'gender' -%>
@@ -124,10 +124,10 @@ module Api
         end
         put "" do
           authenticate!
-          if current_<%= @underscored_name %>.update(params[:<%= @underscored_name %>])
-            render_object(current_<%= @underscored_name %>)
+          if current_<%= underscored_user_class %>.update(params[:<%= underscored_user_class %>])
+            render_object(current_<%= underscored_user_class %>)
           else
-            json_error_response({ errors: current_<%= @underscored_name %>.errors.full_messages })
+            json_error_response({ errors: current_<%= underscored_user_class %>.errors.full_messages })
           end
         end
       end

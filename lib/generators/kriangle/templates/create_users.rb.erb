@@ -1,6 +1,6 @@
 class Create<%= user_class.pluralize %> < ActiveRecord::Migration<%= "[#{Rails::VERSION::STRING[0..2]}]" if Rails::VERSION::MAJOR > 4 %>
   def change
-    create_table(:<%= user_class.pluralize.underscore %>) do |t|
+    create_table :<%= user_class.pluralize.underscore %> do |t|
       ## Database authenticatable
       t.string :email,              :null => false, :default => ""
       t.string :encrypted_password, :null => false, :default => ""

@@ -94,23 +94,27 @@ module Kriangle
         @resources = options.resources?
 
         @reference = options.reference?
-        @has_many = options.has_many?
-        @reference_name = options.reference_name
-        @counter_cache = options.counter_cache?
-        if @reference_name.match(/current_/)
-          @reference_name_create_update = @reference_name
-          @user_class ||= @reference_name.gsub(/current_/, '').underscore
-        else
-          @user_class ||= @reference_name.underscore
-          @reference_id_param = get_attribute_name(@reference_name.underscore, 'references')
-          @reference_name_create_update = "#{@reference_name}.find(params[:#{singular_name}][:#{reference_id_param}])"
-          @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
+        if @reference
+          @has_many = options.has_many?
+          @reference_name = options.reference_name
+          @counter_cache = options.counter_cache?
+          if @reference_name.match(/current_/)
+            @reference_name_create_update = @reference_name
+            @user_class ||= @reference_name.gsub(/current_/, '').underscore
+          else
+            @user_class ||= @reference_name.underscore
+            @reference_id_param = get_attribute_name(@reference_name.underscore, 'references')
+            @reference_name_create_update = "#{@reference_name}.find(params[:#{singular_name}][:#{reference_id_param}])"
+            @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
+          end
         end
 
         @self_reference = options.self_reference?
-        @parent_association_name = options.parent_association_name
-        @child_association_name = options.child_association_name
-        @additional_where_clause = @self_reference ? '.only_parent' : ''
+        if @self_reference
+          @parent_association_name = options.parent_association_name
+          @child_association_name = options.child_association_name
+          @additional_where_clause = @self_reference ? '.only_parent' : ''
+        end
 
         @custom_orm = options.custom_orm
         @initial_setup = options.initial_setup?
@@ -195,7 +199,7 @@ module Kriangle
       def create_model_file
         # create module model & migration
         create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.select { |a| a.required == 'true' }.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
-        inject_into_file "app/models/#{@user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{@user_class.humanize} < ApplicationRecord.*/ if user_class && !skip_model
+        inject_into_file "app/models/#{user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{user_class.classify} < ApplicationRecord.*/ if user_class && !skip_model
         create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb", force: force if !skip_migration && custom_orm == 'ActiveRecord'
         create_migration_file 'counter_cache_migration.rb', "db/migrate/add_#{class_name.pluralize.underscore}_count_to_#{user_class.pluralize}.rb", force: force if counter_cache && custom_orm == 'ActiveRecord'
 
