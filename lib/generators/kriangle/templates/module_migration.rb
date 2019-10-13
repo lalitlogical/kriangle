@@ -15,7 +15,7 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration[5.2]
       <%- end -%>
 
       <%- for attribute in @attributes -%>
-      t.<%= attribute.type || 'string'  %> :<%= attribute.name %><%= ", default: #{attribute.default}" unless attribute.default.nil? %>
+      t.<%= attribute.type || 'string'  %> :<%= attribute.name %><%= ", default: #{attribute.default.gsub('~', "'")}" unless attribute.default.nil? %>
       <%- end -%>
 
       <%- unless skip_timestamps -%>
