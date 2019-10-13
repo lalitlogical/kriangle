@@ -6,7 +6,7 @@ module Kriangle
     module GeneratorHelpers
       attr_accessor :options, :attributes
 
-      Attribute = Struct.new(:name, :type, :required, :search_by)
+      Attribute = Struct.new(:name, :type, :required, :search_by, :default)
 
       @@column_types = {
         'references': 'Integer',
