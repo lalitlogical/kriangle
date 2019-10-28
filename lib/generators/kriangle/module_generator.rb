@@ -43,6 +43,7 @@ module Kriangle
                       :child_association_name,
                       :additional_where_clause,
                       :reference_id_param,
+                      :creation_method,
                       :resources,
                       :description_method_name,
                       :search_by,
@@ -63,6 +64,8 @@ module Kriangle
       class_option :self_reference, desc: 'Counter cache support', type: :boolean, default: false
       class_option :parent_association_name, type: :string, default: 'parent', desc: 'Parent Association Name'
       class_option :child_association_name, type: :string, default: 'children', desc: 'Child Association Name'
+
+      class_option :creation_method, type: :string, default: 'new', desc: 'Creation Method'
 
       class_option :resources, desc: 'Resources routes', type: :boolean, default: true
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: 'ORM i.e. ActiveRecord, mongoid'
@@ -115,6 +118,7 @@ module Kriangle
           @child_association_name = options.child_association_name
           @additional_where_clause = @self_reference ? '.only_parent' : ''
         end
+        @creation_method = options.creation_method
 
         @custom_orm = options.custom_orm
         @initial_setup = options.initial_setup?

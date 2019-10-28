@@ -113,13 +113,13 @@ module Api
         post "", root: "<%= singular_name %>" do
           <%- if reference -%>
             <%- if has_many -%>
-          <%= singular_name %> = <%= reference_name_create_update %>.<%= plural_name %>.new(params[:<%= singular_name %>])
+          <%= singular_name %> = <%= reference_name_create_update %>.<%= plural_name %>.<%= creation_method %>(params[:<%= singular_name %>])
             <%- else -%>
           <%= singular_name %> = <%= reference_name_create_update %>.<%= singular_name %> || <%= reference_name_create_update %>.build_<%= singular_name %>(params[:<%= singular_name %>])
           <%= singular_name %>.attributes = params[:<%= singular_name %>] if <%= singular_name %>.persisted?
             <%- end -%>
           <%- else -%>
-          <%= singular_name %> = <%= class_name %>.new(params[:<%= singular_name %>])
+          <%= singular_name %> = <%= class_name %>.<%= creation_method %>(params[:<%= singular_name %>])
           <%- end -%>
           if <%= singular_name %>.save
             render_object(<%= singular_name %>, additional_response: { message: "<%= class_name %> created successfully." })
