@@ -107,7 +107,7 @@ module Kriangle
           else
             @user_class ||= @reference_name.underscore
             @reference_id_param = get_attribute_name(@reference_name.underscore, 'references')
-            @reference_name_create_update = "#{@reference_name}.find(params[:#{singular_name}][:#{reference_id_param}])"
+            @reference_name_create_update = "#{@reference_name}.find(params[:#{reference_id_param}])"
             @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
           end
         end
@@ -211,6 +211,7 @@ module Kriangle
         unless skip_serializer
           create_template 'active_serializer.rb', 'app/serializers/active_serializer.rb', skip_if_exist: true
           create_template 'serializer.rb', "app/serializers/#{singular_name}_serializer.rb", attributes: [:id] + @attributes.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name)
+          inject_into_file "app/serializers/#{user_class}_serializer.rb", "\n\tattributes :#{class_name.pluralize.underscore}_count", after: /class #{user_class.classify}Serializer < ActiveSerializer*/ if counter_cache && custom_orm == 'ActiveRecord'
         end
       end
 

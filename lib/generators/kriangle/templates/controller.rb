@@ -18,7 +18,7 @@ module Api
 
         <%= description_method_name %> "Return all <%= plural_name %>"
         <%- if !skip_pagination || search_by -%>
-        <%- if !reference || (reference && has_many) || @reference_id_param -%>
+        <%- if !reference || (reference && has_many) || reference_id_param -%>
         params do
           <%- if search_by -%>
           optional :q, type: Hash do
@@ -28,8 +28,8 @@ module Api
             <%- end -%>
           end
           <%- end -%>
-          <%- if @reference_id_param -%>
-          requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
+          <%- if reference_id_param -%>
+          requires :<%= reference_id_param %>, type: Integer, desc: "<%= @user_class.classify %>'s id"
           <%- end -%>
           <%- if !skip_pagination && (!reference || (reference && has_many)) -%>
           optional :page, type: Integer, desc: "Page number", default: 0
@@ -72,9 +72,9 @@ module Api
         <%- if controller_actions.include?('show') -%>
 
         <%= description_method_name %> "Return a <%= singular_name %>"
-        <%- if @reference_id_param -%>
+        <%- if reference_id_param -%>
         params do
-          requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
+          requires :<%= reference_id_param %>, type: Integer, desc: "<%= @user_class.classify %>'s id"
         end
         <%- end -%>
         get ":id", root: "<%= singular_name %>" do
@@ -94,10 +94,10 @@ module Api
 
         <%= description_method_name %> "Create a <%= singular_name %>"
         params do
+          <%- if reference_id_param -%>
+          requires :<%= reference_id_param %>, type: Integer, desc: "<%= @user_class.classify %>'s id"
+          <%- end -%>
           requires :<%= singular_name %>, type: Hash do
-            <%- if @reference_id_param -%>
-            requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class.classify %>'s id"
-            <%- end -%>
             <%- if self_reference -%>
             optional :<%= parent_association_name %>_id, type: Integer, desc: "<%= class_name.classify %>'s id as parent"
             <%- end -%>
@@ -132,10 +132,10 @@ module Api
 
         <%= description_method_name %> "Update a <%= singular_name %>"
         params do
+          <%- if reference_id_param -%>
+          requires :<%= reference_id_param %>, type: Integer, desc: "<%= @user_class.classify %>'s id"
+          <%- end -%>
           requires :<%= singular_name %>, type: Hash do
-            <%- if @reference_id_param -%>
-            requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
-            <%- end -%>
             <%- for attribute in model_attributes -%>
             optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
             <%- end -%>
@@ -166,9 +166,9 @@ module Api
         <%- if controller_actions.include?('destroy') -%>
 
         <%= description_method_name %> "Destroy a <%= singular_name %>"
-        <%- if @reference_id_param -%>
+        <%- if reference_id_param -%>
         params do
-          requires :<%= @reference_id_param %>, type: Integer, desc: "<%= @user_class %>'s id"
+          requires :<%= reference_id_param %>, type: Integer, desc: "<%= @user_class.classify %>'s id"
         end
         <%- end -%>
         delete ":id", root: "<%= singular_name %>" do
