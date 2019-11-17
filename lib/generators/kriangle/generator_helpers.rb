@@ -8,6 +8,10 @@ module Kriangle
 
       Attribute = Struct.new(:name, :type, :required, :search_by, :default)
       Association = Struct.new(:association_type, :association_name, :required, :counter_cache, :foreign_key, :class_name) do
+        def association_type_with_name
+          "#{association_type} :#{association_name}"
+        end
+
         def association
           txt = "#{association_type} :#{association_name}"
           txt += ", foreign_key: '#{foreign_key}'" if foreign_key.present?

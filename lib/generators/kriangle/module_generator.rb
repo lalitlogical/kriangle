@@ -210,14 +210,15 @@ module Kriangle
 
       desc 'Generates model with the given NAME.'
       def create_model_file
+        options = {
+          references: @references.map(&:name),
+          model_associations: @model_associations,
+          polymorphics: @polymorphics.map(&:name)
+        }
+
         # create module model & migration
         unless skip_model
-          options = {
-            attributes: @attributes.select { |a| a.required == 'true' }.map(&:name),
-            references: @references.map(&:name),
-            model_associations: @model_associations,
-            polymorphics: @polymorphics.map(&:name)
-          }
+          options[:attributes] = @attributes.select { |a| a.required == 'true' }.map(&:name)
           create_template 'model.rb', "app/models/#{singular_name}.rb", options
         end
         # inject_into_file "app/models/#{user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{user_class.classify} < ApplicationRecord.*/ if user_class && !skip_model
@@ -227,7 +228,8 @@ module Kriangle
         # create active serializer & module serializer
         unless skip_serializer
           create_template 'active_serializer.rb', 'app/serializers/active_serializer.rb', skip_if_exist: true
-          create_template 'serializer.rb', "app/serializers/#{singular_name}_serializer.rb", attributes: [:id] + @attributes.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name)
+          options[:attributes] = [:id] + @attributes.map(&:name)
+          create_template 'serializer.rb', "app/serializers/#{singular_name}_serializer.rb", options
           inject_into_file "app/serializers/#{user_class}_serializer.rb", "\n\tattributes :#{class_name.pluralize.underscore}_count", after: /class #{user_class.classify}Serializer < ActiveSerializer*/ if counter_cache && custom_orm == 'ActiveRecord'
         end
       end
