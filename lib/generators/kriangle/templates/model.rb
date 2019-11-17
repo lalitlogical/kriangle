@@ -1,8 +1,8 @@
 # frozen_string_literal: true
 
 class <%= class_name %> < ApplicationRecord
-  <%- if reference -%>
-  belongs_to :<%= user_class %><%= counter_cache ? ', counter_cache: true' : '' %>
+  <%- for ma in @options[:model_associations] -%>
+  <%= ma.association %>
   <%- end -%>
   <%- if self_reference -%>
   belongs_to :<%= parent_association_name %>, :class_name => '<%= class_name %>', optional: true

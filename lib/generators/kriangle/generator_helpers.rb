@@ -7,11 +7,23 @@ module Kriangle
       attr_accessor :options, :attributes
 
       Attribute = Struct.new(:name, :type, :required, :search_by, :default)
+      Association = Struct.new(:association_type, :association_name, :required, :counter_cache, :foreign_key, :class_name) do
+        def association
+          txt = "#{association_type} :#{association_name}"
+          txt += ", foreign_key: '#{foreign_key}'" if foreign_key.present?
+          txt += ", class_name: '#{class_name}'" if class_name.present?
+          txt += ", counter_cache: true" if counter_cache == 'true'
+          txt += ", dependent: :destroy" if association_type.match('has_')
+          txt
+        end
+      end
 
       @@column_types = {
         'references': 'Integer',
         'text': 'String',
-        'datetime': 'DateTime'
+        'datetime': 'DateTime',
+        'attachment': 'File',
+        'jsonb': 'JSON'
       }
 
       private

@@ -16,6 +16,7 @@ module Kriangle
         attr_accessor :underscored_user_class,
                       :column_types,
                       :model_attributes,
+                      :model_associations,
                       :controller_actions,
                       :wrapper,
                       :controller_path,
@@ -46,6 +47,7 @@ module Kriangle
       def initialize(*args, &block)
         super
         @model_attributes = []
+        @model_associations = []
         @underscored_user_class = user_class.underscore
         @wrapper = options.wrapper
         @custom_orm = options.custom_orm
@@ -57,7 +59,15 @@ module Kriangle
         @controller_path = options.controller_path&.classify&.pluralize || user_class.classify&.pluralize
 
         args_for_c_m.each do |arg|
-          @model_attributes << Attribute.new(*arg.split(':')) if arg.include?(':')
+          if arg.include?(':')
+            options = arg.split(':')
+            if arg.match(/^ma:/).present?
+              options.shift
+              @model_associations << Association.new(*options)
+            else
+              @model_attributes << Attribute.new(*options)
+            end
+          end
         end
 
         if @model_attributes.blank?
@@ -94,7 +104,7 @@ module Kriangle
       end
 
       def create_model_file
-        create_template 'user.rb', "app/models/#{user_class.underscore}.rb"
+        create_template 'user.rb', "app/models/#{user_class.underscore}.rb", model_associations: @model_associations
         create_template 'authentication.rb', 'app/models/authentication.rb'
         create_template 'avatar.rb', 'app/models/avatar.rb' unless skip_avatar
 

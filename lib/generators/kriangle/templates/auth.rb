@@ -16,10 +16,11 @@ module Api
             requires :password_confirmation, type: String, desc: "Password Confirmation"
             # Additional(optional) parameters
             <%- for attribute in model_attributes -%>
+              <% next if attribute.name == 'email' %>
               <%- if attribute.name == 'gender' -%>
-            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", default: 'Male', values: ['Male', 'Female', 'Other']
+            <%= require_or_optional(attribute) %> :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", default: 'Male', values: ['Male', 'Female', 'Other']
               <%- else -%>
-            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
+            <%= require_or_optional(attribute) %> :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
               <%- end -%>
             <%- end -%>
           end
@@ -109,10 +110,11 @@ module Api
           requires :<%= underscored_user_class %>, type: Hash do
             # Additional(optional) parameters
             <%- for attribute in model_attributes -%>
+              <% next if attribute.name == 'email' %>
               <%- if attribute.name == 'gender' -%>
-            optional :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", default: 'Male', values: ['Male', 'Female', 'Other']
+            <%= require_or_optional(attribute) %> :<%= attribute.name %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>", default: 'Male', values: ['Male', 'Female', 'Other']
               <%- else -%>
-            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
+            <%= require_or_optional(attribute) %> :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
               <%- end -%>
             <%- end -%>
             # group :avatars_attributes, type: Hash, desc: "An array of avatars" do

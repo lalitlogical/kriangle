@@ -21,6 +21,7 @@ module Kriangle
                       :controller_path,
                       :column_types,
                       :model_attributes,
+                      :model_associations,
                       :controller_actions,
                       :custom_orm,
                       :initial_setup,
@@ -89,6 +90,10 @@ module Kriangle
         super
         @controller_actions = []
         @model_attributes = []
+        @model_associations = []
+        @attributes = []
+        @references = []
+        @polymorphics = []
 
         @user_class = options.user_class&.underscore
         @wrapper = options.wrapper
@@ -110,6 +115,7 @@ module Kriangle
             @reference_name_create_update = "#{@reference_name}.find(params[:#{reference_id_param}])"
             @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
           end
+          @model_associations << Association.new('belongs_to', user_class, false, counter_cache.to_s)
         end
 
         @self_reference = options.self_reference?
@@ -138,7 +144,13 @@ module Kriangle
 
         args_for_c_m.each do |arg|
           if arg.include?(':') || !CONTROLLER_ACTIONS.include?(arg)
-            @model_attributes << Attribute.new(*arg.split(':'))
+            options = arg.split(':')
+            if arg.match(/^ma:/).present?
+              options.shift
+              @model_associations << Association.new(*options)
+            else
+              @model_attributes << Attribute.new(*options)
+            end
           else
             @controller_actions << arg
             @controller_actions << 'create' if arg == 'new'
@@ -153,9 +165,6 @@ module Kriangle
         end
 
         # Get attribute's name
-        @attributes = []
-        @references = []
-        @polymorphics = []
         @search_by = model_attributes.any? { |ma| ma.search_by.present? }
 
         # get different types of attributes
@@ -202,8 +211,16 @@ module Kriangle
       desc 'Generates model with the given NAME.'
       def create_model_file
         # create module model & migration
-        create_template 'model.rb', "app/models/#{singular_name}.rb", attributes: @attributes.select { |a| a.required == 'true' }.map(&:name), references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) unless skip_model
-        inject_into_file "app/models/#{user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{user_class.classify} < ApplicationRecord.*/ if user_class && !skip_model
+        unless skip_model
+          options = {
+            attributes: @attributes.select { |a| a.required == 'true' }.map(&:name),
+            references: @references.map(&:name),
+            model_associations: @model_associations,
+            polymorphics: @polymorphics.map(&:name)
+          }
+          create_template 'model.rb', "app/models/#{singular_name}.rb", options
+        end
+        # inject_into_file "app/models/#{user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{user_class.classify} < ApplicationRecord.*/ if user_class && !skip_model
         create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb", force: force if !skip_migration && custom_orm == 'ActiveRecord'
         create_migration_file 'counter_cache_migration.rb', "db/migrate/add_#{class_name.pluralize.underscore}_count_to_#{user_class.pluralize}.rb", force: force if counter_cache && custom_orm == 'ActiveRecord'
 
@@ -219,7 +236,7 @@ module Kriangle
       def copy_controller_and_spec_files
         template 'controller.rb', "app/controllers/api/#{@wrapper.underscore}/#{controller_path.underscore}.rb" unless skip_controller
 
-        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount Api::#{@wrapper.capitalize}::#{controller_path}", after: /Grape::API.*/
+        inject_into_file "app/controllers/api/#{@wrapper.underscore}/controllers.rb", "\n\t\t\tmount Api::#{@wrapper.capitalize}::#{controller_path}", after: /Grape::API.*/ unless skip_controller
       end
     end
   end

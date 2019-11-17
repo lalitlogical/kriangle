@@ -10,7 +10,6 @@ class <%= user_class %> < ApplicationRecord
   # field :content, type: String, default: ""
   # field :views, type: Integer, default: 0
   <% end %>
-
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
@@ -20,7 +19,12 @@ class <%= user_class %> < ApplicationRecord
   has_many :avatars
   <%- end -%>
   has_many :authentications
+  <%- for ma in @options[:model_associations] -%>
+  <%= ma.association %>
+  <%- end -%>
 
+  <%- unless skip_tips -%>
   # Some validation
   # validates :first_name, presence: true
+  <%- end -%>
 end
