@@ -24,7 +24,7 @@ module Api
           optional :q, type: Hash do
             optional :m, type: String, desc: 'Matching case', default: 'or', values: ['or', 'and']
             <%- for attribute in model_attributes.select { |ma| ma.search_by.present? } -%>
-            optional :<%= attribute.name %><%= attribute.search_by %>, type: <%= get_attribute_type(attribute.type) %>, desc: "Search by <%= attribute.name.capitalize %>"
+            optional :<%= attribute.name %><%= attribute.search_by %>, type: <%= get_attribute_type(attribute.type) %>, desc: "Search by <%= attribute.name.titleize %>"
             <%- end -%>
           end
           <%- end -%>
@@ -101,8 +101,11 @@ module Api
             <%- if self_reference -%>
             optional :<%= parent_association_name %>_id, type: Integer, desc: "<%= class_name.classify %>'s id as parent"
             <%- end -%>
+            <%- for attribute in model_associations.select { |ma| ma.association_type == 'belongs_to' && !ma.class_name && !ma.reference } -%>
+            <%= require_or_optional(attribute) %> :<%= attribute.association_name + '_id' %>, type: Integer, desc: "<%= attribute.association_name.titleize %>"
+            <%- end -%>
             <%- for attribute in model_attributes -%>
-            <%= require_or_optional(attribute) %> :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
+            <%= require_or_optional(attribute) %> :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.titleize %>"
             <%- end -%>
             <%- unless skip_tips -%>
             # requires :title, type: String, desc: "Title of the <%= singular_name %>"
@@ -137,7 +140,7 @@ module Api
           <%- end -%>
           requires :<%= singular_name %>, type: Hash do
             <%- for attribute in model_attributes -%>
-            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.capitalize %>"
+            optional :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.titleize %>"
             <%- end -%>
             <%- unless skip_tips -%>
             # requires :title, type: String, desc: "Title of the <%= singular_name %>"

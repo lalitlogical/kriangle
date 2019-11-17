@@ -9,7 +9,7 @@ class <%= @options[:class_name] || class_name %>Serializer < ActiveSerializer
   <%- @options[:references].try(:each) do |parent_model| -%>
   belongs_to :<%= parent_model %>
   <%- end -%>
-  <%- for ma in @options[:model_associations] -%>
+  <%- for ma in model_associations -%>
   <%= ma.association_type_with_name %>
   <%- end -%>
   <%- if self_reference -%>

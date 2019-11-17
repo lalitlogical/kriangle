@@ -19,7 +19,7 @@ class <%= user_class %> < ApplicationRecord
   has_many :avatars
   <%- end -%>
   has_many :authentications
-  <%- for ma in @options[:model_associations] -%>
+  <%- for ma in model_associations -%>
   <%= ma.association %>
   <%- end -%>
 

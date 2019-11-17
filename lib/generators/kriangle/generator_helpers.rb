@@ -7,7 +7,7 @@ module Kriangle
       attr_accessor :options, :attributes
 
       Attribute = Struct.new(:name, :type, :required, :search_by, :default)
-      Association = Struct.new(:association_type, :association_name, :required, :counter_cache, :foreign_key, :class_name) do
+      Association = Struct.new(:association_type, :association_name, :required, :counter_cache, :foreign_key, :class_name, :reference) do
         def association_type_with_name
           "#{association_type} :#{association_name}"
         end

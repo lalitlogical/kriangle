@@ -104,12 +104,12 @@ module Kriangle
       end
 
       def create_model_file
-        create_template 'user.rb', "app/models/#{user_class.underscore}.rb", model_associations: @model_associations
+        create_template 'user.rb', "app/models/#{user_class.underscore}.rb"
         create_template 'authentication.rb', 'app/models/authentication.rb'
         create_template 'avatar.rb', 'app/models/avatar.rb' unless skip_avatar
 
         create_template 'active_serializer.rb', 'app/serializers/active_serializer.rb', skip_if_exist: true
-        create_template 'serializer.rb', "app/serializers/#{underscored_user_class}_serializer.rb", class_name: user_class, attributes: @attributes, model_associations: @model_associations
+        create_template 'serializer.rb', "app/serializers/#{underscored_user_class}_serializer.rb", class_name: user_class, attributes: @attributes
         create_template 'serializer.rb', 'app/serializers/avatar_serializer.rb', class_name: 'Avatar', attributes: %i[id image_url] unless skip_avatar
 
         # Uploader File

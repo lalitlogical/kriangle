@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class <%= class_name %> < ApplicationRecord
-  <%- for ma in @options[:model_associations] -%>
+  <%- for ma in model_associations -%>
   <%= ma.association %>
   <%- end -%>
   <%- if self_reference -%>

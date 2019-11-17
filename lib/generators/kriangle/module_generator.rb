@@ -115,7 +115,7 @@ module Kriangle
             @reference_name_create_update = "#{@reference_name}.find(params[:#{reference_id_param}])"
             @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
           end
-          @model_associations << Association.new('belongs_to', user_class, false, counter_cache.to_s)
+          @model_associations << Association.new('belongs_to', user_class, false, counter_cache.to_s, '', '', true)
         end
 
         @self_reference = options.self_reference?
@@ -210,11 +210,8 @@ module Kriangle
 
       desc 'Generates model with the given NAME.'
       def create_model_file
-        options = {
-          references: @references.map(&:name),
-          model_associations: @model_associations,
-          polymorphics: @polymorphics.map(&:name)
-        }
+        # default options
+        options = { references: @references.map(&:name), polymorphics: @polymorphics.map(&:name) }
 
         # create module model & migration
         unless skip_model
