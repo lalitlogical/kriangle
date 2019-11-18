@@ -200,7 +200,7 @@ module Kriangle
         create_template 'controllers.rb', "app/controllers/api/#{@wrapper.underscore}/controllers.rb", skip_if_exist: true unless skip_controller
         create_template 'defaults.rb', "app/controllers/api/#{@wrapper.underscore}/defaults.rb", skip_if_exist: true
 
-        inject_into_file 'app/controllers/api/base.rb', "\n\t\tmount Api::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
+        inject_into_file 'app/controllers/api/base.rb', "\n\t\t\tmount Api::#{wrapper.capitalize}::Controllers", after: /Grape::API.*/
 
         if initial_setup
           inject_into_file 'config/routes.rb', "\n\tmount GrapeSwaggerRails::Engine => '/swagger'", after: /routes.draw.*/ unless skip_swagger
@@ -215,7 +215,7 @@ module Kriangle
 
         # create module model & migration
         unless skip_model
-          options[:attributes] = @attributes.select { |a| a.required == 'true' }.map(&:name)
+          options[:attributes] = @attributes.select { |a| a.validate_presence == 'true' }.map(&:name)
           create_template 'model.rb', "app/models/#{singular_name}.rb", options
         end
         # inject_into_file "app/models/#{user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{user_class.classify} < ApplicationRecord.*/ if user_class && !skip_model
