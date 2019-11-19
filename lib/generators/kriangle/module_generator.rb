@@ -221,11 +221,14 @@ module Kriangle
 
         unless skip_model
           model_associations.select { |ma| ma.association_type == 'belongs_to' }.each do |ma|
-            if ma.class_name.present?
-              inject_into_file "app/models/#{ma.class_name.underscore}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{ma.class_name} < ApplicationRecord.*/
-            else
-              inject_into_file "app/models/#{ma.association_name}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{ma.association_name.classify} < ApplicationRecord.*/
-            end
+            regex = "has_many :#{plural_name}"
+            file_path = ma.class_name.present? ? "app/models/#{ma.class_name.underscore}.rb" : "app/models/#{ma.association_name}.rb"
+            contents = File.foreach(file_path).grep /#{regex}/
+            next if contents.count != 0
+
+            association = "\n\thas_many :#{plural_name}, dependent: :destroy"
+            belongs_to = ma.class_name.present? ? ma.class_name : ma.association_name.classify
+            inject_into_file file_path, association, after: /class #{belongs_to} < ApplicationRecord.*/
           end
         end
 
