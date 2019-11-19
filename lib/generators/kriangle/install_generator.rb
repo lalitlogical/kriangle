@@ -59,14 +59,14 @@ module Kriangle
         @controller_path = options.controller_path&.classify&.pluralize || user_class.classify&.pluralize
 
         args_for_c_m.each do |arg|
-          if arg.include?(':')
-            options = arg.split(':')
-            if arg.match(/^ma:/).present?
-              options.shift
-              @model_associations << Association.new(*options)
-            else
-              @model_attributes << Attribute.new(*options)
-            end
+          next unless arg.include?(':')
+
+          options = arg.split(':')
+          if arg.match(/^ma:/).present?
+            options.shift
+            @model_associations << Association.new(*options)
+          else
+            @model_attributes << Attribute.new(*options)
           end
         end
 

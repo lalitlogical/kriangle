@@ -1,8 +1,8 @@
 class Create<%= class_name.pluralize %> < ActiveRecord::Migration[5.2]
   def change
     create_table :<%= controller_file_name %> do |t|
-      <%- if reference -%>
-      t.references :<%= user_class %>, foreign_key: true
+      <%- for ma in model_associations.select { |ma| ma.association_type == 'belongs_to' } -%>
+      t.references :<%= ma.association_name %>, foreign_key: true
       <%- end -%>
       <%- if self_reference -%>
       t.references :<%= parent_association_name %>, foreign_key: true
@@ -10,9 +10,7 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration[5.2]
       <%- for attribute in @polymorphics -%>
       t.references :<%= attribute.name %>, polymorphic: true
       <%- end -%>
-      <%- for attribute in @references.reject { |a| reference && a.name == user_class } -%>
-      t.references :<%= attribute.name %>, foreign_key: true
-      <%- end -%>
+      
       <%- for attribute in @attributes -%>
       t.<%= attribute.type || 'string'  %> :<%= attribute.name %><%= ", default: #{attribute.default.gsub('~', "'")}" unless attribute.default.nil? %>
       <%- end -%>

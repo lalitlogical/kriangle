@@ -14,12 +14,12 @@ module Kriangle
 
         def association
           txt = "#{association_type} :#{association_name}"
-          txt += ", counter_cache: true" if counter_cache == 'true'
-          txt += ", optional: true" if optional == 'true'
-          txt += ", touch: true" if touch_record == 'true'
+          txt += ', counter_cache: true' if counter_cache == 'true'
+          txt += ', optional: true' if optional == 'true'
+          txt += ', touch: true' if touch_record == 'true'
           txt += ", foreign_key: '#{foreign_key}'" if foreign_key.present?
           txt += ", class_name: '#{class_name}'" if class_name.present?
-          txt += ", dependent: :destroy" if association_type.match('has_')
+          txt += ', dependent: :destroy' if association_type.match('has_')
           txt += "\n\t#{accepts_nested_attributes}" if accepts_nested_attributes_for == 'true'
           txt
         end

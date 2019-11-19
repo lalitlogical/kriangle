@@ -115,7 +115,7 @@ module Kriangle
             @reference_name_create_update = "#{@reference_name}.find(params[:#{reference_id_param}])"
             @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
           end
-          @model_associations << Association.new('belongs_to', user_class, false, counter_cache.to_s, '', '', true)
+          @model_associations << Association.new('belongs_to', user_class, true, counter_cache.to_s, false, false, false, '', '', true)
         end
 
         @self_reference = options.self_reference?
@@ -218,9 +218,24 @@ module Kriangle
           options[:attributes] = @attributes.select { |a| a.validate_presence == 'true' }.map(&:name)
           create_template 'model.rb', "app/models/#{singular_name}.rb", options
         end
-        # inject_into_file "app/models/#{user_class}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{user_class.classify} < ApplicationRecord.*/ if user_class && !skip_model
+
+        unless skip_model
+          model_associations.select { |ma| ma.association_type == 'belongs_to' }.each do |ma|
+            if ma.class_name.present?
+              inject_into_file "app/models/#{ma.class_name.underscore}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{ma.class_name} < ApplicationRecord.*/
+            else
+              inject_into_file "app/models/#{ma.association_name}.rb", "\n\thas_many :#{plural_name}, dependent: :destroy", after: /class #{ma.association_name.classify} < ApplicationRecord.*/
+            end
+          end
+        end
+
         create_migration_file 'module_migration.rb', "db/migrate/create_#{plural_name}.rb", force: force if !skip_migration && custom_orm == 'ActiveRecord'
-        create_migration_file 'counter_cache_migration.rb', "db/migrate/add_#{class_name.pluralize.underscore}_count_to_#{user_class.pluralize}.rb", force: force if counter_cache && custom_orm == 'ActiveRecord'
+        if custom_orm == 'ActiveRecord'
+          model_associations.select { |ma| ma.association_type == 'belongs_to' && ma.counter_cache == 'true' }.uniq { |ma| ma.association_name.classify && ma.class_name }.each do |ma|
+            belongs_to = ma.class_name.present? ? ma.class_name.underscore : ma.association_name
+            create_migration_file 'counter_cache_migration.rb', "db/migrate/add_#{class_name.pluralize.underscore}_count_to_#{belongs_to.pluralize}.rb", force: force, belongs_to: belongs_to
+          end
+        end
 
         # create active serializer & module serializer
         unless skip_serializer
