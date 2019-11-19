@@ -7,7 +7,7 @@ module Kriangle
       attr_accessor :options, :attributes
 
       Attribute = Struct.new(:name, :type, :validate_presence, :search_by, :default)
-      Association = Struct.new(:association_type, :association_name, :validate_presence, :counter_cache, :optional, :touch_record, :accepts_nested_attributes_for, :foreign_key, :class_name, :reference) do
+      Association = Struct.new(:association_type, :association_name, :validate_presence, :counter_cache, :touch_record, :accepts_nested_attributes_for, :foreign_key, :class_name, :reference) do
         def association_type_with_name
           "#{association_type} :#{association_name}"
         end
@@ -15,7 +15,7 @@ module Kriangle
         def association
           txt = "#{association_type} :#{association_name}"
           txt += ', counter_cache: true' if counter_cache == 'true'
-          txt += ', optional: true' if optional == 'true'
+          txt += ', optional: true' if validate_presence == 'false'
           txt += ', touch: true' if touch_record == 'true'
           txt += ", foreign_key: '#{foreign_key}'" if foreign_key.present?
           txt += ", class_name: '#{class_name}'" if class_name.present?
