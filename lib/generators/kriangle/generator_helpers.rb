@@ -34,7 +34,8 @@ module Kriangle
         'text': 'String',
         'datetime': 'DateTime',
         'attachment': 'File',
-        'jsonb': 'JSON'
+        'jsonb': 'JSON',
+        'json': 'JSON'
       }
 
       private
