@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class <%= class_name %> < ApplicationRecord
-  <%- for ma in model_associations -%>
+  <%- for ma in model_associations.uniq { |ma| ma.association_name } -%>
   <%= ma.association %>
   <%- end -%>
   <%- if self_reference -%>

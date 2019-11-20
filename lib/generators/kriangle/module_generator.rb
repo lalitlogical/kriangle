@@ -37,7 +37,9 @@ module Kriangle
                       :reference,
                       :reference_name,
                       :reference_name_create_update,
-                      :has_many,
+                      :association_type,
+                      :touch_record,
+                      :accepts_nested_attributes,
                       :counter_cache,
                       :self_reference,
                       :parent_association_name,
@@ -59,7 +61,9 @@ module Kriangle
 
       class_option :reference, desc: 'Reference to user', type: :boolean
       class_option :reference_name, type: :string, default: 'current_user', desc: 'Reference Name'
-      class_option :has_many, desc: 'Association with user', type: :boolean
+      class_option :association_type, desc: 'Association with any model', type: :string
+      class_option :touch_record, desc: 'Touch the updated_at column', type: :boolean
+      class_option :accepts_nested_attributes, desc: 'accepts nested attributes', type: :boolean
       class_option :counter_cache, desc: 'Counter cache support', type: :boolean, default: false
 
       class_option :self_reference, desc: 'Counter cache support', type: :boolean, default: false
@@ -103,9 +107,12 @@ module Kriangle
 
         @reference = options.reference?
         if @reference
-          @has_many = options.has_many?
-          @reference_name = options.reference_name
+          @association_type = options.association_type
+          @touch_record = options.touch_record?
+          @accepts_nested_attributes = options.accepts_nested_attributes?
           @counter_cache = options.counter_cache?
+
+          @reference_name = options.reference_name
           if @reference_name.match(/current_/)
             @reference_name_create_update = @reference_name
             @user_class ||= @reference_name.gsub(/current_/, '').underscore
@@ -115,7 +122,7 @@ module Kriangle
             @reference_name_create_update = "#{@reference_name}.find(params[:#{reference_id_param}])"
             @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
           end
-          @model_associations << Association.new('belongs_to', user_class, 'true', counter_cache.to_s, false, false, '', '', true)
+          @model_associations << Association.new('belongs_to', user_class, 'true', counter_cache.to_s, touch_record.to_s, accepts_nested_attributes.to_s, '', '', true)
         end
 
         @self_reference = options.self_reference?

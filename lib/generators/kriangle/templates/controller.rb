@@ -18,7 +18,7 @@ module Api
 
         <%= description_method_name %> "Return all <%= plural_name %>"
         <%- if !skip_pagination || search_by -%>
-        <%- if !reference || (reference && has_many) || reference_id_param -%>
+        <%- if !reference || (reference && association_type == 'has_many') || reference_id_param -%>
         params do
           <%- if search_by -%>
           optional :q, type: Hash do
@@ -31,7 +31,7 @@ module Api
           <%- if reference_id_param -%>
           requires :<%= reference_id_param %>, type: Integer, desc: "<%= @user_class.classify %>'s id"
           <%- end -%>
-          <%- if !skip_pagination && (!reference || (reference && has_many)) -%>
+          <%- if !skip_pagination && (!reference || (reference && association_type == 'has_many')) -%>
           optional :page, type: Integer, desc: "Page number", default: 0
           optional :per_page, type: Integer, desc: "Per Page", default: 15
           <%- end -%>
@@ -40,7 +40,7 @@ module Api
         <%- end -%>
         get "", root: :<%= plural_name %> do
           <%- if reference -%>
-            <%- if has_many -%>
+            <%- if association_type == 'has_many' -%>
               <%- if search_by -%>
           @q = <%= reference_name %>.<%= plural_name %><%= additional_where_clause %>.ransack(params[:q])
           results = @q.result(distinct: true)
@@ -59,7 +59,7 @@ module Api
           results = <%= class_name %><%= additional_where_clause %>.all
             <%- end -%>
           <%- end -%>
-          <%- if !reference || has_many -%>
+          <%- if !reference || association_type == 'has_many' -%>
             <%- if skip_pagination -%>
           render_objects(results)
             <%- else -%>
@@ -79,7 +79,7 @@ module Api
         <%- end -%>
         get ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
-            <%- if has_many -%>
+            <%- if association_type == 'has_many' -%>
           <%= singular_name %> = <%= reference_name %>.<%= plural_name %>.find(params[:id])
             <%- else -%>
           <%= singular_name %> = <%= reference_name %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
@@ -115,7 +115,7 @@ module Api
         end
         post "", root: "<%= singular_name %>" do
           <%- if reference -%>
-            <%- if has_many -%>
+            <%- if association_type == 'has_many' -%>
           <%= singular_name %> = <%= reference_name_create_update %>.<%= plural_name %>.<%= creation_method %>(params[:<%= singular_name %>])
             <%- else -%>
           <%= singular_name %> = <%= reference_name_create_update %>.<%= singular_name %> || <%= reference_name_create_update %>.build_<%= singular_name %>(params[:<%= singular_name %>])
@@ -151,7 +151,7 @@ module Api
         end
         put ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
-            <%- if has_many -%>
+            <%- if association_type == 'has_many' -%>
           <%= singular_name %> = <%= reference_name_create_update %>.<%= plural_name %>.find(params[:id])
             <%- else -%>
           <%= singular_name %> = <%= reference_name_create_update %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)
@@ -176,7 +176,7 @@ module Api
         <%- end -%>
         delete ":id", root: "<%= singular_name %>" do
           <%- if reference -%>
-            <%- if has_many -%>
+            <%- if association_type == 'has_many' -%>
           <%= singular_name %> = <%= reference_name %>.<%= plural_name %>.find(params[:id])
             <%- else -%>
           <%= singular_name %> = <%= reference_name %>.<%= singular_name %> || raise(<%= get_record_not_found_exception %>)

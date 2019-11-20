@@ -2,6 +2,7 @@ class CreateAvatars < ActiveRecord::Migration<%= "[#{Rails::VERSION::STRING[0..2
   def change
     create_table :avatars do |t|
       t.references :<%= underscored_user_class %>
+
       t.text :image
       t.integer :sorting, default: 0
     end
