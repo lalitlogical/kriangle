@@ -20,7 +20,7 @@ module Kriangle
           txt += ", foreign_key: '#{foreign_key}'" if foreign_key.present?
           txt += ", class_name: '#{class_name}'" if class_name.present?
           txt += ', dependent: :destroy' if association_type.match('has_')
-          txt += "\n\t#{accepts_nested_attributes}" if accepts_nested_attributes_for == 'true'
+          txt += "\n\t#{accepts_nested_attributes}" if association_type != 'belongs_to' && accepts_nested_attributes_for == 'true'
           txt
         end
 

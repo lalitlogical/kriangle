@@ -234,6 +234,7 @@ module Kriangle
             next if contents.count != 0
 
             association = "\n\thas_many :#{plural_name}, dependent: :destroy"
+            association += "\n\taccepts_nested_attributes_for :#{plural_name}, allow_destroy: true" if ma.accepts_nested_attributes.present?
             belongs_to = ma.class_name.present? ? ma.class_name : ma.association_name.classify
             inject_into_file file_path, association, after: /class #{belongs_to} < ApplicationRecord.*/
           end

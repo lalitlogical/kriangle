@@ -14,7 +14,6 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration[5.2]
       <%- for attribute in @polymorphics -%>
       t.references :<%= attribute.name %>, polymorphic: true
       <%- end -%>
-
       <%- for attribute in @attributes -%>
       t.<%= attribute.type || 'string'  %> :<%= attribute.name %><%= ", default: #{attribute.default.gsub('~', "'")}" unless attribute.default.nil? %>
       <%- end -%>

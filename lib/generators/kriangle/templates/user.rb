@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 class <%= user_class %> < ApplicationRecord
-  <% if custom_orm == 'Mongoid' %>
+  <%- if custom_orm == 'Mongoid' -%>
   include Mongoid::Document
   include Mongoid::Timestamps
 
@@ -9,7 +9,7 @@ class <%= user_class %> < ApplicationRecord
   # field :title, type: String
   # field :content, type: String, default: ""
   # field :views, type: Integer, default: 0
-  <% end %>
+  <%- end -%>
   # Include default devise modules. Others available are:
   # :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
