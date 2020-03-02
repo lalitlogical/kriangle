@@ -13,7 +13,7 @@ module Kriangle
       include Rails::Generators::Migration
       include Kriangle::Generators::GeneratorHelpers
 
-      CONTROLLER_ACTIONS = %w[index show new create edit update destroy].freeze
+      CONTROLLER_ACTIONS = %w[index show new create edit update destroy create_or_destroy].freeze
 
       no_tasks do
         attr_accessor :user_class,
@@ -47,6 +47,7 @@ module Kriangle
                       :additional_where_clause,
                       :reference_id_param,
                       :creation_method,
+                      :like_dislike,
                       :resources,
                       :description_method_name,
                       :search_by,
@@ -71,6 +72,7 @@ module Kriangle
       class_option :child_association_name, type: :string, default: 'children', desc: 'Child Association Name'
 
       class_option :creation_method, type: :string, default: 'new', desc: 'Creation Method'
+      class_option :like_dislike, desc: 'Like Dislike', type: :boolean, default: false
 
       class_option :resources, desc: 'Resources routes', type: :boolean, default: true
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: 'ORM i.e. ActiveRecord, mongoid'
@@ -132,6 +134,7 @@ module Kriangle
           @additional_where_clause = @self_reference ? '.only_parent' : ''
         end
         @creation_method = options.creation_method
+        @like_dislike = options.like_dislike
 
         @custom_orm = options.custom_orm
         @initial_setup = options.initial_setup?
@@ -234,7 +237,7 @@ module Kriangle
             next if contents.count != 0
 
             association = "\n\thas_many :#{plural_name}, dependent: :destroy"
-            association += "\n\taccepts_nested_attributes_for :#{plural_name}, allow_destroy: true" if ma.accepts_nested_attributes.present?
+            association += "\n\taccepts_nested_attributes_for :#{plural_name}, allow_destroy: true" if ma.accepts_nested_attributes == 'true'
             belongs_to = ma.class_name.present? ? ma.class_name : ma.association_name.classify
             inject_into_file file_path, association, after: /class #{belongs_to} < ApplicationRecord.*/
           end

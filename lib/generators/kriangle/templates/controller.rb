@@ -191,6 +191,50 @@ module Api
           end
         end
         <%- end -%>
+        <%- if controller_actions.include?('create_or_destroy') -%>
+
+        <%= description_method_name %> "Create or Destroy a <%= singular_name %>"
+        params do
+          <%- if reference_id_param -%>
+          requires :<%= reference_id_param %>, type: Integer, desc: "<%= @user_class.classify %>'s id"
+          <%- end -%>
+          requires :<%= singular_name %>, type: Hash do
+            <%- if self_reference -%>
+            optional :<%= parent_association_name %>_id, type: Integer, desc: "<%= class_name.classify %>'s id as parent"
+            <%- end -%>
+            <%- for attribute in model_associations.select { |ma| ma.association_type == 'belongs_to' && !ma.class_name && !ma.reference } -%>
+            <%= require_or_optional(attribute) %> :<%= attribute.association_name + '_id' %>, type: Integer, desc: "<%= attribute.association_name.titleize %>"
+            <%- end -%>
+            <%- for attribute in model_attributes -%>
+            <%= require_or_optional(attribute) %> :<%= get_attribute_name(attribute.name, attribute.type) %>, type: <%= get_attribute_type(attribute.type) %>, desc: "<%= attribute.name.titleize %>"
+            <%- end -%>
+          end
+        end
+        post "", root: "<%= singular_name %>" do
+          <%- if reference -%>
+            <%- if association_type == 'has_many' -%>
+          <%= singular_name %> = <%= reference_name_create_update %>.<%= plural_name %>.find_or_initialize_by(params[:<%= singular_name %>])
+            <%- else -%>
+          <%= singular_name %> = <%= reference_name_create_update %>.<%= singular_name %> || <%= reference_name_create_update %>.build_<%= singular_name %>(params[:<%= singular_name %>])
+            <%- end -%>
+          <%- else -%>
+          <%= singular_name %> = <%= class_name %>.find_or_initialize_by(params[:<%= singular_name %>])
+          <%- end -%>
+          if <%= singular_name %>.persisted?
+            if <%= singular_name %>.destroy_all
+              json_success_response(message: "<%= class_name %> destroyed successfully.")
+            else
+              json_error_response(errors: <%= singular_name %>.errors.full_messages)
+            end
+          else
+            if <%= singular_name %>.save
+              render_object(<%= singular_name %>, additional_response: { message: "<%= class_name %> created successfully." })
+            else
+              json_error_response(errors: <%= singular_name %>.errors.full_messages)
+            end
+          end
+        end
+        <%- end -%>
       end
     end
   end
