@@ -15,7 +15,7 @@ module Kriangle
         def association
           txt = "#{association_type} :#{association_name}"
           txt += ', counter_cache: true' if counter_cache == 'true'
-          txt += ', optional: true' if validate_presence == 'false'
+          txt += ', optional: true' if association_type == 'belongs_to' && validate_presence == 'false'
           txt += ', touch: true' if touch_record == 'true'
           txt += ", foreign_key: '#{foreign_key}'" if foreign_key.present?
           txt += ", class_name: '#{class_name}'" if class_name.present?
