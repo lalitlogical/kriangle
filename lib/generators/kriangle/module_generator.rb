@@ -124,7 +124,7 @@ module Kriangle
             @reference_name_create_update = "#{@reference_name}.find(params[:#{reference_id_param}])"
             @reference_name = "#{@reference_name}.find(params[:#{reference_id_param}])"
           end
-          @model_associations << Association.new('belongs_to', user_class, 'true', counter_cache.to_s, touch_record.to_s, accepts_nested_attributes.to_s, '', '', true)
+          @model_associations << Association.new('belongs_to', user_class, nil, 'true', counter_cache.to_s, touch_record.to_s, accepts_nested_attributes.to_s, '', '', true)
         end
 
         @self_reference = options.self_reference?
