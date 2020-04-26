@@ -22,6 +22,11 @@ class <%= user_class %> < ApplicationRecord
   <%- for ma in model_associations -%>
   <%= ma.association %>
   <%- end -%>
+  <%- if database == 'sqlite3' -%>
+    <%- model_attributes.select { |a| a.type == 'array' }.each do |a| -%>
+  serialize :<%= a.name %>, Array
+    <%- end -%>
+  <%- end -%>
 
   <%- unless skip_tips -%>
   # Some validation

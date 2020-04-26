@@ -26,13 +26,16 @@ module Kriangle
                       :skip_swagger,
                       :skip_avatar,
                       :skip_migration,
-                      :skip_authentication
+                      :skip_authentication,
+                      :database
       end
 
       # arguments
       argument :user_class, type: :string, default: 'User'
       # argument :mount_path, type: :string, default: 'User'
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
+
+      class_option :database, type: :string, desc: "database i.e. postgresql, mysql, sqlite3"
 
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
       class_option :controller_path, type: :string, desc: "controller's path"
@@ -50,6 +53,7 @@ module Kriangle
         @model_associations = []
         @underscored_user_class = user_class.underscore
         @wrapper = options.wrapper
+        @database = options.database
         @custom_orm = options.custom_orm
         @skip_tips = options.skip_tips?
         @skip_swagger = options.skip_swagger?

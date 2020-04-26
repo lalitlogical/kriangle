@@ -20,6 +20,7 @@ module Kriangle
                       :wrapper,
                       :controller_path,
                       :column_types,
+                      :attributes,
                       :model_attributes,
                       :model_associations,
                       :controller_actions,
@@ -51,10 +52,13 @@ module Kriangle
                       :resources,
                       :description_method_name,
                       :search_by,
+                      :database,
                       :force
       end
 
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
+
+      class_option :database, type: :string, desc: "database i.e. postgresql, mysql, sqlite3"
 
       class_option :user_class, type: :string, desc: "User's model name"
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
@@ -103,6 +107,7 @@ module Kriangle
 
         @user_class = options.user_class&.underscore
         @wrapper = options.wrapper
+        @database = options.database
         @controller_path = options.controller_path&.classify&.pluralize || controller_class_name
         @force = options.force
         @resources = options.resources?

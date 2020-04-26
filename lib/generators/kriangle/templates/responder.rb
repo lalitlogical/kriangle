@@ -61,6 +61,7 @@ module Api
           end
 
           # additional params
+          @serializer_options = options[:serializer_options] || {}
           @additional_response = options[:additional_response] || {}
         end
 
@@ -69,7 +70,7 @@ module Api
           extract_options(object, options) # extract required options
 
           json_success_response({
-            data: @serializer.present? ? single_serializer.new(object, serializer: @serializer, serializer_options: options[:serializer_options]) : {}
+            data: @serializer.present? ? single_serializer.new(object, serializer: @serializer, serializer_options: @serializer_options) : {}
           }.merge(@additional_response))
         end
 
@@ -91,8 +92,7 @@ module Api
           extract_options(objects.to_a, options, true) # extract required options
 
           # collect meta data if any present there
-          meta = {}
-          meta.merge!(options[:extra_params]) if options[:extra_params].present?
+          meta = options[:extra_params].present? ? options[:extra_params] : {}
           meta[:suggestions]  = objects.suggestions if objects.respond_to?(:suggestions) && objects.suggestions.present?
           meta[:aggregations] = format_aggregation(objects.aggs) if objects.respond_to?(:aggs)
           if objects.respond_to?(:total_count)
@@ -106,7 +106,7 @@ module Api
 
           # send data & meta
           json_success_response({
-            data: @serializer.present? ? array_serializer.new(objects, serializer: @serializer, serializer_options: options[:serializer_options]) : [],
+            data: @serializer.present? ? array_serializer.new(objects, serializer: @serializer, serializer_options: @serializer_options) : [],
             meta: meta
           }.merge(@additional_response))
         end

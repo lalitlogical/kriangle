@@ -15,7 +15,15 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration[5.2]
       t.references :<%= attribute.name %>, polymorphic: true
       <%- end -%>
       <%- for attribute in @attributes -%>
+        <%- if attribute.type == 'array' -%>
+          <%- if database == 'sqlite3' -%>
+      t.text :<%= attribute.name %>
+          <%- else -%>
+      t.text :<%= attribute.name %>, array: true, default: []
+          <%- end -%>
+        <%- else -%>
       t.<%= attribute.type || 'string'  %> :<%= attribute.name %><%= ", default: #{attribute.default.gsub('~', "'")}" unless attribute.default.nil? %>
+        <%- end -%>
       <%- end -%>
       <%- unless skip_timestamps -%>
       t.timestamps

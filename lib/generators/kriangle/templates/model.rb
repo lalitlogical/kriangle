@@ -20,6 +20,11 @@ class <%= class_name %> < ApplicationRecord
   belongs_to :<%= parent_model %>
     <%- end -%>
   <%- end -%>
+  <%- if database == 'sqlite3' -%>
+    <%- attributes.select { |a| a.type == 'array' }.each do |a| -%>
+  serialize :<%= a.name %>, Array
+    <%- end -%>
+  <%- end -%>
   <%- if @options[:attributes].size != 0 -%>
 
   # validation's on columns
