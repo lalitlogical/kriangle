@@ -9,7 +9,7 @@ class Create<%= class_name.pluralize %> < ActiveRecord::Migration[5.2]
         <%- end -%>
       <%- end -%>
       <%- if self_reference -%>
-      t.references :<%= parent_association_name %>, foreign_key: true
+      t.references :<%= parent_association_name %>, index: true
       <%- end -%>
       <%- for attribute in @polymorphics -%>
       t.references :<%= attribute.name %>, polymorphic: true
