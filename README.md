@@ -131,7 +131,7 @@ If you have rails knowledge, you are already aware about the associations (has_m
 
 `ma:association_type:association_name:dependent_type:validate_presence:counter_cache:touch_record:accepts_nested_attributes:foreign_key:class_name`
 
-Let understand the every options and its supported values. By default false or nil.
+Let understand the every options and its supported values. By default false or nil depedents of options.
 
 | Option            |            Description                         |  Required   |
 |:---	              |:---	                                           |:---  |
@@ -145,12 +145,34 @@ Let understand the every options and its supported values. By default false or n
 | `foreign_key` | custom foreign key   | |
 | `class_name` | any previously created model name   | |
 
+i.e.
+
+`ma:has_many:comments::false:false:false:false:`
+
 
 ### Columns
 
+By default rails support two options into migration. But we have enhance it into Kriangle. It supports as below.
+
+`column name:type:validate_presence:search_by:default value`
+
+Let understand the every options and its supported values. By default false or nil depedents of options.
+
+| Option            |            Description                         |  Required   |
+|:---	              |:---	                                           |:---  |
+| column name | any valid column name for your model             | True |
+| type | `string`, `text`, `boolean`, `integer`, `float`, `date`, `DateTime`, `array`, `attachment`, `Polymorphic`, `json`  | True |
+| `validate_presence`   | `true` or `false`. To validate the presence of column value | |
+| `search_by`   | `_eq`, `_not_eq`, `_matches`, `_does_not_match`, `_cont`, `_cont_any`, `_cont_all`, `_not_cont`, `_not_cont_any`, `_not_cont_all`, `_true`, `_false` | |
+| deafult value   | pass the default value for columns. i.e. `true` or `false` for boolean type of column | |
+
+i.e.
+
+ `title:string:false:_cont_any`
+
 ### Controller Actions
 
-By default all controller created (CRUD). But if you want to
+By default all controller created (CRUD). But if you want to control it you have to mentioned the required action. It will generate only those action only.
 
 ### Skip Options
 
@@ -158,13 +180,14 @@ There are a lot of skip options available. You can check below.
 
 | Skip Options            | Default   |                            Description                     |
 |:---	                    |:---	      |:---                                                        |
-| `skip_model`            | `false`   | Skip the model generation if model aleady created and you do not want to override it. |
+| `skip_model`            | `false`   | Skip the model creation if model aleady created and you do not want to override it. |
 | `skip_controller`            | `false`   | Skip the controller (APIs) generation. |
-| `skip_model`            | `false`   | Skip the model generation if model aleady created and you do not want to override it. |
-| `skip_model`            | `false`   | Skip the model generation if model aleady created and you do not want to override it. |
-| `skip_model`            | `false`   | Skip the model generation if model aleady created and you do not want to override it. |
-| `skip_model`            | `false`   | Skip the model generation if model aleady created and you do not want to override it. |
-| `skip_model`            | `false`   | Skip the model generation if model aleady created and you do not want to override it. |
+| `skip_migration`            | `false`   | Skip the table migration if table aleady created and you do not want to override it. |
+| `skip_tips`            | `false`   | Skip the tips or comments into files. |
+| `skip_authentication`            | `false`   | Skip the authentication for whole APIs of given module. |
+| `skip_serializer`            | `false`   | Skip the serialiser. |
+| `skip_timestamps`            | `false`   | Skip the timestamps columns (created_at and updated_at) into migration |
+| `skip_pagination`            | `false`   | Skip the pagination from index API of controller. |
 
 
 ## License
