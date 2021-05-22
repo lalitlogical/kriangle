@@ -1,6 +1,6 @@
 # Kriangle
 
-It is the library (gem) built upon ruby to create the Modules (Model, Controller, Serialiser, APIs and much more) in existing rails project.
+Kriangle is the library (gem) built upon ruby to create the Modules (Model, Controller, Serialiser, APIs and much more) in existing rails project. 
 
 Any modules can be consists of below components.
 1. Model
@@ -8,24 +8,20 @@ Any modules can be consists of below components.
 3. Serialiser
 5. Swagger Docs
 
-Its can create any module easily by using it’s commands. You can control the module generation with required components as mentioned above.
-
-By default in first setup, it's create the authentication module (login, register, forgot password, etc). It can setup the swagger docs to access APIs docs easily which can be useful for developers to share the docs.
-
-It provides two commands for this purpose.
-1. Setup Kriangle (create required files) into the existing project.
-2. Create new modules into the existing project.
+Kriangle can create any module easily by using it’s [Generators](#generators). You can control the module generation with [skip options](#skip-options). Also you can choose the [options](#options) as per your requirements.
 
 ## Contents
 
 - [Getting Started](#getting-started)
-  - [Generate New module](#generate-new-module)
+  - [Generators](#generators)
+  - [Initial Setup](#initial-setup)
+  - [Module Generator](#module-generator)
 - [Example](#example)
 - [Options](#options)
   - [Associations](#associations)
   - [Columns](#columns)
   - [Controller Actions](#controller-actions)
-  - [Skip Actions](#skip-actions)
+  - [Skip Options](#skip-options)
 - [License](#license)
 - [Code of Conduct](#code-of-conduct)
 
@@ -52,17 +48,28 @@ Then run `bundle install`
 
 Next, you need to run the generator:
 
-In the following command you will replace `MODEL` with the class name used for the application’s users. This will create a model (if one does not exist) and configure it with the authentication modul. The generator also configures your config/routes.rb file to point to the authentications controller.
+### Generators
+
+Kriangle provides two generator for this purpose:
+1. [Initial Setup](#initial-setup) - Install the Kriangle and it's dependencies into the existing project.
+2. [Module Generator](#module-generator) - Create new modules into the existing project.
+
+### Initial Setup
+
+In intial setup, it's create the intialiser files, authentication module (login, register, forgot password, etc), swagger setup, etc. Swagger help to create the APIs docs. This command can be run single time per project and always before module generator.
+
+In the following command you will replace `MODEL` with the class name used for the application’s users. This will create a model (if one does not exist) and configure it with the authentication module. The generator also configures your config/routes.rb file to point to the authentications controller.This command can be run single time per project and always before module generator.
 
 `rails g kriangle:install MODEL PATH [column_name:type]`
 
-i.e. if you want to generate the User model with Auth model (for authentication). So you can type below. Email column add automatically.
+i.e. if you want to generate the User model with Authentication model (for authentication purpose), so you can type below command.
 
 ```ruby
 rails g kriangle:install User Auth first_name last_name
 ```
+Note: Email column will be added automatically.
 
-### Generate New module
+### Module Generator
 
 In above command we have setup the initial authetication module. We can generate the new modules with below command. You have take care of sequence of options as below.
 
@@ -88,7 +95,7 @@ rails g kriangle:module Post title:string content:text --reference=true --has_ma
 
 ## Example
 
-To understand the uses of Kriangle we will provide a example of `Blog Rails Application`. Please follow the [Getting Started](#getting-started) to setup the Kriangle gem into your newly created Rails project. After that we run its commands to create a modules into projects as following.
+To understand the uses of Kriangle, we will provide a example of `Blog Rails Application`. Please follow the [Getting Started](#getting-started) to setup the Kriangle gem into your newly created Rails project. After that we run its commands to create a modules into projects as following.
 
 Let generate the authentication module. It's compulsary step.
 
@@ -131,7 +138,7 @@ If you have rails knowledge, you are already aware about the associations (has_m
 
 `ma:association_type:association_name:dependent_type:validate_presence:counter_cache:touch_record:accepts_nested_attributes:foreign_key:class_name`
 
-Let understand the every options and its supported values. By default false or nil depedents of options.
+Let understand the every options and its supported values. By default false or nil depedents on options.
 
 | Option            |            Description                         |  Required   |
 |:---	              |:---	                                           |:---  |
@@ -156,7 +163,7 @@ By default rails support two options into migration. But we have enhance it into
 
 `column name:type:validate_presence:search_by:default value`
 
-Let understand the every options and its supported values. By default false or nil depedents of options.
+Let understand the every options and its supported values. By default false or nil depedents on options.
 
 | Option            |            Description                         |  Required   |
 |:---	              |:---	                                           |:---  |
