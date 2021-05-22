@@ -116,7 +116,7 @@ A full fledge command which contains approx all options will be like something b
 4. It will also enable counter caching on User table to store the blogs count.
 
 ```ruby
-rails g kriangle:module Blog title:string:false:_cont_any description:text:false:_cont_any index show create update destroy --reference=true --reference_name=current_user --association_type=has_many --counter_cache=true --skip_tips=true --creation_method=new
+rails g kriangle:module Blog ma:has_many:comments:delete_all:false:false:false:false: title:string:false:_cont_any description:text:false:_cont_any published:boolean:false::false index show create update destroy --reference=true --reference_name=current_user --association_type=has_many --counter_cache=true --skip_tips=true --creation_method=new
 ```
 
 Next command generate the `Comment` module with association with `Blog` model.
