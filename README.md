@@ -30,18 +30,36 @@ Kriangle can create any module easily by using it’s [Generators](#generators).
 Kriangle works with Rails 5.1 onwards. Add the following line to your Gemfile:
 
 ```ruby
-gem 'grape', '~> 1.0', '>= 1.0.1'
-gem 'grape-active_model_serializers', '~> 1.5', '>= 1.5.1'
-gem 'grape-swagger', '~> 0.27.3'
-gem 'grape-swagger-rails'
+gem 'kriangle'
+
+gem 'bcrypt', '~> 3.1.7'
+gem 'devise', '~> 4.4', '>= 4.4.3'
+gem 'dotenv-rails'
+gem 'friendly_id', '~> 5.2', '>= 5.2.4'
+gem 'rails_admin', '~> 2.0'
+# gem 'rails_admin_rollincode', '~> 1.2', '>= 1.2.1'
+gem 'select2-rails'
+
+gem 'bootstrap4-kaminari-views'
+gem 'faker'
+gem 'searchkick', '~> 4.1'
+gem 'jquery-rails', '~> 4.3', '>= 4.3.3'
+gem 'twitter-typeahead-rails'
+
+gem 'activerecord-import', '~> 1.0', '>= 1.0.1'
+gem 'rack-cors'
+
+gem 'grape', '~> 1.2', '>= 1.2.4'
+gem 'grape-active_model_serializers', '~> 1.5', '>= 1.5.2'
 gem 'grape-rails-cache'
+gem 'grape-swagger', '0.33.0'
+gem 'grape-swagger-rails', '0.3.1'
 
 gem 'kaminari', '~> 1.0', '>= 1.0.1'
 gem 'api-pagination', '~> 4.7'
-gem 'kriangle'
-
-gem 'carrierwave'
-gem 'rack-cors', '~> 0.4.1'
+gem 'carrierwave', '~> 2.0', '>= 2.0.2'
+gem 'ransack', '~> 2.3'
+gem 'paperclip', '~> 6.0.0'
 ```
 
 Then run `bundle install`
