@@ -1,12 +1,25 @@
 # Kriangle
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/kriangle`. To experiment with that code, run `bin/console` for an interactive prompt.
+It is the library (gem) built upon ruby to create the Modules (Model, Controller, Serialiser, APIs and much more) in existing rails project. 
 
-TODO: Delete this and the text above, and describe your gem
+Any modules can be consists of below components.
+1. Model
+2. Controller (APIs)
+3. Serialiser
+5. Swagger Docs
 
-## Installation
+Its can create any module easily by using it’s commands. You can control the module generation with required components as mentioned above.
 
-Add this line to your application's Gemfile:
+By default in first setup, it's create the authentication module (login, register, forgot password, etc). It can setup the swagger docs to access APIs docs easily which can be useful for developers to share the docs.
+
+It provides two commands for this purpose.
+1. Setup Kriangle (create required files) into the existing project.
+2. Create new modules into the existing project.
+ 
+
+## Getting started
+
+Kriangle works with Rails 5.1 onwards. Add the following line to your Gemfile:
 
 ```ruby
 gem 'grape', '~> 1.0', '>= 1.0.1'
@@ -23,34 +36,27 @@ gem 'carrierwave'
 gem 'rack-cors', '~> 0.4.1'
 ```
 
-And then execute:
+Then run `bundle install`
 
-    $ bundle
+Next, you need to run the generator:
 
-Or install it yourself as:
+In the following command you will replace `MODEL` with the class name used for the application’s users. This will create a model (if one does not exist) and configure it with the authentication modul. The generator also configures your config/routes.rb file to point to the authentications controller.
 
-    $ gem install kriangle
+`rails g kriangle:install MODEL PATH [column_name:type]`
 
-## Usage
+i.e. if you want to generate the User model with Auth model (for authentication). So you can type below. Email column add automatically.
 
-Generate Authentication Module
+`rails g kriangle:install User Auth first_name last_name`
 
-`rails g kriangle:install [MODEL NAME] [MOUNT PATH] [column_name:type]`
+### Generate New module
 
-i.e. If we want to generate the User model with Auth model (for authentication). So you can type below.
-
-`rails g kriangle:install User Auth first_name`
-
-Generate other module
+In above command we have setup the initial authetication module. Now we can generate new modules which be generated with below command.
 
 `rails g kriangle:module MODULE_NAME [column_name:type]`
 
-i.e. If you want to generate Post model with title, content column, you can type below.
+If you want to generate Post model with title, content column, you can type below.
 
 `rails g kriangle:module Post title:string content:text`
-
-i.e. City model only with index route, skip model and migration
-`rails g kriangle:module City name:string index --skip_model=true --skip_migration=true`
 
 More options are listed below
 `skip_controller`
