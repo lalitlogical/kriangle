@@ -13,7 +13,6 @@ PATH
       grape-swagger (~> 1.4)
       grape-swagger-rails (~> 0.3.1)
       kaminari (~> 1.0, >= 1.0.1)
-      paperclip (~> 6.0.0)
       rack-cors
       ransack (~> 2.3)
 
@@ -65,7 +64,6 @@ GEM
       ssrf_filter (~> 1.0)
     case_transform (0.2)
       activesupport
-    climate_control (0.2.0)
     concurrent-ruby (1.1.8)
     crass (1.0.6)
     devise (4.8.0)
@@ -138,12 +136,6 @@ GEM
       nokogiri (>= 1.5.9)
     marcel (1.0.1)
     method_source (1.0.0)
-    mime-types (3.3.1)
-      mime-types-data (~> 3.2015)
-    mime-types-data (3.2021.0225)
-    mimemagic (0.3.10)
-      nokogiri (~> 1)
-      rake
     mini_magick (4.11.0)
     mini_mime (1.1.0)
     mini_portile2 (2.5.1)
@@ -156,12 +148,6 @@ GEM
       mini_portile2 (~> 2.5.0)
       racc (~> 1.4)
     orm_adapter (0.5.0)
-    paperclip (6.0.0)
-      activemodel (>= 4.2.0)
-      activesupport (>= 4.2.0)
-      mime-types
-      mimemagic (~> 0.3.0)
-      terrapin (~> 0.6.0)
     public_suffix (4.0.6)
     racc (1.5.2)
     rack (2.2.3)
@@ -194,8 +180,6 @@ GEM
       ffi (~> 1.12)
     ruby2_keywords (0.0.4)
     ssrf_filter (1.0.7)
-    terrapin (0.6.0)
-      climate_control (>= 0.0.3, < 1.0)
     thor (1.1.0)
     tzinfo (2.0.4)
       concurrent-ruby (~> 1.0)
@@ -221,7 +205,6 @@ DEPENDENCIES
   grape-swagger-rails (~> 0.3.1)
   kaminari (~> 1.0, >= 1.0.1)
   kriangle!
-  paperclip (~> 6.0.0)
   rack-cors
   rake (~> 10.0)
   ransack (~> 2.3)

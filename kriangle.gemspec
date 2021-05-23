@@ -51,5 +51,4 @@ Gem::Specification.new do |spec|
   spec.add_dependency('ransack', '~> 2.3')
 
   spec.add_dependency('carrierwave', '~> 2.0', '>= 2.0.2')
-  spec.add_dependency('paperclip', '~> 6.0.0')
 end

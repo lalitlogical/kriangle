@@ -26,4 +26,3 @@ gem 'rack-cors'
 gem 'ransack', '~> 2.3'
 
 gem 'carrierwave', '~> 2.0', '>= 2.0.2'
-gem 'paperclip', '~> 6.0.0'
