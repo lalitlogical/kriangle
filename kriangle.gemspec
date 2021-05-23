@@ -8,7 +8,7 @@ Gem::Specification.new do |spec|
   spec.name          = 'kriangle'
   spec.version       = Kriangle::VERSION
   spec.authors       = ['Lalit Kumar Maurya']
-  spec.email         = ['lalit.maurya@engineer.ai']
+  spec.email         = ['lalit.logical@gmail.com']
 
   spec.summary       = '"Write a short summary, because RubyGems requires one."'
   spec.description   = '"Write a longer description or delete this line."'
