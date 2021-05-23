@@ -23,6 +23,8 @@ Kriangle can create any module easily by using it’s [Generators](#generators).
   - [Controller Actions](#controller-actions)
   - [Skip Options](#skip-options)
   - [Advanced Options](#advanced-options)
+    - [Parent Reference](#parent-reference)
+    - [Self Association](#self-association) 
 - [License](#license)
 - [Code of Conduct](#code-of-conduct)
 
@@ -97,7 +99,7 @@ Let now generate the two modules.
 1. Blog
 2. Comment 
 
-It's provide you different options to control the module generation. So we will use some them mentioned below.
+Kriangle provide you different arguments to control the module generation. So we will use some them mentioned below.
 
 A full fledge command which contains approx all options will be like something below. 
 1. It will generate the `Blog` module with title, description with enabling searching on these columns. 
@@ -122,7 +124,7 @@ Hope you like it. if you face any issue, please feel free to contact me :)
 
 ## Options
 
-Kriangle support different options to control the code generation.
+Kriangle support different arguments to control the code generation.
 
 ### Associations
 
@@ -130,7 +132,7 @@ If you have rails knowledge, you are already aware about the associations (has_m
 
 `ma:association_type:association_name:dependent_type:validate_presence:counter_cache:touch_record:accepts_nested_attributes:foreign_key:class_name`
 
-Let understand the every options and its supported values. By default false or nil depedents on options.
+Let understand the every options and its supported values. By default false or nil depedents on arguments.
 
 | Option            |            Description                         |  Required   |
 |:---	              |:---	                                           |:---  |
@@ -155,7 +157,7 @@ By default rails support two options into migration. But we have enhance it into
 
 `column name:type:validate_presence:search_by:default value`
 
-Let understand the every options and its supported values. By default false or nil depedents on options.
+Let understand the every arguments and its supported values. By default false or nil depedents on arguments.
 
 | Option            |            Description                         |  Required   |
 |:---	              |:---	                                           |:---  |
@@ -171,7 +173,15 @@ i.e.
 
 ### Controller Actions
 
-By default all controller created (CRUD). But if you want to control it you have to mentioned the required action. It will generate only those action only.
+By default all CRUD APIs generated. But if you want to control it, you have to mentioned the required action. It will generate only those APIs.
+
+Valid actions mentioned as below.
+1. index
+2. show
+3. create
+4. update
+5. destroy
+6. create_or_destroy - Will update the controller's action according to like dislike feature respective to authenticator model (i.e. User).
 
 ### Skip Options
 
@@ -189,7 +199,40 @@ There are a lot of skip options available. You can check below.
 | `skip_pagination`            | `false`   | Skip the pagination from index API of controller. |
 
 ### Advanced Options
-WIP
+
+Kriangle support some additional arguments also for generate code as per requirement.
+
+#### Parent Reference
+
+Kriangle provides mechanism to add parent reference with previously created model (i.e. `User`, `Post` ) or `current_user`. 
+
+If you want that newly created records associate with current logged in user, you have to pass below arguments.
+
+```ruby
+--reference=true --reference_name=current_user --association_type=has_many
+```
+There are other options also available under this Parent Reference.
+
+| Option         | Default   |                            Description                     |
+|:---	           |:---   |:---                                                        |
+| `reference` | `false` | Current model's association sets up a one-to-one connection with selected model, such that each instance of the declaring model 'belongs to' one instance of the selected model. |
+| `reference_name` | | `current_user` or previously created model name i.e. `User`, `Post` | 
+| `association_type` | `has_many` | `has_many` or `has_one` |
+| `counter_cache` | `false` | Default false. Instead of counting the associated records in the database every time the page loads, ActiveRecord’s counter caching feature allows storing the counter and updating it every time an associated object is created or removed. Parent model should be defined before this model. |
+| `touch_record` | `false` | In rails touch is used to update the parent's updated_at field for persisted objects. |
+| `accepts_nested_attributes` | `false` | Nested attributes allow you to save attributes on associated records through the parent. By default nested attribute updating is turned off and you can enable it using the accepts_nested_attributes_for class method. When you enable nested attributes an attribute writer is defined on the model. |
+
+#### Self Association
+
+Kriangle provides mechanism to add self reference within the model. 
+
+If you want that newly created records associate with existing record of same table, you have to pass below arguments.
+
+```ruby
+--self_reference=true --parent_association_name=parent --child_association_name=replies
+```
+
+You can chose your desired association name through `parent_association_name` and `child_association_name` arguments.
 
 ## License
 
