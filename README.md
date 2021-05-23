@@ -22,6 +22,7 @@ Kriangle can create any module easily by using it’s [Generators](#generators).
   - [Columns](#columns)
   - [Controller Actions](#controller-actions)
   - [Skip Options](#skip-options)
+  - [Advanced Options](#advanced-options)
 - [License](#license)
 - [Code of Conduct](#code-of-conduct)
 
@@ -31,35 +32,6 @@ Kriangle works with Rails 5.1 onwards. Add the following line to your Gemfile:
 
 ```ruby
 gem 'kriangle'
-
-gem 'bcrypt', '~> 3.1.7'
-gem 'devise', '~> 4.4', '>= 4.4.3'
-gem 'dotenv-rails'
-gem 'friendly_id', '~> 5.2', '>= 5.2.4'
-gem 'rails_admin', '~> 2.0'
-# gem 'rails_admin_rollincode', '~> 1.2', '>= 1.2.1'
-gem 'select2-rails'
-
-gem 'bootstrap4-kaminari-views'
-gem 'faker'
-gem 'searchkick', '~> 4.1'
-gem 'jquery-rails', '~> 4.3', '>= 4.3.3'
-gem 'twitter-typeahead-rails'
-
-gem 'activerecord-import', '~> 1.0', '>= 1.0.1'
-gem 'rack-cors'
-
-gem 'grape', '~> 1.2', '>= 1.2.4'
-gem 'grape-active_model_serializers', '~> 1.5', '>= 1.5.2'
-gem 'grape-rails-cache'
-gem 'grape-swagger', '0.33.0'
-gem 'grape-swagger-rails', '0.3.1'
-
-gem 'kaminari', '~> 1.0', '>= 1.0.1'
-gem 'api-pagination', '~> 4.7'
-gem 'carrierwave', '~> 2.0', '>= 2.0.2'
-gem 'ransack', '~> 2.3'
-gem 'paperclip', '~> 6.0.0'
 ```
 
 Then run `bundle install`
@@ -99,16 +71,16 @@ if you want to generate Post model with title, content column, you can type belo
 rails g kriangle:module Post title:string content:text
 ```
 
-By default generated the module not referenced to User model. You can enable it by passing reference: true
+By default generated the module not referenced to current logged in user. You can enable it by passing reference=true and other commands as below.
 
 ```ruby
-rails g kriangle:module Post title:string content:text --reference=true
+rails g kriangle:module Post title:text:false:_cont_any content:text:false:_cont_any published:boolean:false::false index show create update destroy --reference=true --reference_name=current_user --association_type=has_many --skip_tips=true --creation_method=new
 ```
 
-If you want has_many association with User model, you should use below command.
+If you want enable counter cache on user's record, you should use below command.
 
 ```ruby
-rails g kriangle:module Post title:string content:text --reference=true --has_many=true
+rails g kriangle:module Post title:text:false:_cont_any content:text:false:_cont_any published:boolean:false::false index show create update destroy --reference=true --reference_name=current_user --association_type=has_many --counter_cache=true --skip_tips=true --creation_method=new
 ```
 
 ## Example
@@ -149,6 +121,8 @@ This is the example of Kriangle which can be use to create a full working module
 Hope you like it. if you face any issue, please feel free to contact me :) 
 
 ## Options
+
+Kriangle support different options to control the code generation.
 
 ### Associations
 
@@ -214,6 +188,8 @@ There are a lot of skip options available. You can check below.
 | `skip_timestamps`            | `false`   | Skip the timestamps columns (created_at and updated_at) into migration |
 | `skip_pagination`            | `false`   | Skip the pagination from index API of controller. |
 
+### Advanced Options
+WIP
 
 ## License
 
