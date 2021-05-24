@@ -9,6 +9,8 @@ gemspec
 
 gem 'byebug', platform: :mri
 
+gem 'sqlite3'
+
 gem 'bcrypt', '~> 3.1.7'
 gem 'dotenv-rails'
 gem 'devise', '~> 4.4', '>= 4.4.3'
