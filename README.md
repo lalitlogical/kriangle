@@ -27,7 +27,7 @@ Kriangle can create any module easily by using it’s [Generators](#generators).
     - [Wrapper](#wrapper)
     - [APIs Routes](#apis-routes)
     - [Parent Reference](#parent-reference)
-    - [Self Association](#self-association)
+    - [Self Reference](#self-reference)
 - [Example](#example)
 - [License](#license)
 - [Code of Conduct](#code-of-conduct)
@@ -233,7 +233,7 @@ There are other options also available under this Parent Reference.
 | `touch_record` | `false` | In rails touch is used to update the parent's updated_at field for persisted objects. |
 | `accepts_nested_attributes` | `false` | Nested attributes allow you to save attributes on associated records through the parent. By default nested attribute updating is turned off and you can enable it using the accepts_nested_attributes_for class method. When you enable nested attributes an attribute writer is defined on the model. |
 
-#### Self Association
+#### Self Reference
 
 Kriangle provides mechanism to add self reference within the model.
 
