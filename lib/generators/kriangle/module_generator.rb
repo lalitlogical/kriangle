@@ -64,11 +64,11 @@ module Kriangle
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
       class_option :controller_path, type: :string, desc: "controller's path"
 
-      class_option :reference, desc: 'Reference to user', type: :boolean
+      class_option :reference, desc: 'Reference to user', type: :boolean, default: false
       class_option :reference_name, type: :string, default: 'current_user', desc: 'Reference Name'
       class_option :association_type, desc: 'Association with any model', type: :string
-      class_option :touch_record, desc: 'Touch the updated_at column', type: :boolean
-      class_option :accepts_nested_attributes, desc: 'accepts nested attributes', type: :boolean
+      class_option :touch_record, desc: 'Touch the updated_at column', type: :boolean, default: false
+      class_option :accepts_nested_attributes, desc: 'accepts nested attributes', type: :boolean, default: false
       class_option :counter_cache, desc: 'Counter cache support', type: :boolean, default: false
 
       class_option :self_reference, desc: 'Counter cache support', type: :boolean, default: false
@@ -84,13 +84,13 @@ module Kriangle
 
       class_option :skip_swagger, type: :boolean, default: false, desc: 'Skip "Swagger UI"'
       class_option :skip_tips, type: :boolean, default: false, desc: 'Skip "Tips from different files i.e. model, serializer, etc."'
-      class_option :skip_model, desc: 'Don\'t generate a model or migration file.', type: :boolean
-      class_option :skip_controller, desc: 'Don\'t generate a controller.', type: :boolean
-      class_option :skip_migration, desc: 'Don\'t generate migration file for model.', type: :boolean
-      class_option :skip_serializer, desc: 'Don\'t generate serializer file for model.', type: :boolean
-      class_option :skip_timestamps, desc: 'Don\'t add timestamps to migration file.', type: :boolean
-      class_option :skip_pagination, desc: 'Don\'t add pagination to index method.', type: :boolean
-      class_option :skip_authentication, desc: 'Don\'t require authentication for this controller.', type: :boolean
+      class_option :skip_model, desc: 'Don\'t generate a model or migration file.', type: :boolean, default: false
+      class_option :skip_controller, desc: 'Don\'t generate a controller.', type: :boolean, default: false
+      class_option :skip_migration, desc: 'Don\'t generate migration file for model.', type: :boolean, default: false
+      class_option :skip_serializer, desc: 'Don\'t generate serializer file for model.', type: :boolean, default: false
+      class_option :skip_timestamps, desc: 'Don\'t add timestamps to migration file.', type: :boolean, default: false
+      class_option :skip_pagination, desc: 'Don\'t add pagination to index method.', type: :boolean, default: false
+      class_option :skip_authentication, desc: 'Don\'t require authentication for this controller.', type: :boolean, default: false
       class_option :description_method_name, type: :string, default: 'desc', desc: 'desc or description'
       class_option :force, desc: 'Force', type: :boolean, default: false
 

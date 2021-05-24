@@ -35,14 +35,14 @@ module Kriangle
       # argument :mount_path, type: :string, default: 'User'
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
 
-      class_option :database, type: :string, desc: "database i.e. postgresql, mysql, sqlite3"
+      class_option :database, type: :string, default: 'sqlite3', desc: "database i.e. postgresql, mysql, sqlite3"
 
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
       class_option :controller_path, type: :string, desc: "controller's path"
       class_option :skip_tips, type: :boolean, default: false, desc: 'Skip "Tips from different files i.e. model, serializer, etc."'
       class_option :skip_swagger, type: :boolean, default: false, desc: 'Skip "Swagger UI"'
       class_option :skip_avatar, type: :boolean, default: true, desc: 'Skip "Avatar Feature"'
-      class_option :skip_migration, desc: 'Don\'t generate migration file for model.', type: :boolean
+      class_option :skip_migration, desc: 'Don\'t generate migration file for model.', type: :boolean, default: false
       class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: 'ORM i.e. ActiveRecord, Mongoid'
 
       source_root File.expand_path('templates', __dir__)
