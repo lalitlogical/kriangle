@@ -16,7 +16,6 @@ Kriangle can create any module easily by using it’s [Generators](#generators).
   - [Generators](#generators)
   - [Initial Setup](#initial-setup)
   - [Module Generator](#module-generator)
-- [Example](#example)
 - [Options](#options)
   - [Associations](#associations)
   - [Columns](#columns)
@@ -25,6 +24,7 @@ Kriangle can create any module easily by using it’s [Generators](#generators).
   - [Advanced Options](#advanced-options)
     - [Parent Reference](#parent-reference)
     - [Self Association](#self-association) 
+- [Example](#example)
 - [License](#license)
 - [Code of Conduct](#code-of-conduct)
 
@@ -84,43 +84,6 @@ If you want enable counter cache on user's record, you should use below command.
 ```ruby
 rails g kriangle:module Post title:text:false:_cont_any content:text:false:_cont_any published:boolean:false::false index show create update destroy --reference=true --reference_name=current_user --association_type=has_many --counter_cache=true --skip_tips=true --creation_method=new
 ```
-
-## Example
-
-To understand the uses of Kriangle, we will provide a example of `Blog Rails Application`. Please follow the [Getting Started](#getting-started) to setup the Kriangle gem into your newly created Rails project. After that we run its commands to create a modules into projects as following.
-
-Let generate the authentication module. It's compulsary step.
-
-```ruby
-rails g kriangle:install User email:string:true name:string:true --skip_avatar=true --skip_tips=true --controller_path=Auth
-```
-
-Let now generate the two modules.
-1. Blog
-2. Comment 
-
-Kriangle provide you different arguments to control the module generation. So we will use some them mentioned below.
-
-A full fledge command which contains approx all options will be like something below. 
-1. It will generate the `Blog` module with title, description with enabling searching on these columns. 
-2. It will also create all CRUD APIs. 
-3. It will also associate the records with `current_user` during creation.
-4. It will also enable counter caching on User table to store the blogs count.
-
-```ruby
-rails g kriangle:module Blog ma:has_many:comments:delete_all:false:false:false:false: title:string:false:_cont_any description:text:false:_cont_any published:boolean:false::false index show create update destroy --reference=true --reference_name=current_user --association_type=has_many --counter_cache=true --skip_tips=true --creation_method=new
-```
-
-Next command generate the `Comment` module with association with `Blog` model.
-
-```ruby
-rails g kriangle:module Comment ma:belongs_to:user::true:false:false:false: message:text:false index show create update destroy --reference=true --reference_name=Blog --association_type=has_many --counter_cache=true --self_reference=true --parent_association_name=parent --child_association_name=replies --skip_tips=true --creation_method=new
-```
-When you are done with these commands, please run `rake db:migrate` to complete the migration. Now run the application and go to `/swagger` routes to check the APIs documentation. Also you can check the rails project which will magically contains the generated code.
-
-This is the example of Kriangle which can be use to create a full working module with these commands. Play it!
-
-Hope you like it. if you face any issue, please feel free to contact me :) 
 
 ## Options
 
@@ -233,6 +196,51 @@ If you want that newly created records associate with existing record of same ta
 ```
 
 You can chose your desired association name through `parent_association_name` and `child_association_name` arguments.
+
+## Example
+
+To understand the uses of Kriangle, we will provide a example of **Blogger** rails application. 
+
+Let's create a rails project.
+
+```ruby
+rails _5.2.3_ new blogger
+```
+
+Now follow the [Getting Started](#getting-started) to setup the Kriangle gem into your newly created **blogger** rails project. After that we run its generators to create new modules into projects as below.
+
+Let generate the **authentication** module. It's **mendatory** step.
+
+```ruby
+rails g kriangle:install User email:string:true name:string:true --skip_avatar=true --skip_tips=true --controller_path=Auth
+```
+
+Let now generate the two modules.
+1. Blog
+2. Comment 
+
+Kriangle provide you different arguments to control the module generation. So we will use some them mentioned below.
+
+A full fledge command which contains approx all options will be like something below. 
+1. It will generate the `Blog` module with title, description with enabling searching on these columns. 
+2. It will also create all CRUD APIs. 
+3. It will also associate the records with `current_user` during creation.
+4. It will also enable counter caching on User table to store the blogs count.
+
+```ruby
+rails g kriangle:module Blog ma:has_many:comments:delete_all:false:false:false:false: title:string:false:_cont_any description:text:false:_cont_any published:boolean:false::false index show create update destroy --reference=true --reference_name=current_user --association_type=has_many --counter_cache=true --skip_tips=true --creation_method=new
+```
+
+Next command generate the `Comment` module association with `Blog` model.
+
+```ruby
+rails g kriangle:module Comment ma:belongs_to:user::true:false:false:false: message:text:false index show create update destroy --reference=true --reference_name=Blog --association_type=has_many --counter_cache=true --self_reference=true --parent_association_name=parent --child_association_name=replies --skip_tips=true --creation_method=new
+```
+When you are done with these commands, please run `rake db:migrate` to complete the migration. Now run the application and go to **/swagger** routes to check the APIs documentation. Also you can check the rails project now which will magically contains the generated code.
+
+This is the example of Kriangle which can be use to create a full working module with these generators. Play it!
+
+Hope you like it. if you face any issue, please feel free to contact me :)
 
 ## License
 
