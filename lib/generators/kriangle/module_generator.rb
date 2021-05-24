@@ -58,7 +58,7 @@ module Kriangle
 
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
 
-      class_option :database, type: :string, desc: "database i.e. postgresql, mysql, sqlite3"
+      class_option :database, type: :string, default: 'sqlite3', desc: "database i.e. postgresql, mysql, sqlite3"
 
       class_option :user_class, type: :string, desc: "User's model name"
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
