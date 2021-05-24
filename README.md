@@ -62,7 +62,7 @@ Kriangle provides two generator for this purpose:
 1. [Initial Setup](#initial-setup) - Install the Kriangle and it's dependencies into the existing project.
 2. [Module Generator](#module-generator) - Create new modules into the existing project.
 
-Always remember the hierarchy of modules. So if any module behave as child of any other module then parent module should be generated before the child module. So when you generate the modules, it should follow the hierarchy. i.e. if you enable the counter cache on `Post` model for it's owners, `User` module must created before `Post` module. So hierarchy should be like `User`, `Post`, `Comment`, `Like`, etc for a blog rails application.
+Always remember the **hierarchy** of modules. So if any module behave as child of any other module then parent module should be generated before the child module. So when you generate the modules, it should follow the hierarchy. i.e. if you enable the counter cache on `Post` model for it's owners, `User` module must created before `Post` module. So hierarchy should be like `User`, `Post`, `Comment`, `Like`, etc for a blog rails application.
 
 ### Initial Setup
 
