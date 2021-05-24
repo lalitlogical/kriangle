@@ -30,7 +30,7 @@ Kriangle can create any module easily by using it’s [Generators](#generators).
 
 ## Getting started
 
-Kriangle works with Rails 5.1 onwards. Add the following line to your Gemfile:
+Kriangle works with Rails 5.1 onwards (< 6). Add the following line to your Gemfile:
 
 ```ruby
 gem 'kriangle'
@@ -38,7 +38,13 @@ gem 'kriangle'
 
 Then run `bundle install`
 
-Next, you need to run the generator:
+Kriangle dependent on [Devise](https://github.com/heartcombo/devise) gem for its authentication module. So we have to generate its intialiser file by installing it.
+
+```ruby
+bundle exec rails g devise:install
+```
+
+Next, you need to run the generators:
 
 ### Generators
 
@@ -207,7 +213,7 @@ Let's create a rails project.
 rails _5.2.3_ new blogger
 ```
 
-Now follow the [Getting Started](#getting-started) to setup the Kriangle gem into your newly created **blogger** rails project. After that we run its generators to create new modules into projects as below.
+Now follow the [Getting Started](#getting-started) to setup the Kriangle gem into your newly created **blogger** rails project. After that we run its generators to create new modules into the **blogger** rails project as below.
 
 Let generate the **authentication** module. It's **mendatory** step.
 
