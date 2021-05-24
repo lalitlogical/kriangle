@@ -40,6 +40,12 @@ Kriangle works with Rails 5.1 onwards (< 6). Add the following line to your Gemf
 gem 'kriangle'
 ```
 
+Or you can use the master branch code as gem. Add the following line to your Gemfile:
+
+```ruby
+gem 'kriangle', git: 'git@github.com:lalitlogical/kriangle.git', branch: 'master'
+```
+
 Then run `bundle install`
 
 Kriangle dependent on [Devise](https://github.com/heartcombo/devise) gem for its authentication module. So we have to generate its intialiser file by installing it.
