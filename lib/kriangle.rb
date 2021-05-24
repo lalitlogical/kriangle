@@ -18,7 +18,6 @@ require 'kaminari'
 require 'ransack'
 
 require 'carrierwave'
-require 'paperclip'
 
 module Kriangle
   # Your code goes here...
