@@ -23,6 +23,9 @@ Kriangle can create any module easily by using it’s [Generators](#generators).
   - [Controller Actions](#controller-actions)
   - [Skip Options](#skip-options)
   - [Advanced Options](#advanced-options)
+    - [Database](#database)
+    - [Wrapper](#wrapper)
+    - [APIs Routes](#apis-routes)
     - [Parent Reference](#parent-reference)
     - [Self Association](#self-association)
 - [Example](#example)
@@ -160,6 +163,8 @@ There are a lot of skip options available. You can check below.
 
 | Skip Options            | Default   |                            Description                     |
 |:---	                    |:---	      |:---                                                        |
+| `skip_swagger`            | `false`   | Skip the swagger documentation. **Only** valid with `install` generator |
+| `skip_avatar`            | `true`   | Skip the user's avatar feature. **Only** valid with `install` generator |
 | `skip_model`            | `false`   | Skip the model creation if model aleady created and you do not want to override it. |
 | `skip_controller`            | `false`   | Skip the controller (APIs) generation. |
 | `skip_migration`            | `false`   | Skip the table migration if table aleady created and you do not want to override it. |
@@ -172,6 +177,35 @@ There are a lot of skip options available. You can check below.
 ### Advanced Options
 
 Kriangle support some additional arguments also for generate code as per requirement.
+
+#### Database
+
+By default, Kriangle generate code based on `sqlite3` database, mostly migration files depends on it. But you can provide the database to generate the code based on that.
+
+```ruby
+--database=postgresql
+```
+
+Supported databases: `postgresql`, `mysql`, `sqlite3`. You have to add **adapter/gem** based on your database in your **Gemfile**
+
+
+#### Wrapper
+
+Kriangle generate all APIs under `app/controllers/api/v1` folder. You can change the wrapper name (v1) as per you need with `wrapper` arguments as below.
+
+```ruby
+--wrapper=V2
+```
+
+#### APIs Routes
+
+Kriangle by default use the model name for routes. So if do not pass it will determined with model name. i.e. For `Post` model api routes will be `posts` and whole end points will be like `api/v1/posts`. You can change it by passing your desired path as below.
+
+```ruby 
+--controller_path=blogs
+```
+
+Now all APIs points to `/api/v1/blogs` but model will be `Post`.
 
 #### Parent Reference
 
