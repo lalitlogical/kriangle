@@ -169,7 +169,7 @@ GEM
       method_source
       rake (>= 0.8.7)
       thor (~> 1.0)
-    rake (10.5.0)
+    rake (13.0.3)
     ransack (2.4.2)
       activerecord (>= 5.2.4)
       activesupport (>= 5.2.4)
@@ -208,7 +208,7 @@ DEPENDENCIES
   kaminari (~> 1.0, >= 1.0.1)
   kriangle!
   rack-cors
-  rake (~> 10.0)
+  rake (~> 13.0)
   ransack (~> 2.3)
   sqlite3
 
