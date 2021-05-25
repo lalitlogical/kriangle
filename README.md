@@ -1,6 +1,6 @@
 # Kriangle
 
-Kriangle is a library (gem) built upon ruby to create the Modules (Model, Controller, Serialiser, APIs and much more) in rails project.
+Kriangle is a library (gem) built upon ruby to scaffold the Modules (Model, Controller, Serialiser, APIs and much more) in rails project.
 
 Any modules can be consists of below components.
 1. Model
@@ -9,7 +9,7 @@ Any modules can be consists of below components.
 5. Swagger Docs
 6. much more ...
 
-Kriangle can create any module easily by using it’s [Generators](#generators). You can control the module generation with [skip options](#skip-options). Also you can choose the [options](#options) as per your requirements.
+Kriangle can scaffold any module easily by using it’s [Generators](#generators). You can control the module generation with [skip options](#skip-options). Also you can choose the [options](#options) as per your requirements.
 
 ## Contents
 
@@ -60,7 +60,7 @@ Next, you need to run the generators:
 
 Kriangle provides two generator for this purpose:
 1. [Initial Setup](#initial-setup) - Install the Kriangle and it's dependencies into the existing project.
-2. [Module Generator](#module-generator) - Create new modules into the existing project.
+2. [Module Generator](#module-generator) - Scaffold new modules into the existing project.
 
 Always remember the **hierarchy** of modules. So if any module behave as child of any other module then parent module should be generated before the child module. So when you generate the modules, it should follow the hierarchy. i.e. if you enable the counter cache on `Post` model for it's owners, `User` module must created before `Post` module. So hierarchy should be like `User`, `Post`, `Comment`, `Like`, etc for a blog rails application.
 
@@ -255,7 +255,7 @@ Let's create a rails project.
 rails _5.2.3_ new blogger
 ```
 
-Now follow the [Getting Started](#getting-started) to setup the Kriangle gem into your newly created **blogger** rails project. After that we run its generators to create new modules into the **blogger** rails project as below.
+Now follow the [Getting Started](#getting-started) to setup the Kriangle gem into your newly created **blogger** rails project. After that we run its generators to scaffold new modules into the **blogger** rails project as below.
 
 Let generate the **authentication** module. Its a **mendatory** step.
 
@@ -286,9 +286,9 @@ rails g kriangle:module Comment ma:belongs_to:user::true:false:false:false: mess
 ```
 When you are done with these commands, please run `rake db:migrate` to complete the migration.
 
-Now run the application and go to **/swagger** routes to check the APIs documentation. Also you can check the rails project which will magically contains the generated code.
+Now run the application and go to [http://localhost:3000/swagger](http://localhost:3000/swagger) routes to check the APIs documentation. Also you can check the rails project which will magically contains the generated code.
 
-This is the example of Kriangle which can be use to create a full working module with these generators. Play it!
+This is the example of Kriangle which can be use to scaffold a full working module with these generators. Play it!
 
 Hope you like it!. if you face any issue, please feel free to contact me :)
 
