@@ -288,7 +288,7 @@ When you are done with these commands, please run `rake db:migrate` to complete 
 
 Now run the application and go to [http://localhost:3000/swagger](http://localhost:3000/swagger) routes to check the APIs documentation as below.
 
-![alt text][api-documentation]
+![alt text][api-documentation-image]
 
 Also you can check the rails project which will magically contains the generated code.
 
@@ -304,4 +304,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 Everyone interacting in the Kriangle project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/lalitlogical/kriangle/blob/master/CODE_OF_CONDUCT.md).
 
-[api-documentation]: https://kriangle.s3.ap-south-1.amazonaws.com/rest-apis-with-kriangle.png "Swagger APIs documentation"
+[api-documentation-image]: https://kriangle.s3.ap-south-1.amazonaws.com/kriangle-api-documentation.png "Swagger APIs documentation"
