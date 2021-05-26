@@ -264,8 +264,8 @@ rails g kriangle:install User email:string:true name:string:true --skip_avatar=t
 ```
 
 Let now generate the two modules.
-1. Blog
-2. Comment
+1. [Blog](https://kriangle.s3.ap-south-1.amazonaws.com/blog-module-setting.png)
+2. [Comment](https://kriangle.s3.ap-south-1.amazonaws.com/comment-module-setting.png)
 
 Kriangle provide you different arguments to control the module generation. So we will use some of them mentioned below.
 
