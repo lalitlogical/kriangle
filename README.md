@@ -286,11 +286,15 @@ rails g kriangle:module Comment ma:belongs_to:user::true:false:false:false: mess
 ```
 When you are done with these commands, please run `rake db:migrate` to complete the migration.
 
-Now run the application and go to [http://localhost:3000/swagger](http://localhost:3000/swagger) routes to check the APIs documentation. Also you can check the rails project which will magically contains the generated code.
+Now run the application and go to [http://localhost:3000/swagger](http://localhost:3000/swagger) routes to check the APIs documentation as below.
+
+![alt text][api-documentation]
+
+Also you can check the rails project which will magically contains the generated code.
 
 This is the example of Kriangle which can be use to scaffold a full working module with these generators. Play it!
 
-Hope you like it!. if you face any issue, please feel free to contact me :)
+Hope you like it!. if you face any issue, please feel free to contact us :)
 
 ## License
 
@@ -299,3 +303,5 @@ The gem is available as open source under the terms of the [MIT License](https:/
 ## Code of Conduct
 
 Everyone interacting in the Kriangle project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/lalitlogical/kriangle/blob/master/CODE_OF_CONDUCT.md).
+
+[api-documentation]: https://kriangle.s3.ap-south-1.amazonaws.com/rest-apis-with-kriangle.png "Swagger APIs documentation"
