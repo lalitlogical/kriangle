@@ -54,7 +54,7 @@ module Kriangle
         @underscored_user_class = user_class.underscore
         @wrapper = options.wrapper
         @database = options.database
-        @custom_orm = options.custom_orm
+        @custom_orm = 'ActiveRecord' # Kriangle.custom_orm
         @skip_tips = options.skip_tips?
         @skip_swagger = options.skip_swagger?
         @skip_avatar = options.skip_avatar?
@@ -95,6 +95,7 @@ module Kriangle
       end
 
       def copy_initializer
+        create_template 'kriangle.rb', 'config/initializers/kriangle.rb', skip_if_exist: true
         create_template 'application_record.rb', 'app/models/application_record.rb', skip_if_exist: true
         create_template 'swagger.rb', 'config/initializers/swagger.rb', skip_if_exist: true unless skip_swagger
       end

@@ -58,8 +58,6 @@ module Kriangle
 
       argument :args_for_c_m, type: :array, default: [], banner: 'model:attributes'
 
-      class_option :database, type: :string, default: 'sqlite3', desc: "database i.e. postgresql, mysql, sqlite3"
-
       class_option :user_class, type: :string, desc: "User's model name"
       class_option :wrapper, type: :string, default: 'V1', desc: 'Skip "Swagger UI"'
       class_option :controller_path, type: :string, desc: "controller's path"
@@ -79,7 +77,6 @@ module Kriangle
       class_option :like_dislike, desc: 'Like Dislike', type: :boolean, default: false
 
       class_option :resources, desc: 'Resources routes', type: :boolean, default: true
-      class_option :custom_orm, type: :string, default: 'ActiveRecord', desc: 'ORM i.e. ActiveRecord, mongoid'
       class_option :initial_setup, type: :boolean, default: false, desc: 'Skip "Initial Setup i.e. Routes, Base models, etc."'
 
       class_option :skip_swagger, type: :boolean, default: false, desc: 'Skip "Swagger UI"'
@@ -107,7 +104,7 @@ module Kriangle
 
         @user_class = options.user_class&.underscore
         @wrapper = options.wrapper
-        @database = options.database
+        @database = Kriangle.database
         @controller_path = options.controller_path&.classify&.pluralize || controller_class_name
         @force = options.force
         @resources = options.resources?
@@ -141,7 +138,7 @@ module Kriangle
         @creation_method = options.creation_method
         @like_dislike = options.like_dislike
 
-        @custom_orm = options.custom_orm
+        @custom_orm = 'ActiveRecord' # Kriangle.custom_orm
         @initial_setup = options.initial_setup?
         @skip_tips = options.skip_tips?
         @skip_swagger = options.skip_swagger?

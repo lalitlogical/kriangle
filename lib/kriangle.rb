@@ -20,5 +20,17 @@ require 'ransack'
 require 'carrierwave'
 
 module Kriangle
-  # Your code goes here...
+  # database for which migration files created
+  mattr_accessor :database
+  @@database = 'sqlite3'
+
+  # Custom ORM, default 'ActiveRecord'
+  # mattr_accessor :custom_orm
+  # @@custom_orm = 'ActiveRecord'
+
+  # Default way to set up Kriangle. Run rails generate install to create
+  # a fresh initializer with all configuration values.
+  def self.setup
+    yield self
+  end
 end
