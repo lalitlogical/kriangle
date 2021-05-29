@@ -6,16 +6,16 @@ PATH
       bcrypt (~> 3.1.7)
       carrierwave (~> 2.0, >= 2.0.2)
       devise (~> 4.4, >= 4.4.3)
-      dotenv-rails
+      dotenv-rails (~> 2.7, >= 2.7.6)
       grape (~> 1.2, >= 1.2.4)
       grape-active_model_serializers (~> 1.5, >= 1.5.2)
-      grape-rails-cache
+      grape-rails-cache (~> 0.1.2)
       grape-swagger (~> 1.4)
       grape-swagger-rails (~> 0.3.1)
       kaminari (~> 1.0, >= 1.0.1)
-      rack-cors
+      rack-cors (~> 1.1, >= 1.1.1)
       ransack (~> 2.3)
-      sqlite3
+      sqlite3 (~> 1.4, >= 1.4.2)
 
 GEM
   remote: https://rubygems.org/
@@ -199,18 +199,18 @@ DEPENDENCIES
   byebug
   carrierwave (~> 2.0, >= 2.0.2)
   devise (~> 4.4, >= 4.4.3)
-  dotenv-rails
+  dotenv-rails (~> 2.7, >= 2.7.6)
   grape (~> 1.2, >= 1.2.4)
   grape-active_model_serializers (~> 1.5, >= 1.5.2)
-  grape-rails-cache
+  grape-rails-cache (~> 0.1.2)
   grape-swagger (~> 1.4)
   grape-swagger-rails (~> 0.3.1)
   kaminari (~> 1.0, >= 1.0.1)
   kriangle!
-  rack-cors
+  rack-cors (~> 1.1, >= 1.1.1)
   rake (~> 13.0)
   ransack (~> 2.3)
-  sqlite3
+  sqlite3 (~> 1.4, >= 1.4.2)
 
 BUNDLED WITH
    1.16.2

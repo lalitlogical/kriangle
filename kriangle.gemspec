@@ -34,22 +34,22 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1.16'
   spec.add_development_dependency 'rake', '~> 13.0'
 
-  spec.add_dependency('sqlite3')
+  spec.add_dependency('sqlite3', '~> 1.4', '>= 1.4.2')
 
   spec.add_dependency('bcrypt', '~> 3.1.7')
   spec.add_dependency('devise', '~> 4.4', '>= 4.4.3')
-  spec.add_dependency('dotenv-rails')
+  spec.add_dependency('dotenv-rails', '~> 2.7', '>= 2.7.6')
 
   spec.add_dependency('grape', '~> 1.2', '>= 1.2.4')
   spec.add_dependency('grape-active_model_serializers', '~> 1.5', '>= 1.5.2')
-  spec.add_dependency('grape-rails-cache')
+  spec.add_dependency('grape-rails-cache', '~> 0.1.2')
   spec.add_dependency('grape-swagger', '~> 1.4')
   spec.add_dependency('grape-swagger-rails', '~> 0.3.1')
 
   spec.add_dependency('api-pagination', '~> 4.7')
   spec.add_dependency('kaminari', '~> 1.0', '>= 1.0.1')
 
-  spec.add_dependency('rack-cors')
+  spec.add_dependency('rack-cors', '~> 1.1', '>= 1.1.1')
   spec.add_dependency('ransack', '~> 2.3')
 
   spec.add_dependency('carrierwave', '~> 2.0', '>= 2.0.2')
