@@ -10,19 +10,10 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Lalit Kumar Maurya']
   spec.email         = ['lalit.logical@gmail.com']
 
-  spec.summary       = '"Write a short summary, because RubyGems requires one."'
-  spec.description   = '"Write a longer description or delete this line."'
-  spec.homepage      = 'https://github.com/lalitlogical'
+  spec.summary       = 'Scaffold module (including REST API with documentation) with help of Grape and Swagger.'
+  spec.description   = 'Scaffold module (including REST API with documentation) with help of Grape and Swagger.'
+  spec.homepage      = 'https://github.com/lalitlogical/kriangle'
   spec.license       = 'MIT'
-
-  # Prevent pushing this gem to RubyGems.org. To allow pushes either set the 'allowed_push_host'
-  # to allow pushing to a single host or delete this section to allow pushing to any host.
-  if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "Set to 'http://mygemserver.com'"
-  else
-    raise 'RubyGems 2.0 or newer is required to protect against ' \
-      'public gem pushes.'
-  end
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
@@ -35,22 +26,17 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'rake', '~> 13.0'
 
   spec.add_dependency('sqlite3', '~> 1.4', '>= 1.4.2')
-
   spec.add_dependency('bcrypt', '~> 3.1.7')
   spec.add_dependency('devise', '~> 4.4', '>= 4.4.3')
   spec.add_dependency('dotenv-rails', '~> 2.7', '>= 2.7.6')
-
   spec.add_dependency('grape', '~> 1.2', '>= 1.2.4')
   spec.add_dependency('grape-active_model_serializers', '~> 1.5', '>= 1.5.2')
   spec.add_dependency('grape-rails-cache', '~> 0.1.2')
   spec.add_dependency('grape-swagger', '~> 1.4')
   spec.add_dependency('grape-swagger-rails', '~> 0.3.1')
-
   spec.add_dependency('api-pagination', '~> 4.7')
   spec.add_dependency('kaminari', '~> 1.0', '>= 1.0.1')
-
   spec.add_dependency('rack-cors', '~> 1.1', '>= 1.1.1')
   spec.add_dependency('ransack', '~> 2.3')
-
   spec.add_dependency('carrierwave', '~> 2.0', '>= 2.0.2')
 end
