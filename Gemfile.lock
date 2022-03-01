@@ -96,7 +96,7 @@ GEM
       dry-inflector (~> 0.1, >= 0.1.2)
       dry-logic (~> 1.0, >= 1.0.2)
     erubi (1.10.0)
-    ffi (1.15.1)
+    ffi (1.15.5)
     grape (1.5.3)
       activesupport
       builder
@@ -116,7 +116,7 @@ GEM
       railties (>= 3.2.12)
     i18n (1.8.10)
       concurrent-ruby (~> 1.0)
-    image_processing (1.12.1)
+    image_processing (1.12.2)
       mini_magick (>= 4.9.5, < 5)
       ruby-vips (>= 2.0.17, < 3)
     jsonapi-renderer (0.2.2)
@@ -177,7 +177,7 @@ GEM
     responders (3.0.1)
       actionpack (>= 5.0)
       railties (>= 5.0)
-    ruby-vips (2.1.2)
+    ruby-vips (2.1.4)
       ffi (~> 1.12)
     ruby2_keywords (0.0.4)
     sqlite3 (1.4.2)
