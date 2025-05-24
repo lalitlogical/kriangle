@@ -14,6 +14,7 @@ Gem::Specification.new do |spec|
   spec.description   = 'Scaffold module (including REST API with documentation) with help of Grape and Swagger.'
   spec.homepage      = 'https://github.com/lalitlogical/kriangle'
   spec.license       = 'MIT'
+  spec.required_ruby_version = '>= 2.7.8'
 
   spec.files = `git ls-files -z`.split("\x0").reject do |f|
     f.match(%r{^(test|spec|features)/})
@@ -25,7 +26,7 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency 'bundler', '~> 1.16'
   spec.add_development_dependency 'rake', '~> 13.0'
 
-  spec.add_dependency('sqlite3', '~> 1.4', '>= 1.4.2')
+  spec.add_dependency('sqlite3', '~> 1.6.4')
   spec.add_dependency('bcrypt', '~> 3.1.7')
   spec.add_dependency('devise', '~> 4.4', '>= 4.4.3')
   spec.add_dependency('dotenv-rails', '~> 2.7', '>= 2.7.6')
@@ -36,7 +37,7 @@ Gem::Specification.new do |spec|
   spec.add_dependency('grape-swagger-rails', '~> 0.3.1')
   spec.add_dependency('api-pagination', '~> 4.7')
   spec.add_dependency('kaminari', '~> 1.0', '>= 1.0.1')
-  spec.add_dependency('rack-cors', '~> 1.1', '>= 1.1.1')
-  spec.add_dependency('ransack', '~> 2.3')
-  spec.add_dependency('carrierwave', '~> 2.0', '>= 2.0.2')
+  spec.add_dependency('rack-cors', '~> 2.0')
+  # spec.add_dependency('ransack', '~> 2.3')
+  spec.add_dependency('carrierwave', '~> 3.0')
 end
