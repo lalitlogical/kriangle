@@ -15,6 +15,8 @@ require 'grape-swagger-rails'
 require 'api-pagination'
 require 'kaminari'
 
+require 'ransack'
+
 require 'carrierwave'
 
 module Kriangle
